@@ -1,5 +1,5 @@
 # RAVE-II
-Pipelined, Out-of-Order RISC-V processor
+2-core, pipelined, superscalar, Out-of-Order, RISC-V processor
 
 Built for Senior Capstone Project by:
 
