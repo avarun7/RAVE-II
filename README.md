@@ -5,4 +5,6 @@ Built for Senior Capstone Project by:
 
 Rohan Jain, Asher Nederveld, Varun Arumugam, Edgar Turcotte, Megan Yeoman, Anusha Razdan, Felipe Jofre, Luis Cervantes
 
-Abhay was almost here :( 
+Abhay was almost here :(
+
+When will Rohan be able to see this on vLab? 
