@@ -3,4 +3,6 @@
 
 Built for Senior Capstone Project by:
 
-Rohan Jain, Asher Nederveld, Varun Arumugam, Edgar Turcotte
+Rohan Jain, Asher Nederveld, Varun Arumugam, Edgar Turcotte,
+
+Megan Yeoman, Anusha Razdan, Felipe Jofre, Louis Cervantes
