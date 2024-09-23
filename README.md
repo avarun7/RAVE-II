@@ -1,8 +1,6 @@
 # RAVE-II
-2-core, pipelined, superscalar, Out-of-Order, RISC-V processor
+pipelined, Out-of-Order, RISC-V (RV64IMAC) processor
 
 Built for Senior Capstone Project by:
 
-Rohan Jain, Asher Nederveld, Varun Arumugam, Edgar Turcotte,
-
-Megan Yeoman, Anusha Razdan, Felipe Jofre, Louis Cervantes
+Rohan Jain, Asher Nederveld, Varun Arumugam, Edgar Turcotte, Megan Yeoman, Anusha Razdan, Felipe Jofre, Luis Cervantes
