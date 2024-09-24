@@ -7,4 +7,4 @@ Rohan Jain, Asher Nederveld, Varun Arumugam, Edgar Turcotte, Megan Yeoman, Anush
 
 Abhay was almost here :(
 
-When will Rohan be able to see this on vLab? 
+When will Rohan and Eddie be able to see this on vLab?  Very unfortunate ;-;
