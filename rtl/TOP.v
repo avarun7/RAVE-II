@@ -11,33 +11,73 @@ module TOP();
     //instantiation of the modules: frontend, mapper, OOOengine, regfile, ROB, and L2$
 
     frontend_TOP frontend(
-        .clk(clk),
-        //TODO: add more inputs/outputs
+        .clk(clk), .rst(),
+
+        //inputs
+        //TODO: add more inputs
+
+        //outputs
+        .uop(),
+        .dr(), .sr1(), .sr2(), .imm(),
+        .pc(),
+        //TODO: add more outputs
     );
 
     mapper_TOP mapper(
-        .clk(clk),
-        //TODO: add more inputs/outputs
+        .clk(clk), .rst(),
+        
+        //inputs
+        .uop(),
+        .dr(), .sr1(), .sr2(), .imm(),
+        .pc(),
+        //TODO: add more inputs
+
+        //outputs
+        //TODO: add more outputs
     );
 
     regfile_TOP regfile(
-        .clk(clk),
-        //TODO: add more inputs/outputs
+        .clk(clk), .rst(),
+        
+        //inputs
+        //TODO: add more inputs
+
+        //outputs
+        //TODO: add more outputs
     );
 
     ooo_engine_TOP ooo_engine(
-        .clk(clk),
-        //TODO: add more inputs/outputs
+        .clk(clk), .rst(),
+        
+        //inputs
+        //TODO: add more inputs
+
+        //outputs
+        //TODO: add more outputs
     );
 
     rob_TOP rob(
-        .clk(clk),
-        //TODO: add more inputs/outputs
+        .clk(clk), .rst(),
+       
+        //inputs
+        //TODO: add more inputs
+
+        //outputs
+        //TODO: add more outputs
     );
 
     l2cache_TOP l2cache(
-        .clk(clk),
-        //TODO: add more inputs/outputs
+        .clk(clk), .rst(),
+        
+        //inputs
+        .iop(), .iaddr(), .idata_in()
+        .dop(), .daddr(), .ddata_in()
+        //TODO: add more inputs
+
+        //outputs
+        .idata_out(),
+        .ddata_out(),
+        //TODO: add more outputs
     );
 
 endmodule
