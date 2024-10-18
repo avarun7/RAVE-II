@@ -14,12 +14,35 @@ module TOP();
         .clk(clk), .rst(),
 
         //inputs
+        .resteer(), //onehot, 2b
+        .resteer_target_BR(), //32b
+        .resteer_target_ROB(), //32b
+
+        .bp_update(), //1b
+        .bp_update_taken(), //1b
+        .bp_update_target(), //32b
+
+        .pcbp_bhr_update(),
+        .clbp_bhr_update(),
+
+        .prefetch_batch(), //64b (32b for each of the two prefetches)
+
+        //TODO: potentially a interrupt/exception target signal
+        
+        .l2_icache_op(), // (R, W, RWITM, flush, update)
+        .l2_icache_addr(), .l2_icache_data(), 
+        .l2_icache_state(), 
+        
+        
         //TODO: add more inputs
 
         //outputs
         .uop(),
         .dr(), .sr1(), .sr2(), .imm(),
         .pc(),
+        .exception(), //vector with types, flagged as NOP for OOO engine
+
+
         //TODO: add more outputs
     );
 
