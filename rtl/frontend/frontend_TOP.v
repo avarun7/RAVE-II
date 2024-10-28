@@ -1,41 +1,44 @@
-module frontend_TOP(    // TODO: Add right inputs here
-        clk, rst,
+module frontend_TOP(    
+        input clk, rst,
 
-        //inputs
-        resteer(), //onehot, 2b, ROB or WB/BR
-        resteer_target_BR(), //32b - mispredict
-        resteer_target_ROB(), //32b - exception
+    //inputs
+        input resteer, //onehot, 2b, ROB or WB/BR
+        input [31:0] resteer_target_BR, //32b - mispredict
+        input [31:0] resteer_target_ROB, //32b - exception
 
-        bp_update(), //1b
-        bp_update_taken(), //1b
-        bp_update_target(), //32b
-        pcbp_update_bhr(),
-        clbp_update_bhr(),
+        input bp_update, //1b
+        input bp_update_taken, //1b
+        input [31:0] bp_update_target, //32b
+        input [9:0] pcbp_update_bhr,
+        input [9:0] clbp_update_bhr,
 
-        prefetch_batch(), //64b (32b for each of the two prefetches)
+        input [31:0] prefetch_addr, 
+        input prefetch_valid,
 
         //TODO: potentially a interrupt/exception target vector signal
-    
-        l2_icache_op(), // (R, W, RWITM, flush, update)
-        l2_icache_addr(), .l2_icache_data(), 
-        l2_icache_state(), 
+        
+        input [2:0] l2_icache_op, // (R, W, RWITM, flush, update)
+        input [31:0] l2_icache_addr, 
+        input [511:0] l2_icache_data,  
+        input [2:0] l2_icache_state, 
                
-        //TODO: add more inputs
-
         //outputs
-        valid_out(), //TODO: need to check if this is needed according to eddie's weird convention
-        uop(), //micro-op
-        eoi(), //Tells if uop is end of instruction
-        dr(), .sr1(), .sr2(), .imm(),
-        use_imm(),
-        pc(),
-        exception(), //vector with types, flagged as NOP for OOO engine
-        pcbp_bhr(),  // bhr from pc branch predictor
-        clbp_bhr(),  // bhr from cache line branch predictor
-        l2_icache_op(), // (R, W, RWITM, flush, update)
-        l2_icache_addr(), 
-        l2_icache_data_out(), 
-        l2_icache_state()
+        output valid_out,
+        output uop, //micro-op //TODO: decide uops
+        output eoi, //Tells if uop is end of instruction
+        output [4:0] dr, 
+        output [4:0] sr1, 
+        output [4:0] sr2, 
+        output [31:0] imm,
+        output use_imm,
+        output [31:0] pc,
+        output exception, //vector with types, flagged as NOP for OOO engine
+        output [9:0] pcbp_bhr,  // bhr from pc branch predictor
+        output [9:0] clbp_bhr,  // bhr from cache line branch predictor
+        output [2:0] l2_icache_op, // (R, W, RWITM, flush, update)
+        output [31:0] l2_icache_addr, 
+        output [511:0] l2_icache_data_out, 
+        output [2:0] l2_icache_state
         );
 
         c_TOP control(
@@ -68,7 +71,7 @@ module frontend_TOP(    // TODO: Add right inputs here
             //outputs
             .clc(), //cache line counter
             .nlpf(), //next-line prefetch
-            .bppf(), //branch-predictor prefetch
+            .bppf() //branch-predictor prefetch
 
         );
 
@@ -99,7 +102,7 @@ module frontend_TOP(    // TODO: Add right inputs here
             .nlpf_valid(),
 
             //TAG_STORE
-            .tag_out(),
+            .tag_out()
         );
 
         f2_TOP fetch_2( 
@@ -148,8 +151,8 @@ module frontend_TOP(    // TODO: Add right inputs here
         d1_TOP opcode_decode(
             .clk(clk), .rst(),
             // inputs
-            .exceptions_in(),
-            .IBUFF_in(),
+            .exception_in(),
+            .IBuff_in(),
             .resteer(), //onehot, 2b, ROB or WB/BR
             .resteer_target_BR(), //32b - mispredict
             .resteer_target_ROB(), //32b - exception
@@ -162,7 +165,7 @@ module frontend_TOP(    // TODO: Add right inputs here
             // outputs
             .pc(),
 
-            .exceptions_out(),
+            .exception_out(),
             .opcode_format(), //format of the instruction - compressed or not
             .instruction_out(), //expanded instruction
 
@@ -173,7 +176,7 @@ module frontend_TOP(    // TODO: Add right inputs here
 
             .ras_push(),
             .ras_pop(),
-            .ras_ret_addr(), 
+            .ras_ret_addr()
 
 
         );
@@ -181,7 +184,7 @@ module frontend_TOP(    // TODO: Add right inputs here
         d2_TOP decode(
             .clk(clk), .rst(),
             // Inputs
-            .pc(),
+            .pc_in(),
             
             .exceptions_in(),
             .uop_count(),
@@ -193,7 +196,7 @@ module frontend_TOP(    // TODO: Add right inputs here
             .eoi(),
             .dr(), .sr1(), .sr2(), .imm(),
             .use_imm(),
-            .pc(),
+            .pc_out(),
             .exception_out()
         );
         
