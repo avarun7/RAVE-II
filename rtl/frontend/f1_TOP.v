@@ -1,7 +1,7 @@
 module f1_TOP(
     input clk, rst,
     //inputs
-    input [25:0] cacheline_counter_in,
+    input [25:0] clc_in,
     input [25:0] nlpf,
     input [25:0] bppf,
     

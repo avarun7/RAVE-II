@@ -21,8 +21,8 @@ module d1_TOP(
     
     output resteer_D1,
     output [31:0] resteer_target_D1,
-    output resteer_taken
-    output [9:0] clbp_update_bhr_D1
+    output resteer_taken,
+    output [9:0] clbp_update_bhr_D1,
 
     output ras_push,
     output ras_pop,

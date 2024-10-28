@@ -20,10 +20,10 @@ module f2_TOP(
     input [31:0] tag_evict, //TODO
 
     //DATASTORE
-    input [2:0] icache_l2_op, 
-    input [2:0] icache_l2_state,
-    input [31:0] icache_l2_addr,
-    input [511:0] icache_l2_data_in,
+    input [2:0] l2_icache_op, 
+    input [2:0] l2_icache_state,
+    input [31:0] l2_icache_addr,
+    input [511:0] l2_icache_data_in,
 
     //outputs
     output exceptions_out,
@@ -38,9 +38,9 @@ module f2_TOP(
     output [31:0] prefetch_addr,
 
     //Datastore
-    output [2:0] icache_l2_op_out,
-    output [2:0] icache_l2_state_out,
-    output [31:0] icache_l2_addr_out,
+    output [2:0] icache_l2_op,
+    output [2:0] icache_l2_state,
+    output [31:0] icache_l2_addr,
     output [511:0] icache_l2_data_out
 );
 

@@ -25,9 +25,9 @@ module c_TOP(
     input [31:0] ras_ret_addr,
     
     //outputs
-    output [25:0] cacheline_counter, 
+    output [25:0] clc, //cacheline counter 
     output [25:0] nlpf, //next-line prefetch
-    output [25:0] bppf, //branch-predictor prefetch
+    output [25:0] bppf  //branch-predictor prefetch
 );
 
 endmodule

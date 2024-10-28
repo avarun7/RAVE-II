@@ -35,10 +35,10 @@ module frontend_TOP(
         output exception, //vector with types, flagged as NOP for OOO engine
         output [9:0] pcbp_bhr,  // bhr from pc branch predictor
         output [9:0] clbp_bhr,  // bhr from cache line branch predictor
-        output [2:0] l2_icache_op, // (R, W, RWITM, flush, update)
-        output [31:0] l2_icache_addr, 
-        output [511:0] l2_icache_data_out, 
-        output [2:0] l2_icache_state
+        output [2:0] icache_l2_op, // (R, W, RWITM, flush, update)
+        output [31:0] icache_l2_addr, 
+        output [511:0] icache_l2_data_out, 
+        output [2:0] icache_l2_state
         );
 
         c_TOP control(
@@ -125,7 +125,7 @@ module frontend_TOP(
             .tag_evict(),
 
             //DATASTORE
-            .icache_l2_op(), .icache_l2_addr(), .icache_l2_data_in(), .icache_l2_state(),
+            .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_in(), .l2_icache_state(),
             
 
 
@@ -143,7 +143,7 @@ module frontend_TOP(
             .prefetch_addr(),
 
             //Datastore
-            .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_out(), .l2_icache_state(),
+            .icache_l2_op(), .icache_l2_addr(), .icache_l2_data_out(), .icache_l2_state()
 
             
         );
@@ -186,7 +186,7 @@ module frontend_TOP(
             // Inputs
             .pc_in(),
             
-            .exceptions_in(),
+            .exception_in(),
             .uop_count(),
             .opcode_format(),
             .instruction_in(),
