@@ -1,8 +1,9 @@
 module TOP();
 
     localparam CYCLE_TIME = 5.0;
-    reg clk;
+    localparam XLEN = 32;
 
+    reg clk;
     initial begin
         clk = 1'b1;
         forever #(CYCLE_TIME / 2.0) clk = ~clk;
@@ -10,7 +11,7 @@ module TOP();
     
     //instantiation of the modules: frontend, mapper, OOOengine, regfile, ROB, and L2$
 
-    frontend_TOP frontend(
+    frontend_TOP #(.XLEN(XLEN)) frontend (
         .clk(clk), .rst(),
 
         //inputs
@@ -46,7 +47,7 @@ module TOP();
         .pcbp_bhr(), 
         .clbp_bhr(),
       
-        .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_out(), .l2_icache_state(),
+        .icache_l2_op(), .icache_l2_addr(), .icache_l2_data_out(), .icache_l2_state()
         //TODO: add more outputs
     );
 
@@ -60,9 +61,9 @@ module TOP();
         .dr(), .sr1(), .sr2(), .imm(),
         .use_imm(),
         .pc(),
-        .exception_in() //TODO: need better name for this since it goes into and out of mapper (and rob)
+        .exception_in(), //TODO: need better name for this since it goes into and out of mapper (and rob)
 
-        .rob_write_ptr() //comes from ROB
+        .rob_write_ptr(), //comes from ROB
         .rob_full(),
 
         .fu_full(), //one hot, one for each FU
@@ -80,7 +81,7 @@ module TOP();
 
         //TODO: add more outputs
     );
-
+/*
     regfile_TOP regfile(
         //2 read ports, 1 write ports
 
@@ -144,11 +145,9 @@ module TOP();
 
         .sr1_data_md(),
         .sr2_data_md(),
-        .valid_md(),
+        .valid_md()
         //TODO: add more outputs
     );
-
-    //ASK CHIOU ABOUT FULL BYPASS NETWORK ON FPGA
 
     ooo_engine_TOP ooo_engine(
         .clk(clk), .rst(),
@@ -184,15 +183,16 @@ module TOP();
         .sr2_data_md(),
         .valid_md(),
         //TODO: add more inputs
-        /*
-        functional units:
+        
 
-        integer
-        logical
-        load/store
-        branch
-        mul/div/mod?
-        */
+        // functional units:
+
+        // integer
+        // logical
+        // load/store
+        // branch
+        // mul/div/mod?
+        
         
         //outputs
         //Broadcast to the regfile 
@@ -224,7 +224,7 @@ module TOP();
         .ooo_data(),
         .ooo_rob_entry(),
         .ooo_valid(),
-        .ooo_exception(),
+        .ooo_exception()
     );
 
     rob_TOP rob(
@@ -259,7 +259,7 @@ module TOP();
         .dest_eoi_out(), //tell whether an instruction is finished for updating proper PC
 
         .rob_write_ptr(), //to mapper, tell where to write to next
-        .rob_full(), //1 bit signal to let mapper know when to stall
+        .rob_full() //1 bit signal to let mapper know when to stall
         
         //TODO: add more outputs
     );
@@ -290,9 +290,11 @@ module TOP();
 
         //outputs
         .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_out(), .l2_icache_state(),
-        .l2_dcache_op(), .l2_dcache_addr(), .l2_dcache_data_out(), .l2_dcache_state(),
+        .l2_dcache_op(), .l2_dcache_addr(), .l2_dcache_data_out(), .l2_dcache_state()
         //TODO: add more outputs
     );
+
+    */
 
 endmodule
 

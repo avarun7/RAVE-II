@@ -1,0 +1,9 @@
+# Ignore the generated executable file
+sim
+
+# Ignore temporary and backup files
+*.o
+*.vcd
+*.log
+*~
+

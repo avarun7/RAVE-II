@@ -1,5 +1,5 @@
 module mapper_TOP(
-    input clk, rst,
+    input clk, rst, flush,
 
     //inputs
     input [31:0] uop, //TODO
@@ -18,10 +18,10 @@ module mapper_TOP(
     //outputs
     output [4:0] fu_target, //tells which func unit this instruction is using
     output [31:0] rob_entry, //index into ROB to be used for this uop
-    output src1_valid
-    output [] src1_tag,
+    output src1_valid,
+    output [7:0] src1_tag,
     output src2_valid,
-    output [] src2_tag,
+    output [7:0] src2_tag,
 
     output eoi_out,
     output exception_out

@@ -1,24 +1,24 @@
-module frontend_TOP(    
+module frontend_TOP #(parameter XLEN=32) (    
         input clk, rst,
 
     //inputs
         input resteer, //onehot, 2b, ROB or WB/BR
-        input [31:0] resteer_target_BR, //32b - mispredict
-        input [31:0] resteer_target_ROB, //32b - exception
+        input [XLEN - 1:0] resteer_target_BR, //32b - mispredict
+        input [XLEN - 1:0] resteer_target_ROB, //32b - exception
 
         input bp_update, //1b
         input bp_update_taken, //1b
-        input [31:0] bp_update_target, //32b
+        input [XLEN - 1:0] bp_update_target, //32b
         input [9:0] pcbp_update_bhr,
         input [9:0] clbp_update_bhr,
 
-        input [31:0] prefetch_addr, 
+        input [XLEN - 1:0] prefetch_addr, 
         input prefetch_valid,
 
         //TODO: potentially a interrupt/exception target vector signal
         
         input [2:0] l2_icache_op, // (R, W, RWITM, flush, update)
-        input [31:0] l2_icache_addr, 
+        input [XLEN - 1:0] l2_icache_addr, 
         input [511:0] l2_icache_data,  
         input [2:0] l2_icache_state, 
                
@@ -29,19 +29,19 @@ module frontend_TOP(
         output [4:0] dr, 
         output [4:0] sr1, 
         output [4:0] sr2, 
-        output [31:0] imm,
+        output [XLEN - 1:0] imm,
         output use_imm,
-        output [31:0] pc,
+        output [XLEN - 1:0] pc,
         output exception, //vector with types, flagged as NOP for OOO engine
         output [9:0] pcbp_bhr,  // bhr from pc branch predictor
         output [9:0] clbp_bhr,  // bhr from cache line branch predictor
         output [2:0] icache_l2_op, // (R, W, RWITM, flush, update)
-        output [31:0] icache_l2_addr, 
+        output [XLEN - 1:0] icache_l2_addr, 
         output [511:0] icache_l2_data_out, 
         output [2:0] icache_l2_state
         );
 
-        c_TOP control(
+        c_TOP #(.XLEN(XLEN)) control(
             .clk(clk), .rst(),
 
             //inputs
@@ -75,7 +75,7 @@ module frontend_TOP(
 
         );
 
-        f1_TOP fetch_1( //TLB + TAGSTORE
+        f1_TOP #(.XLEN(XLEN)) fetch_1( //TLB + TAGSTORE
             .clk(clk), .rst(),
             //inputs
             .clc_in(),
@@ -105,7 +105,7 @@ module frontend_TOP(
             .tag_out()
         );
 
-        f2_TOP fetch_2( 
+        f2_TOP #(.XLEN(XLEN)) fetch_2( 
             .clk(clk),  .rst(),
             //inputs
             .clc_paddr(),
@@ -148,7 +148,7 @@ module frontend_TOP(
             
         );
 
-        d1_TOP opcode_decode(
+        d1_TOP #(.XLEN(XLEN)) opcode_decode(
             .clk(clk), .rst(),
             // inputs
             .exception_in(),
@@ -181,7 +181,7 @@ module frontend_TOP(
 
         );
 
-        d2_TOP decode(
+        d2_TOP #(.XLEN(XLEN)) decode(
             .clk(clk), .rst(),
             // Inputs
             .pc_in(),
