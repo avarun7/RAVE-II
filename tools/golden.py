@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import struct
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
@@ -388,35 +390,62 @@ class RV32IMAC:
     def dump(self) -> Tuple[List[int], Dict[int, int]]:
         return list(self.regs), {i: self.memory[i] for i in range(0, mem_size, 4) if self.memory[i] != 0}
 
-def test_rv32imac(verbose):
+def parse_instruction_file(filename: str) -> List[int]:
+    """Parse a file containing RISC-V instructions in hex format.
+    Ignores comments starting with '#'"""
+    instructions = []
+    with open(filename, 'r') as f:
+        for line in f:
+            # Remove comments
+            line = line.split('#')[0].strip()
+            # Skip empty lines
+            if not line:
+                continue
+            # Convert hex string to integer
+            try:
+                instruction = int(line, 16)
+                instructions.append(instruction)
+            except ValueError as e:
+                print(f"Error parsing instruction: {line}")
+                raise e
+    return instructions
+
+def run_program(filename: str, verbose: bool = False) -> None:
+    """Run a RISC-V program from a file"""
     rv32imac = RV32IMAC()
     rv32imac.verbose = verbose
-    rv32imac.run([
-        0x00200093, # addi R1, 0x0, 0x2
-        0x00300113, # addi R2, 0x0, 0x3
-        0x002081B3, # add  R3, R1, R2
-        0x40038313, # addi R6, R7, x1024
-        0x00332023, # sw R3, 0(R6)
-        #jump to pc 0
-        0x00000067  # jalr x0, x0, 0
-        ])
-    regs, mem = rv32imac.dump()
-    print("TEST FINISHED")
-    print("Registers:")
-    for i, val in enumerate(regs):
-        print(f"\tx{i}: 0x{val:08x} ({val})")
-    print("Memory:")
-    for addr, val in mem.items():
-        if val != 0:
-            print(f"\t0x{addr:x}: 0x{val:08x} ({val})")
-
+    
+    try:
+        instructions = parse_instruction_file(filename)
+    except FileNotFoundError:
+        print(f"Error: Could not find input file {filename}")
+        return
+    except ValueError as e:
+        print(f"Error parsing instructions: {e}")
+        return
+        
+    try:
+        rv32imac.run(instructions)
+        regs, mem = rv32imac.dump()
+        print("Program finished successfully")
+        print("\nRegisters:")
+        for i, val in enumerate(regs):
+            if val != 0:  # Only print non-zero registers
+                print(f"\tx{i}: 0x{val:08x} ({val})")
+        print("\nMemory:")
+        for addr, val in sorted(mem.items()):
+            if val != 0:
+                print(f"\t0x{addr:x}: 0x{val:08x} ({val})")
+    except Exception as e:
+        print(f"Error during program execution: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="Run RV32IMAC simulator")
+    parser.add_argument("--input_file", help="Input file containing RISC-V instructions in hex format", required=True)
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
 
-    test_rv32imac(args.verbose)
+    run_program(args.input_file, args.verbose)
 
 if __name__ == "__main__":
     main()
