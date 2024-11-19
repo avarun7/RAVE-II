@@ -6,5 +6,6 @@
 0x002081B3 # add  R3, R1, R2
 0x40038313 # addi R6, R7, x400
 0x00332023 # sw R3, 0(R6)
+0x00032403 # lw R8, 0(R6)
 #jump to pc 0
 0x00000067  # jalr x0, x0, 0
