@@ -16,8 +16,9 @@ module d1_TOP #(parameter XLEN=32) (
     //outputs
     output [XLEN - 1:0] pc,
     output exception_out,
-    output [4:0] opcode_format, //TODO
+    output [2:0] opcode_format, //TODO
     output [XLEN - 1:0] instruction_out,
+    output compressed_inst,
     
     output resteer_D1,
     output [XLEN - 1:0] resteer_target_D1,
@@ -29,5 +30,7 @@ module d1_TOP #(parameter XLEN=32) (
     output [XLEN - 1:0] ras_ret_addr
 
 );
+
+    
 
 endmodule
