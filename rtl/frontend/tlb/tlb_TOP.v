@@ -4,7 +4,7 @@ module tlb_TOP #(parameter XLEN = 32, CLC_WIDTH = 26)(
     input [CLC_WIDTH - 1 : 0] clc_in,
     input [CLC_WIDTH - 1 : 0] clc_nl_in,
     input RW_in,            //check permissions
-    input valid_in,   //if 1, then we are doing a memory request, else no exception should be thrown
+    input valid_in,         //if 1, then we are doing a memory request, else no exception should be thrown
 
     output pcd,             //don't cache MMIO
     output hit,

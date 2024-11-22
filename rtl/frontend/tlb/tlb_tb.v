@@ -1,150 +1,199 @@
+`timescale 1ns/1ps
+
 module tlb_tb;
+  // Parameters
+  parameter XLEN = 32;
+  parameter CLC_WIDTH = 26;
+  parameter TLB_ENTRIES = 16;
+  parameter TAG_WIDTH = 20;
+  parameter PAGE_OFFSET = 12;
+  
+  // Test bench signals
+  reg clk;
+  reg rst;
+  reg [XLEN-1:0] pc;
+  reg [CLC_WIDTH-1:0] clc_in;
+  reg [CLC_WIDTH-1:0] clc_nl_in;
+  reg RW_in;
+  reg valid_in;
+  
+  wire pcd;
+  wire hit;
+  wire exception;
+  wire [CLC_WIDTH-1:0] clc_paddr;
+  wire clc_paddr_valid;
+  wire [CLC_WIDTH-1:0] clc_nl_paddr;
+  wire clc_nl_paddr_valid;
 
-    reg [31:0] address;
-    reg RW_in, is_mem_request;
+  // Signal groups for wave dumping
+  wire [3:0] status_signals;
+  assign status_signals = {pcd, hit, exception, valid_in};
+  
+  // Instantiate the TLB
+  tlb_TOP #(
+    .XLEN(XLEN),
+    .CLC_WIDTH(CLC_WIDTH)
+  ) dut (
+    .clk(clk),
+    .rst(rst),
+    .pc(pc),
+    .clc_in(clc_in),
+    .clc_nl_in(clc_nl_in),
+    .RW_in(RW_in),
+    .valid_in(valid_in),
+    .pcd(pcd),
+    .hit(hit),
+    .exception(exception),
+    .clc_paddr(clc_paddr),
+    .clc_paddr_valid(clc_paddr_valid),
+    .clc_nl_paddr(clc_nl_paddr),
+    .clc_nl_paddr_valid(clc_nl_paddr_valid)
+  );
+  
+  // Clock generation
+  always begin
+    #5 clk = ~clk;
+  end
+  
+  // Test vector storage
+  reg [31:0] test_vectors [0:9];
+  integer errors = 0;
+  integer i;
+  
+  // Initial block for waveform generation
+  initial begin
+    // Create VCD file
+    $dumpfile("tlb_test.vcd");
+    // Dump all variables including those in sub-modules
+    $dumpvars(0, tlb_tb);
+    
+    // Optional: Create FST format file (if simulator supports it)
+    // $fsdbDumpfile("tlb_test.fsdb");
+    // $fsdbDumpvars(0, tlb_tb);
+    
+    // Add specific signals to wave window with hierarchy
+    $display("\nSimulation Wave Information:");
+    $display("----------------------------------------");
+    $display("Wave file: tlb_test.vcd");
+    $display("Simulation resolution: 1ns/1ps");
+    $display("----------------------------------------\n");
+  end
 
-    reg [19:0] VP_0, VP_1, VP_2, VP_3, VP_4, VP_5, VP_6, VP_7;
-    reg [19:0] PF_0, PF_1, PF_2, PF_3, PF_4, PF_5, PF_6, PF_7;
-    reg [7:0] entry_v, entry_P,  entry_RW, entry_PCD;
-    reg [159:0] VP, PF;
-
-    wire [19:0] PF_out;
-    wire miss, hit, protection_exception, PCD_out;
-
-    localparam cycle_time = 6;
-    reg clk;
-    initial begin
-        clk = 0;
-        forever
-            #(cycle_time / 2) clk = ~clk;
+  // Add string labels for test phases (for waveform viewer)
+  reg [127:0] test_phase;
+  initial begin
+    test_phase = "Initialize";
+  end
+  
+  // Test scenarios
+  initial begin
+    // Initialize signals
+    clk = 0;
+    rst = 0;
+    pc = 0;
+    clc_in = 0;
+    clc_nl_in = 0;
+    RW_in = 0;
+    valid_in = 0;
+    
+    // Apply reset
+    #10;
+    test_phase = "Reset";
+    rst = 1;
+    #10 rst = 0;
+    
+    // Wait for reset to complete
+    #20;
+    test_phase = "Post-Reset";
+    
+    // Test Case 1: Basic TLB miss
+    test_phase = "TLB Miss Test";
+    $display("Test Case 1: TLB Miss Test at time %0t", $time);
+    valid_in = 1;
+    clc_in = 26'h1234567;
+    #10;
+    if (!exception || hit) begin
+      $display("Error: TLB miss not properly detected");
+      errors = errors + 1;
+    end
+    
+    // Test Case 2: Invalid request
+    test_phase = "Invalid Request";
+    $display("Test Case 2: Invalid Request Test at time %0t", $time);
+    valid_in = 0;
+    #10;
+    if (exception) begin
+      $display("Error: Exception raised for invalid request");
+      errors = errors + 1;
+    end
+    
+    // Test Case 3: Read permission test
+    test_phase = "Read Permission";
+    $display("Test Case 3: Read Permission Test at time %0t", $time);
+    // Setup TLB entry
+    dut.tlb_valid[0] = 1'b1;
+    dut.tlb_tags[0] = clc_in[CLC_WIDTH-1:PAGE_OFFSET];
+    dut.tlb_physical_pages[0] = 32'hABCD0000;
+    dut.permission_bits[0] = 4'b0001; // Read only
+    valid_in = 1;
+    RW_in = 0; // Read access
+    #10;
+    if (exception || !hit) begin
+      $display("Error: Valid read access denied");
+      errors = errors + 1;
+    end
+    
+    // Test Case 4: Write permission violation
+    test_phase = "Write Permission";
+    $display("Test Case 4: Write Permission Test at time %0t", $time);
+    RW_in = 1; // Write access
+    #10;
+    if (!exception) begin
+      $display("Error: Write to read-only page not caught");
+      errors = errors + 1;
+    end
+    
+    // Test Case 5: Dual port operation
+    test_phase = "Dual Port Test";
+    $display("Test Case 5: Dual Port Operation Test at time %0t", $time);
+    clc_in = 26'h1234567;
+    clc_nl_in = 26'h7654321;
+    dut.tlb_valid[1] = 1'b1;
+    dut.tlb_tags[1] = clc_nl_in[CLC_WIDTH-1:PAGE_OFFSET];
+    dut.tlb_physical_pages[1] = 32'hDCBA0000;
+    #10;
+    if (!clc_nl_paddr_valid) begin
+      $display("Error: Second port translation failed");
+      errors = errors + 1;
     end
 
-initial
-	begin		
-		//initialize
-		$display("INITIALIZING...\n");
-		VP_0 = 20'h00000;
-		VP_1 = 20'h02000;
-		VP_2 = 20'h04000;
-		VP_3 = 20'h0b000;
-		VP_4 = 20'h0c000;
-		VP_5 = 20'h0a000;
-		VP_6 = 20'h06000;
-		VP_7 = 20'h03000;
-
-		PF_0 = 20'h00000;
-		PF_1 = 20'h00002;
-		PF_2 = 20'h00005;
-		PF_3 = 20'h00004;
-		PF_4 = 20'h00007;
-		PF_5 = 20'h00005;
-		PF_6 = 20'h00006;
-		PF_7 = 20'h00003;
-
-		entry_v = 8'b10111111;
-		entry_P = 8'b11110111;
-		entry_RW= 8'b11010101;
-		entry_PCD = 8'b00000011;
-
-		VP = {VP_7, VP_6, VP_5, VP_4, VP_3, VP_2, VP_1, VP_0};
-		PF = {PF_7, PF_6, PF_5, PF_4, PF_3, PF_2, PF_1, PF_0};
-		#(cycle_time)
-
-	/*
-		Sample Initialized Values, TLB Entries
-			Virtual Page		Physical Page		Valid		Present		R/W	PCD
-			20'h00000		20'h00000		1		1		0	0
-			20'h02000		20'h00002		1		1		1	0
-			20'h04000		20'h00005		1		1		1	0
-			20'h0b000		20'h00004		1		1		1	0
-			20'h0c000		20'h00007		1		1		1	0
-			20'h0a000		20'h00005		1		1		1	0
-	
-		custom:	20'h06000		20'h00006		0		1		1	1
-			20'h03000		20'h00003		1		1		1	1
-
-	*/	$display("\n VVVVVVVVVVVVVV INIT COMPLETE VVVVVVVVVVVVVV\n");
-		
-		$display("case: nominal\n");
-		address = 32'h03000AAA;
-		RW_in = 1; 
-		is_mem_request = 0;
-		#(cycle_time)
-
-		$display("case: valid but not present\n");
-		address = 32'h0b000234;
-		RW_in = 0;
-		is_mem_request = 1;
-		#(cycle_time)
-
-		$display("case: pure miss\n");
-		address = 32'hFFFFFFFF;
-		RW_in = 1;
-		is_mem_request = 1;
-		#(cycle_time)
-
-		$display("case: pure miss but should still be a hit since not a mem request\n");
-                address = 32'hFFFFFFFF;
-                RW_in = 1;
-                is_mem_request = 0;
-                #(cycle_time)
-
-		$display("case: present but not valid\n");
-		address = 32'h06000432;
-		RW_in = 1;
-		is_mem_request = 1;
-		#(cycle_time)
-
-		$display("case: present and valid but RW doesn't match\n");
-		address = 32'h0a000777;
-		RW_in = 1;
-		is_mem_request = 1;
-		#(cycle_time)
-
-		$display("case: both protection and page fault\n");
-		address = 32'h06000ABC;
-		RW_in = 0;
-		is_mem_request = 1;
-		#(cycle_time)
-
-		$display("case: both protection and page fault but hit since not mem request\n");
-                address = 32'h06000ABC;
-                RW_in = 0;
-                is_mem_request = 0;
-                #(cycle_time)
-
-    	
-		$display("\n^^^^^^^^^^^^^^^^^^^^^ END TEST ^^^^^^^^^^^^^^^^^^^^^\n");
-		$finish;
-	end
-
-	always @(posedge clk) begin
-		$display("inputs:");
-		$display("\t address: %h", address);
-		$display("\t RW_in:   %h", RW_in);
-		$display("\t is_mem_request:   %h", is_mem_request);
-
-
-		$display("outputs:");
-		$display("\t PF_out:  		%h", PF_out);
-		$display("\t PCD:			%h", PCD_out);
-		$display("\t miss:  		%h", miss);
-		$display("\t hit: 			%h", hit);
-		$display("\t protection_exception: 	%h", protection_exception);
-		
-		$display("---------------------------------------\n");    
-	end
-
-   	// Dump all waveforms
-   	initial
-		begin
-	 	$vcdplusfile("tlb.dump.vpd");
-	 	$vcdpluson(0, tlb_tb); 
-	end
-
-	TLB tlb_test(.clk(clk), .address(address), .RW_in(RW_in), .is_mem_request(is_mem_request),
-		.VP(VP), .PF(PF), .entry_v(entry_v), .entry_P(entry_P), .entry_RW(entry_RW), 
-		.entry_PCD(entry_PCD), .PF_out(PF_out), .PCD_out(PCD_out), .miss(miss), .hit(hit), 
-		.protection_exception(protection_exception));
+    // Wait for waveforms to settle
+    #20;
+    test_phase = "Complete";
+    
+    // Report results
+    if (errors == 0)
+      $display("\nSimulation completed successfully at time %0t!", $time);
+    else
+      $display("\nSimulation completed with %d errors at time %0t", errors, $time);
+    
+    // Add some delay before ending simulation for waveform capture
+    #100;
+    $display("\nWaveform file tlb_test.vcd has been generated.");
+    $finish;
+  end
+  
+  // Monitor important signal changes for waveform verification
+  always @(posedge clk) begin
+    $display("Time=%0t Phase=%s hit=%b exception=%b pcd=%b valid_in=%b RW_in=%b",
+             $time, test_phase, hit, exception, pcd, valid_in, RW_in);
+  end
+  
+  // Monitor TLB internal state changes
+  // This will help in waveform analysis
+  always @(posedge clk) begin
+    if (hit)
+      $display("Time=%0t TLB Hit - Physical Address: %h", $time, clc_paddr);
+  end
 
 endmodule
