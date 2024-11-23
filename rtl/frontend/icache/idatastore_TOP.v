@@ -21,7 +21,7 @@ assign f2_data_w1 = f2_data_in[CACHE_LINE*2-1:CACHE_LINE];
 wire[CACHE_LINE-1:0] f2_data_w2;
 assign f2_data_w2 = f2_data_in[CACHE_LINE*3-1:CACHE_LINE*2];
 wire[CACHE_LINE-1:0] f2_data_w3;
-assign f2_data_w1 = f2_data_in[CACHE_LINE*4-1:CACHE_LINE*3];
+assign f2_data_w3 = f2_data_in[CACHE_LINE*4-1:CACHE_LINE*3];
 
 
 reg [CACHE_LINE-1:0] data_store[0:SET_CNT-1]; // Array for tag storage

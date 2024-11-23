@@ -49,13 +49,13 @@ module icache #(parameter SET_CNT = 1024,parameter CACHE_LINE = 512, parameter A
     output [3:0]  icache_l2_state
 );
 
-    itag_store()
+    itag_store();
 
-    idata_store()
+    idata_store();
 
-    iupdate_logic()
+    iupdate_logic();
 
     tlb_TOP #(32, 26)();
 
-    tlb()
+    tlb();
 endmodule 

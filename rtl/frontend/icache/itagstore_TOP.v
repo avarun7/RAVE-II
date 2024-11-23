@@ -37,12 +37,12 @@ assign f2_tag_w1 = f2_tag_in[TAG_SZ*2-1:TAG_SZ];
 wire[TAG_SZ-1:0] f2_tag_w2;
 assign f2_tag_w2 = f2_tag_in[TAG_SZ*3-1:TAG_SZ*2];
 wire[TAG_SZ-1:0] f2_tag_w3;
-assign f2_tag_w1 = f2_tag_in[TAG_SZ*4-1:TAG_SZ*3];
+assign f2_tag_w3 = f2_tag_in[TAG_SZ*4-1:TAG_SZ*3];
 
 wire[TAG_SZ-1:0] f1_tag_w0;
 assign f1_tag_w0 = f1_tag_out[TAG_SZ-1:0];
 wire[TAG_SZ-1:0] f1_tag_w1;
-assign f1_tag_w = f1_tag_out[TAG_SZ*2-1:TAG_SZ];
+assign f1_tag_w1 = f1_tag_out[TAG_SZ*2-1:TAG_SZ];
 wire[TAG_SZ-1:0] f1_tag_w2;
 assign f1_tag_w2 = f1_tag_out[TAG_SZ*3-1:TAG_SZ*2];
 wire[TAG_SZ-1:0] f1_tag_w3;

@@ -49,6 +49,9 @@ always @(posedge clk)begin
     cache_hit <= valid_in && hit;
 end
 
+
+wire [4:0] next_state; // Declare next_state TODO: Update this line! only added because i got an undeclared error during compilation
+
 //process tag store
 assign all_valid = f2_meta_in[4] & f2_meta_in[9] & f2_meta_in[14] & f2_meta_in[19];   
 assign all_cl_ptc = f2_meta_in[2] & f2_meta_in[7] & f2_meta_in[12] & f2_meta_in[17] ; 
@@ -141,6 +144,7 @@ inext_state i1( clk,
                 f2_is_l2_req && f2_op_in == 3'b100, 
                 tag_write_out, 
                 f2_way_in,
+                next_state,
                 tag_way_out,
                 tag_meta_out
                 );
