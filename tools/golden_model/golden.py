@@ -20,6 +20,8 @@ class Opcode(Enum):
     AMO = 0b0101111
     MISC_MEM = 0b0001111  # For FENCE/FENCE.I
 
+    MULDIV = 0b0110011  # Same as OP, distinguished by funct3
+
 class Funct3(Enum):
     # BRANCH
     BEQ = 0b000
@@ -55,6 +57,29 @@ class Funct3(Enum):
     FENCE = 0b000
     FENCE_I = 0b001
 
+    # M Extension
+    MUL = 0b000
+    MULH = 0b001
+    MULHSU = 0b010
+    MULHU = 0b011
+    DIV = 0b100
+    DIVU = 0b101
+    REM = 0b110
+    REMU = 0b111
+    
+    # A Extension
+    AMOSWAP = 0b000
+    AMOADD = 0b000
+    AMOXOR = 0b100
+    AMOAND = 0b110
+    AMOOR = 0b010
+    AMOMIN = 0b100
+    AMOMAX = 0b110
+    AMOMINU = 0b011
+    AMOMAXU = 0b111
+    LR = 0b010
+    SC = 0b011
+
 @dataclass
 class CSRState:
     mstatus: int = 0
@@ -68,7 +93,6 @@ class CSRState:
     cycle: int = 0
     instret: int = 0
 
-mem_size = 4096
 
 class RV32IMAC:
     def __init__(self):
@@ -78,7 +102,8 @@ class RV32IMAC:
     def reset(self):
         self.regs = [0] * 32
         self.pc = 0
-        self.memory = bytearray(mem_size * mem_size)  # 16 MiB
+        self.mem_size = 4096  # 16 MiB
+        self.memory = bytearray(self.mem_size * self.mem_size)
         self.csr = CSRState()
         self.lr_valid = False
         self.lr_address = 0
@@ -159,42 +184,36 @@ class RV32IMAC:
         self.csr.mepc = self.pc
         self.pc = self.csr.mtvec
 
+    # Add these patterns to the existing C extension decompression
     def decompress_instruction(self, insn: int) -> int:
-        """Decompress RVC instruction to regular instruction"""
+        """Enhanced RVC instruction decompressor"""
         op = insn & 0x3
         funct3 = (insn >> 13) & 0x7
         
+        # Add more C extension patterns
         if op == 0b00:
-            # C.ADDI4SPN, C.FLD, C.LW, C.FSD, C.SW
-            if funct3 == 0b000:  # C.ADDI4SPN
-                rd = ((insn >> 2) & 0x7) + 8
-                imm = ((insn >> 7) & 0x30) | ((insn >> 1) & 0x3C0) | ((insn >> 4) & 0x4) | ((insn >> 2) & 0x8)
-                return (imm << 20) | (2 << 15) | (rd << 7) | 0x13  # addi rd, x2, imm
-            elif funct3 == 0b010:  # C.LW
+            # C.FLD, C.LQ (RV128), C.SW, C.FSW, C.SD, C.FSQ
+            if funct3 == 0b011:  # C.FLD/C.LD
                 rd = ((insn >> 2) & 0x7) + 8
                 rs1 = ((insn >> 7) & 0x7) + 8
-                imm = ((insn >> 4) & 0x4) | ((insn >> 7) & 0x38) | ((insn >> 6) & 0x40)
-                return (imm << 20) | (rs1 << 15) | (0b010 << 12) | (rd << 7) | 0x03  # lw rd, imm(rs1)
-            
+                imm = ((insn >> 10) & 0x7) | (((insn >> 5) & 0x3) << 3)
+                return (imm << 20) | (rs1 << 15) | (0b011 << 12) | (rd << 7) | 0x03  # ld
+                
         elif op == 0b01:
-            # C.ADDI, C.JAL, C.LI, C.ADDI16SP, C.LUI, C.SRLI, C.SRAI, C.ANDI, C.SUB, C.XOR, C.OR, C.AND
-            if funct3 == 0b000:  # C.ADDI
-                rd = (insn >> 7) & 0x1F
-                imm = ((insn >> 2) & 0x1F) | (((insn >> 12) & 0x1) << 5)
-                if imm & 0x20:
-                    imm -= 0x40
-                return (imm << 20) | (rd << 15) | (0b000 << 12) | (rd << 7) | 0x13  # addi rd, rd, imm
-            
+            # C.NOP, C.ADDI, C.JAL, C.LI, C.ADDI16SP, C.LUI, C.SRLI, C.SRAI, C.ANDI, C.SUB, C.XOR, C.OR, C.AND
+            if funct3 == 0b001:  # C.JAL
+                imm = ((insn >> 3) & 0x7) | ((insn >> 11) & 0x1) << 3
+                if imm & 0x8:
+                    imm -= 0x10
+                return (imm << 20) | (1 << 7) | 0x6F  # jal x1, imm
+                
         elif op == 0b10:
             # C.SLLI, C.FLDSP, C.LWSP, C.JR, C.MV, C.EBREAK, C.JALR, C.ADD
-            if funct3 == 0b100:  # C.JR/C.MV/C.EBREAK/C.JALR/C.ADD
+            if funct3 == 0b010:  # C.LWSP
                 rd = (insn >> 7) & 0x1F
-                rs2 = (insn >> 2) & 0x1F
-                if rs2 == 0:  # C.JR/C.JALR
-                    return (rd << 15) | 0x67  # jalr x0, rs1, 0
-                else:  # C.MV/C.ADD
-                    return (0b0000000 << 25) | (rs2 << 20) | (rd << 15) | (0b000 << 12) | (rd << 7) | 0x33  # add rd, rd, rs2
-                    
+                imm = ((insn >> 2) & 0x1F) | ((insn >> 12) & 0x1) << 5
+                return (imm << 20) | (2 << 15) | (0b010 << 12) | (rd << 7) | 0x03  # lw rd, imm(x2)
+                
         # Return original instruction if not compressed
         return insn
 
@@ -230,8 +249,11 @@ class RV32IMAC:
             imm_j -= 0x200000
         
         next_pc = self.pc + 4
-        
-        if opcode == Opcode.OP_IMM.value:
+        if opcode == Opcode.OP.value and funct7 == 0x01:  # M extension
+            self.execute_m_extension(funct3, rs1, rs2, rd)
+        elif opcode == Opcode.AMO.value:  # A extension
+            self.execute_a_extension(funct3, rs1, rs2, rd, funct7)
+        elif opcode == Opcode.OP_IMM.value:
             if funct3 == Funct3.ADD_SUB.value:
                 self.regs[rd] = self.regs[rs1] + imm_i
             elif funct3 == Funct3.SLT.value:
@@ -346,10 +368,93 @@ class RV32IMAC:
         
         self.pc = next_pc
 
+    def execute_m_extension(self, funct3: int, rs1: int, rs2: int, rd: int) -> None:
+        """Handle M extension instructions (multiplication/division)"""
+        if funct3 == Funct3.MUL.value:
+            self.regs[rd] = (self.regs[rs1] * self.regs[rs2]) & 0xFFFFFFFF
+        elif funct3 == Funct3.MULH.value:
+            # Signed x Signed high bits
+            result = (self.regs[rs1] * self.regs[rs2]) >> 32
+            self.regs[rd] = result & 0xFFFFFFFF
+        elif funct3 == Funct3.MULHSU.value:
+            # Signed x Unsigned high bits
+            result = (self.regs[rs1] * (self.regs[rs2] & 0xFFFFFFFF)) >> 32
+            self.regs[rd] = result & 0xFFFFFFFF
+        elif funct3 == Funct3.MULHU.value:
+            # Unsigned x Unsigned high bits
+            result = ((self.regs[rs1] & 0xFFFFFFFF) * (self.regs[rs2] & 0xFFFFFFFF)) >> 32
+            self.regs[rd] = result & 0xFFFFFFFF
+        elif funct3 == Funct3.DIV.value:
+            if self.regs[rs2] == 0:
+                self.regs[rd] = -1  # Division by zero
+            else:
+                self.regs[rd] = self.regs[rs1] // self.regs[rs2]
+        elif funct3 == Funct3.DIVU.value:
+            if self.regs[rs2] == 0:
+                self.regs[rd] = 0xFFFFFFFF  # Division by zero
+            else:
+                self.regs[rd] = (self.regs[rs1] & 0xFFFFFFFF) // (self.regs[rs2] & 0xFFFFFFFF)
+        elif funct3 == Funct3.REM.value:
+            if self.regs[rs2] == 0:
+                self.regs[rd] = self.regs[rs1]  # Division by zero
+            else:
+                self.regs[rd] = self.regs[rs1] % self.regs[rs2]
+        elif funct3 == Funct3.REMU.value:
+            if self.regs[rs2] == 0:
+                self.regs[rd] = self.regs[rs1]  # Division by zero
+            else:
+                self.regs[rd] = (self.regs[rs1] & 0xFFFFFFFF) % (self.regs[rs2] & 0xFFFFFFFF)
+
+    def execute_a_extension(self, funct3: int, rs1: int, rs2: int, rd: int, funct7: int) -> None:
+        """Handle A extension instructions (atomic operations)"""
+        addr = self.regs[rs1]
+        
+        # Handle LR.W (Load Reserved)
+        if funct7 & 0x1F == 0x02 and rs2 == 0:  # LR.W
+            self.regs[rd] = self.read_mem(addr, 4)
+            self.lr_valid = True
+            self.lr_address = addr
+            return
+            
+        # Handle SC.W (Store Conditional)
+        if funct7 & 0x1F == 0x03:  # SC.W
+            if self.lr_valid and self.lr_address == addr:
+                self.write_mem(addr, self.regs[rs2], 4)
+                self.regs[rd] = 0  # Success
+            else:
+                self.regs[rd] = 1  # Failure
+            self.lr_valid = False
+            return
+            
+        # Handle other atomic operations
+        current = self.read_mem(addr, 4)
+        result = current
+        
+        if funct3 == Funct3.AMOSWAP.value:
+            result = self.regs[rs2]
+        elif funct3 == Funct3.AMOADD.value:
+            result = current + self.regs[rs2]
+        elif funct3 == Funct3.AMOXOR.value:
+            result = current ^ self.regs[rs2]
+        elif funct3 == Funct3.AMOAND.value:
+            result = current & self.regs[rs2]
+        elif funct3 == Funct3.AMOOR.value:
+            result = current | self.regs[rs2]
+        elif funct3 == Funct3.AMOMIN.value:
+            result = min(current, self.regs[rs2])
+        elif funct3 == Funct3.AMOMAX.value:
+            result = max(current, self.regs[rs2])
+        elif funct3 == Funct3.AMOMINU.value:
+            result = min(current & 0xFFFFFFFF, self.regs[rs2] & 0xFFFFFFFF)
+        elif funct3 == Funct3.AMOMAXU.value:
+            result = max(current & 0xFFFFFFFF, self.regs[rs2] & 0xFFFFFFFF)
+            
+        self.regs[rd] = current
+        self.write_mem(addr, result, 4)
+
     def run(self, program: List[int]) -> None:
         self.reset()
         self.pc = 0x200
-        print("verbose = " + str(self.verbose))
         
         # Load each instruction individually into memory
         for i, insn in enumerate(program):
@@ -366,10 +471,8 @@ class RV32IMAC:
             for i in range(0, len(program)):
                 print(f"[0x{self.pc + i * 4:x}]: 0x{program[i]:08x}")
         
-
+        print("\nRunning program...\n")
         while True:
-            if self.verbose:
-                print(f"PC: 0x{self.pc:x}")
             if self.pc + 4 > len(self.memory):
                 raise ValueError(f"PC {self.pc:x} out of memory bounds")
             
@@ -385,10 +488,20 @@ class RV32IMAC:
             if self.pc == 0:
                 break
 
-
-
     def dump(self) -> Tuple[List[int], Dict[int, int]]:
-        return list(self.regs), {i: self.memory[i] for i in range(0, mem_size, 4) if self.memory[i] != 0}
+        """Return the current state of registers and memory.
+        
+        Returns:
+            Tuple containing:
+            - List of register values
+            - Dict mapping memory addresses to 32-bit values (only non-zero values)
+        """
+        memory_dump = {}
+        for i in range(0, self.mem_size, 4):
+            value = self.read_mem(i, 4)  # Read full 32-bit word
+            if value != 0:  # Only include non-zero values
+                memory_dump[i] = value
+        return list(self.regs), memory_dump
 
 def parse_instruction_file(filename: str) -> List[int]:
     """Parse a file containing RISC-V instructions in hex format.
@@ -410,10 +523,11 @@ def parse_instruction_file(filename: str) -> List[int]:
                 raise e
     return instructions
 
-def run_program(filename: str, verbose: bool = False) -> None:
+def run_program(filename: str, verbose: bool = False, all_regs: bool = False) -> None:
     """Run a RISC-V program from a file"""
     rv32imac = RV32IMAC()
     rv32imac.verbose = verbose
+    # rv32imac.mem_size = 4096  # 16 MiB
     
     try:
         instructions = parse_instruction_file(filename)
@@ -428,27 +542,35 @@ def run_program(filename: str, verbose: bool = False) -> None:
         rv32imac.run(instructions)
         regs, mem = rv32imac.dump()
         print("Program finished successfully")
-        print("\nRegisters:")
-        for i, val in enumerate(regs):
-            if val != 0:  # Only print non-zero registers
+        
+        if all_regs:
+            print("\nRegisters:")
+            for i, val in enumerate(regs):
                 print(f"\tx{i}: 0x{val:08x} ({val})")
-        print("\nMemory:")
+        else:
+            print("\nRegisters (only non-zero):")
+            for i, val in enumerate(regs):
+                if (val != 0):  # Only print non-zero registers
+                    print(f"\tx{i}: 0x{val:08x} ({val})")
+        
+        print("\nMemory (only non-zero):")
         for addr, val in sorted(mem.items()):
             if val != 0:
                 print(f"\t0x{addr:x}: 0x{val:08x} ({val})")
     except Exception as e:
         print(f"Error during program execution: {e}")
 
+
 def main():
     parser = argparse.ArgumentParser(description="Run RV32IMAC simulator")
-    parser.add_argument("--input_file", help="Input file containing RISC-V instructions in hex format", required=True)
-    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
+    parser.add_argument("--input_file", help="Input file containing a RISC-V program in hex format", required=True)
+    parser.add_argument("--verbose", action="store_true", help="Optional: Enable verbose output", default=False)
+    parser.add_argument("--all_regs", action="store_true", help="Optional: Print all registers, not just non-zero ones", default=False)
+    #parser.add_argument("--output_file", help="Output file to write register and memory state") # Not implemented yet
     args = parser.parse_args()
 
-    run_program(args.input_file, args.verbose)
+    run_program(args.input_file, args.verbose, args.all_regs)
 
 if __name__ == "__main__":
     main()
-
-            
 
