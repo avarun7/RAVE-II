@@ -1,0 +1,8 @@
+List of tested ops with this golden:
+
+addi
+sw
+lw
+add
+jalr
+mul
