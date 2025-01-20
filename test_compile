@@ -1,0 +1,440 @@
+#! /usr/bin/vvp
+:ivl_version "11.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_sys.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_textio.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2005_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/va_math.vpi";
+S_0x5c05f11299f0 .scope module, "frontend_TOP" "frontend_TOP" 2 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "rst";
+    .port_info 2 /INPUT 1 "resteer";
+    .port_info 3 /INPUT 32 "resteer_target_BR";
+    .port_info 4 /INPUT 32 "resteer_target_ROB";
+    .port_info 5 /INPUT 1 "bp_update";
+    .port_info 6 /INPUT 1 "bp_update_taken";
+    .port_info 7 /INPUT 32 "bp_update_target";
+    .port_info 8 /INPUT 10 "pcbp_update_bhr";
+    .port_info 9 /INPUT 10 "clbp_update_bhr";
+    .port_info 10 /INPUT 32 "prefetch_addr";
+    .port_info 11 /INPUT 1 "prefetch_valid";
+    .port_info 12 /INPUT 3 "l2_icache_op";
+    .port_info 13 /INPUT 32 "l2_icache_addr";
+    .port_info 14 /INPUT 512 "l2_icache_data";
+    .port_info 15 /INPUT 3 "l2_icache_state";
+    .port_info 16 /OUTPUT 1 "valid_out";
+    .port_info 17 /OUTPUT 1 "uop";
+    .port_info 18 /OUTPUT 1 "eoi";
+    .port_info 19 /OUTPUT 5 "dr";
+    .port_info 20 /OUTPUT 5 "sr1";
+    .port_info 21 /OUTPUT 5 "sr2";
+    .port_info 22 /OUTPUT 32 "imm";
+    .port_info 23 /OUTPUT 1 "use_imm";
+    .port_info 24 /OUTPUT 32 "pc";
+    .port_info 25 /OUTPUT 1 "exception";
+    .port_info 26 /OUTPUT 10 "pcbp_bhr";
+    .port_info 27 /OUTPUT 10 "clbp_bhr";
+    .port_info 28 /OUTPUT 3 "icache_l2_op";
+    .port_info 29 /OUTPUT 32 "icache_l2_addr";
+    .port_info 30 /OUTPUT 512 "icache_l2_data_out";
+    .port_info 31 /OUTPUT 3 "icache_l2_state";
+o0x7f6113686718 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11698c0_0 .net "bp_update", 0 0, o0x7f6113686718;  0 drivers
+o0x7f6113686748 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11699a0_0 .net "bp_update_taken", 0 0, o0x7f6113686748;  0 drivers
+o0x7f6113686778 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1169a60_0 .net "bp_update_target", 31 0, o0x7f6113686778;  0 drivers
+o0x7f61136867a8 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f1169b20_0 .net "clbp_bhr", 9 0, o0x7f61136867a8;  0 drivers
+o0x7f61136867d8 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f1169c00_0 .net "clbp_update_bhr", 9 0, o0x7f61136867d8;  0 drivers
+o0x7f6113684198 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1169ce0_0 .net "clk", 0 0, o0x7f6113684198;  0 drivers
+o0x7f6113686808 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x5c05f1169d80_0 .net "dr", 4 0, o0x7f6113686808;  0 drivers
+o0x7f6113686838 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1169e60_0 .net "eoi", 0 0, o0x7f6113686838;  0 drivers
+o0x7f6113686868 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1169f20_0 .net "exception", 0 0, o0x7f6113686868;  0 drivers
+o0x7f6113686898 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1169fe0_0 .net "icache_l2_addr", 31 0, o0x7f6113686898;  0 drivers
+o0x7f61136868c8 .functor BUFZ 512, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f116a0c0_0 .net "icache_l2_data_out", 511 0, o0x7f61136868c8;  0 drivers
+o0x7f61136868f8 .functor BUFZ 3, C4<zzz>; HiZ drive
+v0x5c05f116a1a0_0 .net "icache_l2_op", 2 0, o0x7f61136868f8;  0 drivers
+o0x7f6113686928 .functor BUFZ 3, C4<zzz>; HiZ drive
+v0x5c05f116a280_0 .net "icache_l2_state", 2 0, o0x7f6113686928;  0 drivers
+o0x7f6113686958 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f116a360_0 .net "imm", 31 0, o0x7f6113686958;  0 drivers
+o0x7f6113686988 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f116a440_0 .net "l2_icache_addr", 31 0, o0x7f6113686988;  0 drivers
+o0x7f61136869b8 .functor BUFZ 512, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f116a520_0 .net "l2_icache_data", 511 0, o0x7f61136869b8;  0 drivers
+o0x7f61136869e8 .functor BUFZ 3, C4<zzz>; HiZ drive
+v0x5c05f116a600_0 .net "l2_icache_op", 2 0, o0x7f61136869e8;  0 drivers
+o0x7f6113686a18 .functor BUFZ 3, C4<zzz>; HiZ drive
+v0x5c05f116a7f0_0 .net "l2_icache_state", 2 0, o0x7f6113686a18;  0 drivers
+o0x7f6113686a48 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f116a8d0_0 .net "pc", 31 0, o0x7f6113686a48;  0 drivers
+o0x7f6113686a78 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f116a9b0_0 .net "pcbp_bhr", 9 0, o0x7f6113686a78;  0 drivers
+o0x7f6113686aa8 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f116aa90_0 .net "pcbp_update_bhr", 9 0, o0x7f6113686aa8;  0 drivers
+o0x7f6113686ad8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f116ab70_0 .net "prefetch_addr", 31 0, o0x7f6113686ad8;  0 drivers
+o0x7f6113686b08 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f116ac50_0 .net "prefetch_valid", 0 0, o0x7f6113686b08;  0 drivers
+o0x7f6113686b38 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f116ad10_0 .net "resteer", 0 0, o0x7f6113686b38;  0 drivers
+o0x7f6113686b68 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f116add0_0 .net "resteer_target_BR", 31 0, o0x7f6113686b68;  0 drivers
+o0x7f6113686b98 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f116aeb0_0 .net "resteer_target_ROB", 31 0, o0x7f6113686b98;  0 drivers
+o0x7f6113686bc8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f116af90_0 .net "rst", 0 0, o0x7f6113686bc8;  0 drivers
+o0x7f6113686bf8 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x5c05f116b050_0 .net "sr1", 4 0, o0x7f6113686bf8;  0 drivers
+o0x7f6113686c28 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x5c05f116b130_0 .net "sr2", 4 0, o0x7f6113686c28;  0 drivers
+o0x7f6113686c58 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f116b210_0 .net "uop", 0 0, o0x7f6113686c58;  0 drivers
+o0x7f6113686c88 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f116b2d0_0 .net "use_imm", 0 0, o0x7f6113686c88;  0 drivers
+o0x7f6113686cb8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f116b390_0 .net "valid_out", 0 0, o0x7f6113686cb8;  0 drivers
+S_0x5c05f112ea70 .scope module, "control" "c_TOP" 2 44, 3 1 0, S_0x5c05f11299f0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "rst";
+    .port_info 2 /INPUT 1 "stall_in";
+    .port_info 3 /INPUT 1 "resteer";
+    .port_info 4 /INPUT 1 "bp_update_D1";
+    .port_info 5 /INPUT 32 "resteer_target_D1";
+    .port_info 6 /INPUT 1 "resteer_taken_D1";
+    .port_info 7 /INPUT 10 "clbp_update_bhr_D1";
+    .port_info 8 /INPUT 1 "bp_update_BR";
+    .port_info 9 /INPUT 32 "resteer_target_BR";
+    .port_info 10 /INPUT 1 "resteer_taken_BR";
+    .port_info 11 /INPUT 10 "clbp_update_bhr_BR";
+    .port_info 12 /INPUT 1 "bp_update_ROB";
+    .port_info 13 /INPUT 32 "resteer_target_ROB";
+    .port_info 14 /INPUT 1 "resteer_taken_ROB";
+    .port_info 15 /INPUT 10 "clbp_update_bhr_ROB";
+    .port_info 16 /INPUT 1 "ras_push";
+    .port_info 17 /INPUT 1 "ras_pop";
+    .port_info 18 /INPUT 32 "ras_ret_addr";
+    .port_info 19 /OUTPUT 26 "clc";
+    .port_info 20 /OUTPUT 26 "nlpf";
+    .port_info 21 /OUTPUT 26 "bppf";
+o0x7f6113684018 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f10ee350_0 .net "bp_update_BR", 0 0, o0x7f6113684018;  0 drivers
+o0x7f6113684048 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f10ee7b0_0 .net "bp_update_D1", 0 0, o0x7f6113684048;  0 drivers
+o0x7f6113684078 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f10eeba0_0 .net "bp_update_ROB", 0 0, o0x7f6113684078;  0 drivers
+o0x7f61136840a8 .functor BUFZ 26, C4<zzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1162250_0 .net "bppf", 25 0, o0x7f61136840a8;  0 drivers
+o0x7f61136840d8 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f1162330_0 .net "clbp_update_bhr_BR", 9 0, o0x7f61136840d8;  0 drivers
+o0x7f6113684108 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f1162460_0 .net "clbp_update_bhr_D1", 9 0, o0x7f6113684108;  0 drivers
+o0x7f6113684138 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f1162540_0 .net "clbp_update_bhr_ROB", 9 0, o0x7f6113684138;  0 drivers
+o0x7f6113684168 .functor BUFZ 26, C4<zzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1162620_0 .net "clc", 25 0, o0x7f6113684168;  0 drivers
+v0x5c05f1162700_0 .net "clk", 0 0, o0x7f6113684198;  alias, 0 drivers
+o0x7f61136841c8 .functor BUFZ 26, C4<zzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f11627c0_0 .net "nlpf", 25 0, o0x7f61136841c8;  0 drivers
+o0x7f61136841f8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11628a0_0 .net "ras_pop", 0 0, o0x7f61136841f8;  0 drivers
+o0x7f6113684228 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1162960_0 .net "ras_push", 0 0, o0x7f6113684228;  0 drivers
+o0x7f6113684258 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1162a20_0 .net "ras_ret_addr", 31 0, o0x7f6113684258;  0 drivers
+o0x7f6113684288 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1162b00_0 .net "resteer", 0 0, o0x7f6113684288;  0 drivers
+o0x7f61136842b8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1162bc0_0 .net "resteer_taken_BR", 0 0, o0x7f61136842b8;  0 drivers
+o0x7f61136842e8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1162c80_0 .net "resteer_taken_D1", 0 0, o0x7f61136842e8;  0 drivers
+o0x7f6113684318 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1162d40_0 .net "resteer_taken_ROB", 0 0, o0x7f6113684318;  0 drivers
+o0x7f6113684348 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1162f10_0 .net "resteer_target_BR", 31 0, o0x7f6113684348;  0 drivers
+o0x7f6113684378 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1162ff0_0 .net "resteer_target_D1", 31 0, o0x7f6113684378;  0 drivers
+o0x7f61136843a8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f11630d0_0 .net "resteer_target_ROB", 31 0, o0x7f61136843a8;  0 drivers
+o0x7f61136843d8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11631b0_0 .net "rst", 0 0, o0x7f61136843d8;  0 drivers
+o0x7f6113684408 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1163270_0 .net "stall_in", 0 0, o0x7f6113684408;  0 drivers
+S_0x5c05f11635f0 .scope module, "decode" "d2_TOP" 2 184, 4 1 0, S_0x5c05f11299f0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "rst";
+    .port_info 2 /INPUT 32 "pc_in";
+    .port_info 3 /INPUT 1 "exception_in";
+    .port_info 4 /INPUT 2 "uop_count";
+    .port_info 5 /INPUT 5 "opcode_format";
+    .port_info 6 /INPUT 32 "instruction_in";
+    .port_info 7 /OUTPUT 32 "uop";
+    .port_info 8 /OUTPUT 1 "eoi";
+    .port_info 9 /OUTPUT 5 "dr";
+    .port_info 10 /OUTPUT 5 "sr1";
+    .port_info 11 /OUTPUT 5 "sr2";
+    .port_info 12 /OUTPUT 32 "imm";
+    .port_info 13 /OUTPUT 1 "use_imm";
+    .port_info 14 /OUTPUT 32 "pc_out";
+    .port_info 15 /OUTPUT 1 "exception_out";
+v0x5c05f1163930_0 .net "clk", 0 0, o0x7f6113684198;  alias, 0 drivers
+o0x7f6113684858 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x5c05f11639d0_0 .net "dr", 4 0, o0x7f6113684858;  0 drivers
+o0x7f6113684888 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1163a90_0 .net "eoi", 0 0, o0x7f6113684888;  0 drivers
+o0x7f61136848b8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1163b60_0 .net "exception_in", 0 0, o0x7f61136848b8;  0 drivers
+o0x7f61136848e8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1163c20_0 .net "exception_out", 0 0, o0x7f61136848e8;  0 drivers
+o0x7f6113684918 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1163d30_0 .net "imm", 31 0, o0x7f6113684918;  0 drivers
+o0x7f6113684948 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1163e10_0 .net "instruction_in", 31 0, o0x7f6113684948;  0 drivers
+o0x7f6113684978 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x5c05f1163ef0_0 .net "opcode_format", 4 0, o0x7f6113684978;  0 drivers
+o0x7f61136849a8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1163fd0_0 .net "pc_in", 31 0, o0x7f61136849a8;  0 drivers
+o0x7f61136849d8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f11640b0_0 .net "pc_out", 31 0, o0x7f61136849d8;  0 drivers
+o0x7f6113684a08 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1164190_0 .net "rst", 0 0, o0x7f6113684a08;  0 drivers
+o0x7f6113684a38 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x5c05f1164250_0 .net "sr1", 4 0, o0x7f6113684a38;  0 drivers
+o0x7f6113684a68 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x5c05f1164330_0 .net "sr2", 4 0, o0x7f6113684a68;  0 drivers
+o0x7f6113684a98 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1164410_0 .net "uop", 31 0, o0x7f6113684a98;  0 drivers
+o0x7f6113684ac8 .functor BUFZ 2, C4<zz>; HiZ drive
+v0x5c05f11644f0_0 .net "uop_count", 1 0, o0x7f6113684ac8;  0 drivers
+o0x7f6113684af8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11645d0_0 .net "use_imm", 0 0, o0x7f6113684af8;  0 drivers
+S_0x5c05f1164920 .scope module, "fetch_1" "f1_TOP" 2 78, 5 1 0, S_0x5c05f11299f0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "rst";
+    .port_info 2 /INPUT 26 "clc_in";
+    .port_info 3 /INPUT 26 "nlpf";
+    .port_info 4 /INPUT 26 "bppf";
+    .port_info 5 /INPUT 32 "tag_in";
+    .port_info 6 /INPUT 2 "way_in";
+    .port_info 7 /INPUT 2 "evict_in";
+    .port_info 8 /OUTPUT 32 "clc_paddr";
+    .port_info 9 /OUTPUT 32 "clc_vaddr";
+    .port_info 10 /OUTPUT 1 "pcd";
+    .port_info 11 /OUTPUT 1 "hit";
+    .port_info 12 /OUTPUT 2 "way";
+    .port_info 13 /OUTPUT 1 "exceptions";
+    .port_info 14 /OUTPUT 32 "bppf_paddr";
+    .port_info 15 /OUTPUT 1 "bppf_valid";
+    .port_info 16 /OUTPUT 32 "nlpf_paddr";
+    .port_info 17 /OUTPUT 1 "nlpf_valid";
+    .port_info 18 /OUTPUT 32 "tag_out";
+o0x7f6113684e28 .functor BUFZ 26, C4<zzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1164b50_0 .net "bppf", 25 0, o0x7f6113684e28;  0 drivers
+o0x7f6113684e58 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1164c30_0 .net "bppf_paddr", 31 0, o0x7f6113684e58;  0 drivers
+o0x7f6113684e88 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1164d10_0 .net "bppf_valid", 0 0, o0x7f6113684e88;  0 drivers
+o0x7f6113684eb8 .functor BUFZ 26, C4<zzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1164de0_0 .net "clc_in", 25 0, o0x7f6113684eb8;  0 drivers
+o0x7f6113684ee8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1164ec0_0 .net "clc_paddr", 31 0, o0x7f6113684ee8;  0 drivers
+o0x7f6113684f18 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1164ff0_0 .net "clc_vaddr", 31 0, o0x7f6113684f18;  0 drivers
+v0x5c05f11650d0_0 .net "clk", 0 0, o0x7f6113684198;  alias, 0 drivers
+o0x7f6113684f48 .functor BUFZ 2, C4<zz>; HiZ drive
+v0x5c05f11651c0_0 .net "evict_in", 1 0, o0x7f6113684f48;  0 drivers
+o0x7f6113684f78 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11652a0_0 .net "exceptions", 0 0, o0x7f6113684f78;  0 drivers
+o0x7f6113684fa8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1165360_0 .net "hit", 0 0, o0x7f6113684fa8;  0 drivers
+o0x7f6113684fd8 .functor BUFZ 26, C4<zzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1165420_0 .net "nlpf", 25 0, o0x7f6113684fd8;  0 drivers
+o0x7f6113685008 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1165500_0 .net "nlpf_paddr", 31 0, o0x7f6113685008;  0 drivers
+o0x7f6113685038 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11655e0_0 .net "nlpf_valid", 0 0, o0x7f6113685038;  0 drivers
+o0x7f6113685068 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11656a0_0 .net "pcd", 0 0, o0x7f6113685068;  0 drivers
+o0x7f6113685098 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1165760_0 .net "rst", 0 0, o0x7f6113685098;  0 drivers
+o0x7f61136850c8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1165820_0 .net "tag_in", 31 0, o0x7f61136850c8;  0 drivers
+o0x7f61136850f8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1165900_0 .net "tag_out", 31 0, o0x7f61136850f8;  0 drivers
+o0x7f6113685128 .functor BUFZ 2, C4<zz>; HiZ drive
+v0x5c05f1165af0_0 .net "way", 1 0, o0x7f6113685128;  0 drivers
+o0x7f6113685158 .functor BUFZ 2, C4<zz>; HiZ drive
+v0x5c05f1165bd0_0 .net "way_in", 1 0, o0x7f6113685158;  0 drivers
+S_0x5c05f1165fb0 .scope module, "fetch_2" "f2_TOP" 2 108, 6 1 0, S_0x5c05f11299f0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "rst";
+    .port_info 2 /INPUT 32 "clc_paddr";
+    .port_info 3 /INPUT 32 "clc_vaddr";
+    .port_info 4 /INPUT 1 "pcd";
+    .port_info 5 /INPUT 1 "hit";
+    .port_info 6 /INPUT 2 "way";
+    .port_info 7 /INPUT 1 "exceptions";
+    .port_info 8 /INPUT 32 "bppf_paddr";
+    .port_info 9 /INPUT 1 "bppf_valid";
+    .port_info 10 /INPUT 32 "nlpf_paddr";
+    .port_info 11 /INPUT 1 "nlpf_valid";
+    .port_info 12 /INPUT 32 "tag_evict";
+    .port_info 13 /INPUT 3 "l2_icache_op";
+    .port_info 14 /INPUT 3 "l2_icache_state";
+    .port_info 15 /INPUT 32 "l2_icache_addr";
+    .port_info 16 /INPUT 512 "l2_icache_data_in";
+    .port_info 17 /OUTPUT 1 "exceptions_out";
+    .port_info 18 /OUTPUT 32 "tag_ovrw";
+    .port_info 19 /OUTPUT 2 "way_ovrw";
+    .port_info 20 /OUTPUT 32 "IBuff_out";
+    .port_info 21 /OUTPUT 1 "prefetch_valid";
+    .port_info 22 /OUTPUT 32 "prefetch_addr";
+    .port_info 23 /OUTPUT 3 "icache_l2_op";
+    .port_info 24 /OUTPUT 3 "icache_l2_state";
+    .port_info 25 /OUTPUT 32 "icache_l2_addr";
+    .port_info 26 /OUTPUT 512 "icache_l2_data_out";
+o0x7f6113685518 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1164ab0_0 .net "IBuff_out", 31 0, o0x7f6113685518;  0 drivers
+o0x7f6113685548 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1166430_0 .net "bppf_paddr", 31 0, o0x7f6113685548;  0 drivers
+o0x7f6113685578 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1166510_0 .net "bppf_valid", 0 0, o0x7f6113685578;  0 drivers
+o0x7f61136855a8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f11665b0_0 .net "clc_paddr", 31 0, o0x7f61136855a8;  0 drivers
+o0x7f61136855d8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1166690_0 .net "clc_vaddr", 31 0, o0x7f61136855d8;  0 drivers
+v0x5c05f11667c0_0 .net "clk", 0 0, o0x7f6113684198;  alias, 0 drivers
+o0x7f6113685608 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1166860_0 .net "exceptions", 0 0, o0x7f6113685608;  0 drivers
+o0x7f6113685638 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1166920_0 .net "exceptions_out", 0 0, o0x7f6113685638;  0 drivers
+o0x7f6113685668 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11669e0_0 .net "hit", 0 0, o0x7f6113685668;  0 drivers
+o0x7f6113685698 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1166aa0_0 .net "icache_l2_addr", 31 0, o0x7f6113685698;  0 drivers
+o0x7f61136856c8 .functor BUFZ 512, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1166b80_0 .net "icache_l2_data_out", 511 0, o0x7f61136856c8;  0 drivers
+o0x7f61136856f8 .functor BUFZ 3, C4<zzz>; HiZ drive
+v0x5c05f1166c60_0 .net "icache_l2_op", 2 0, o0x7f61136856f8;  0 drivers
+o0x7f6113685728 .functor BUFZ 3, C4<zzz>; HiZ drive
+v0x5c05f1166d40_0 .net "icache_l2_state", 2 0, o0x7f6113685728;  0 drivers
+o0x7f6113685758 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1166e20_0 .net "l2_icache_addr", 31 0, o0x7f6113685758;  0 drivers
+o0x7f6113685788 .functor BUFZ 512, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1166f00_0 .net "l2_icache_data_in", 511 0, o0x7f6113685788;  0 drivers
+o0x7f61136857b8 .functor BUFZ 3, C4<zzz>; HiZ drive
+v0x5c05f1166fe0_0 .net "l2_icache_op", 2 0, o0x7f61136857b8;  0 drivers
+o0x7f61136857e8 .functor BUFZ 3, C4<zzz>; HiZ drive
+v0x5c05f11670c0_0 .net "l2_icache_state", 2 0, o0x7f61136857e8;  0 drivers
+o0x7f6113685818 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f11672b0_0 .net "nlpf_paddr", 31 0, o0x7f6113685818;  0 drivers
+o0x7f6113685848 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1167390_0 .net "nlpf_valid", 0 0, o0x7f6113685848;  0 drivers
+o0x7f6113685878 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1167450_0 .net "pcd", 0 0, o0x7f6113685878;  0 drivers
+o0x7f61136858a8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1167510_0 .net "prefetch_addr", 31 0, o0x7f61136858a8;  0 drivers
+o0x7f61136858d8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11675f0_0 .net "prefetch_valid", 0 0, o0x7f61136858d8;  0 drivers
+o0x7f6113685908 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11676b0_0 .net "rst", 0 0, o0x7f6113685908;  0 drivers
+o0x7f6113685938 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1167770_0 .net "tag_evict", 31 0, o0x7f6113685938;  0 drivers
+o0x7f6113685968 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1167850_0 .net "tag_ovrw", 31 0, o0x7f6113685968;  0 drivers
+o0x7f6113685998 .functor BUFZ 2, C4<zz>; HiZ drive
+v0x5c05f1167930_0 .net "way", 1 0, o0x7f6113685998;  0 drivers
+o0x7f61136859c8 .functor BUFZ 2, C4<zz>; HiZ drive
+v0x5c05f1167a10_0 .net "way_ovrw", 1 0, o0x7f61136859c8;  0 drivers
+S_0x5c05f1167e50 .scope module, "opcode_decode" "d1_TOP" 2 151, 7 1 0, S_0x5c05f11299f0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "rst";
+    .port_info 2 /INPUT 1 "exception_in";
+    .port_info 3 /INPUT 32 "IBuff_in";
+    .port_info 4 /INPUT 1 "resteer";
+    .port_info 5 /INPUT 32 "resteer_target_BR";
+    .port_info 6 /INPUT 32 "resteer_target_ROB";
+    .port_info 7 /INPUT 1 "bp_update";
+    .port_info 8 /INPUT 1 "bp_update_taken";
+    .port_info 9 /INPUT 32 "bp_update_target";
+    .port_info 10 /INPUT 10 "pcbp_update_bhr";
+    .port_info 11 /OUTPUT 32 "pc";
+    .port_info 12 /OUTPUT 1 "exception_out";
+    .port_info 13 /OUTPUT 5 "opcode_format";
+    .port_info 14 /OUTPUT 32 "instruction_out";
+    .port_info 15 /OUTPUT 1 "resteer_D1";
+    .port_info 16 /OUTPUT 32 "resteer_target_D1";
+    .port_info 17 /OUTPUT 1 "resteer_taken";
+    .port_info 18 /OUTPUT 10 "clbp_update_bhr_D1";
+    .port_info 19 /OUTPUT 1 "ras_push";
+    .port_info 20 /OUTPUT 1 "ras_pop";
+    .port_info 21 /OUTPUT 32 "ras_ret_addr";
+o0x7f6113685f08 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1168250_0 .net "IBuff_in", 31 0, o0x7f6113685f08;  0 drivers
+o0x7f6113685f38 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1168350_0 .net "bp_update", 0 0, o0x7f6113685f38;  0 drivers
+o0x7f6113685f68 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1168410_0 .net "bp_update_taken", 0 0, o0x7f6113685f68;  0 drivers
+o0x7f6113685f98 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f11684b0_0 .net "bp_update_target", 31 0, o0x7f6113685f98;  0 drivers
+o0x7f6113685fc8 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f1168590_0 .net "clbp_update_bhr_D1", 9 0, o0x7f6113685fc8;  0 drivers
+v0x5c05f11686c0_0 .net "clk", 0 0, o0x7f6113684198;  alias, 0 drivers
+o0x7f6113685ff8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1168760_0 .net "exception_in", 0 0, o0x7f6113685ff8;  0 drivers
+o0x7f6113686028 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1168820_0 .net "exception_out", 0 0, o0x7f6113686028;  0 drivers
+o0x7f6113686058 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f11688e0_0 .net "instruction_out", 31 0, o0x7f6113686058;  0 drivers
+o0x7f6113686088 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v0x5c05f1168a50_0 .net "opcode_format", 4 0, o0x7f6113686088;  0 drivers
+o0x7f61136860b8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1168b30_0 .net "pc", 31 0, o0x7f61136860b8;  0 drivers
+o0x7f61136860e8 .functor BUFZ 10, C4<zzzzzzzzzz>; HiZ drive
+v0x5c05f1168c10_0 .net "pcbp_update_bhr", 9 0, o0x7f61136860e8;  0 drivers
+o0x7f6113686118 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1168cf0_0 .net "ras_pop", 0 0, o0x7f6113686118;  0 drivers
+o0x7f6113686148 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1168db0_0 .net "ras_push", 0 0, o0x7f6113686148;  0 drivers
+o0x7f6113686178 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1168e70_0 .net "ras_ret_addr", 31 0, o0x7f6113686178;  0 drivers
+o0x7f61136861a8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1168f50_0 .net "resteer", 0 0, o0x7f61136861a8;  0 drivers
+o0x7f61136861d8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1169010_0 .net "resteer_D1", 0 0, o0x7f61136861d8;  0 drivers
+o0x7f6113686208 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f11691e0_0 .net "resteer_taken", 0 0, o0x7f6113686208;  0 drivers
+o0x7f6113686238 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f11692a0_0 .net "resteer_target_BR", 31 0, o0x7f6113686238;  0 drivers
+o0x7f6113686268 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1169380_0 .net "resteer_target_D1", 31 0, o0x7f6113686268;  0 drivers
+o0x7f6113686298 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0x5c05f1169460_0 .net "resteer_target_ROB", 31 0, o0x7f6113686298;  0 drivers
+o0x7f61136862c8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x5c05f1169540_0 .net "rst", 0 0, o0x7f61136862c8;  0 drivers
+# The file index is used to find the file name in the following table.
+:file_names 8;
+    "N/A";
+    "<interactive>";
+    "rtl/frontend/frontend_TOP.v";
+    "rtl/frontend/c_TOP.v";
+    "rtl/frontend/d2_TOP.v";
+    "rtl/frontend/f1_TOP.v";
+    "rtl/frontend/f2_TOP.v";
+    "rtl/frontend/d1_TOP.v";
