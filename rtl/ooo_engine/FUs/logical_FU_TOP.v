@@ -1,33 +1,27 @@
-module logical_FU#(parameter XLEN=32)( // TODO: Break integer and logical units into break
-    input clk, rst, 
-    input[3:0] logical_type,
-    input[31:0] input_a,
-    input[31:0] input_b,
+module logical_FU#(parameter XLEN=32)( 
+    input clk, rst, valid,
+    input[2:0] logical_type,
+    input[31:0] rs1,
+    input[31:0] rs2,
 
     output reg[31:0] result
 );
 
-always @(posedge clk) begin
-    case (logical_type)
-        4'b0000: // Add/Sub
-            result = input_a + ((logical_type[3]) ? (!input_b + 1) : input_b);
-        4'b0001: // Logical Left Shift
-            result = input_a << (input_b & 5'b11111);
-        4'b0010: // Set Less than
-            result = (input_b > input_a) ? 1 : 0;
-        4'b0011: // Set Less than Unsigned
-            result = (input_b > input_a) ? 1 : 0;
-        4'b0100: // XOR
-            result = input_a ^ input_b;
-        4'b0101: // Right shift
-            result = (logical_type[3]) ? (input_a >>> (input_b & 5'b11111)) : (input_a >> (input_b & 5'b11111));  // Logical
-        4'b0110: // OR
-            result = input_a | input_b;
-        4'b0111: // AND
-            result = input_a & input_b;
+    always @(posedge clk) begin
+        if(rst)
+            result <= 0;
+        else begin
+            case (logical_type)
+                4'b0100: // XOR
+                    result <= rs1 ^ rs2;
+                4'b0110: // OR
+                    result <= rs1 | rs2;
+                4'b0111: // AND
+                    result <= rs1 & rs2;
 
-        default: 
-            result = 0;
-    endcase
-end
+                default: 
+                    result <= 1'b0;
+            endcase
+        end
+    end
 endmodule

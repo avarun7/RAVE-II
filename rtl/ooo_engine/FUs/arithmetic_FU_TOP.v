@@ -1,34 +1,34 @@
 module arithmetic_FU#(parameter XLEN=32)(
-    input clk, rst,
-    input[3:0] logical_type,
-    input[31:0] input_a,
-    input[31:0] input_b,
-    
+    input clk, rst, valid,
+    input[2:0]  arithmetic_type,
+    input       additional_info,
+    input[31:0] rs1,
+    input[31:0] rs2,
 
-    output[31:0] result
+    output reg[31:0] result
 );
 
 always @(posedge clk) begin
-    case (logical_type)
-        4'b0000: // Add/Sub
-            result = input_a + ((logical_type[3]) ? (!input_b + 1) : input_b);
-        4'b0001: // Logical Left Shift
-            result = input_a << (input_b & 5'b11111);
-        4'b0010: // Set Less than
-            result = (input_b > input_a) ? 1 : 0;
-        4'b0011: // Set Less than Unsigned
-            result = (input_b > input_a) ? 1 : 0;
-        4'b0100: // XOR
-            result = input_a ^ input_b;
-        4'b0101: // Right shift
-            result = (logical_type[3]) ? (input_a >>> (input_b & 5'b11111)) : (input_a >> (input_b & 5'b11111));  // Logical
-        4'b0110: // OR
-            result = input_a | input_b;
-        4'b0111: // AND
-            result = input_a & input_b;
+    if(rst)
+        result <= 1'b0;
+    else begin
+        case (operation)
+            3'b000: // Add/Sub
+                result <= rs1 + ((additional_info) ? (!rs2 + 1) : rs2);
+            3'b001: // Logical Left Shift
+                result <= rs1 << (rs2 & 5'b11111);
+            3'b010: // Set Less than, needs to be intepreted as signed
+                if(!rs1[31] && rs2[31])         result <= 1'b1;
+                else if(rs1[31] && !rs2[31])    result <= 1'b0;
+                else                            result <= (rs2 > rs1) ? 1'b1 : 1'b0;
+            3'b011: // Set Less than Unsigned
+                result <= (rs2 > rs1) ? 1'b1 : 1'b0;
+            3'b101: // Right shift
+                result <= (additional_info) ? (rs1 >>> (rs2 & 5'b11111)) : (rs1 >> (rs2 & 5'b11111)); 
 
-        default: 
-            result = 0;
-    endcase
+            default: 
+                result <= 1'b0;
+        endcase
+    end
 end
 endmodule
