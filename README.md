@@ -1,5 +1,5 @@
 # RAVE-II
-pipelined, Out-of-Order, RISC-V (RV64IMAC) processor
+Pipelined, Out-of-Order, RISC-V (RV64IMAC) processor
 
 Built for Senior Capstone Project by:
 
@@ -7,4 +7,4 @@ Rohan Jain, Asher Nederveld, Varun Arumugam, Edgar Turcotte, Megan Yeoman, Anush
 
 The University of Texas at Austin
 
-2024
+2024 - 2025
