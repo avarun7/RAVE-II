@@ -37,7 +37,6 @@ always @(*) begin
         else next_state <= PS;
     end
     else begin
-    
         case(current_state)
         I:  begin
             if(operation == LD) next_state <= PL;
