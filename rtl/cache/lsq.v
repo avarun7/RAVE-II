@@ -12,9 +12,9 @@ module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6) (
 
     
     //From MSHR  x
-    input [2:0] mshr_wr_idx,
+    input [2:0] mshr_wr_idx, //next location to be allocated into mshr
     input mshr_fin,
-    input [2:0] mshr_fin_idx ,
+    input [2:0] mshr_fin_idx ,// location being deallocated from mshr
 
     //outputs 
     output [OOO_TAG_BITS-1:0] ooo_tag_out,
