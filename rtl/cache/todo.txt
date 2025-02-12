@@ -1,10 +1,6 @@
 Store Forwarding
-Exception logic???
-Request module 
 d$merge
 d$split
-rewind queue
-size :(
 
 d$ top
 i$ top
