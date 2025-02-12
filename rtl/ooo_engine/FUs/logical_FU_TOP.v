@@ -1,24 +1,31 @@
 module logical_FU#(parameter XLEN=32)( 
-    input clk, rst, valid,
+    input clk, rst, valid_in,
+    input additional_info,
     input[2:0] logical_type,
-    input[31:0] rs1,
-    input[31:0] rs2,
+    input[XLEN - 1:0] rs1,
+    input[XLEN - 1:0] rs2,
 
-    output reg[31:0] result
+    output reg[XLEN - 1:0] result,
+    output reg             valid_out
 );
-
     always @(posedge clk) begin
-        if(rst)
-            result <= 0;
+        if(rst || !valid_in) valid_out <= 0;
         else begin
+            valid_out <= 1;
             case (logical_type)
-                4'b0100: // XOR
+                3'b100: // XOR
                     result <= rs1 ^ rs2;
-                4'b0110: // OR
+                3'b110: // OR
                     result <= rs1 | rs2;
-                4'b0111: // AND
+                3'b111: // AND
                     result <= rs1 & rs2;
-
+                3'b001: // Logical Left Shift
+                    result <= rs1 << (rs2 & 5'b11111);
+                3'b101: // Right shift
+                    if(additional_info) 
+                        result <= ($signed(rs1) >>> (rs2 & 5'b11111));
+                    else                
+                        result <= (rs1 >> (rs2 & 5'b11111));
                 default: 
                     result <= 1'b0;
             endcase

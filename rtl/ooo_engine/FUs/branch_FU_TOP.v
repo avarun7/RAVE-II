@@ -8,7 +8,8 @@ module br_FU#(parameter XLEN=32)(
     input[31:0] offset,
 
     output reg[31:0] result,
-    output reg       taken
+    output reg       taken,
+    output reg       link
 );
 
 reg equals, less_than;
@@ -16,6 +17,7 @@ reg equals, less_than;
     always @(posedge clk) begin
         case (opcode)
             5'b11000: begin// Branch Instruction
+                link <= 0'b1;
                 equals = (rs1 == rs2);
                 if(branch_type[2]) begin
                     less_than <= rs1 < rs2;
@@ -34,8 +36,10 @@ reg equals, less_than;
                 end
             end
 
-            5'b11001: begin
+            5'b11001: begin // TODO: This assumes that ROB entry has the register allocated to store the result of the 
                 taken <= 1'b1;
+                link <= 0'b1;
+                result <= pc + 4;
             end  // TODO: JALR needs to put PC+4 in RD
                 
                 
@@ -50,8 +54,8 @@ reg equals, less_than;
             end
 
             default: begin
-                taken <= 1'b0;
-                result <= 32'b0;
+                taken <= 0'b1;
+                result <= 0;
             end
         endcase
     end
