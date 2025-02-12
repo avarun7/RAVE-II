@@ -1,8 +1,8 @@
 module TOP;
 
     localparam CYCLE_TIME = 2.0;
-    localparam WIDTH = 16;
-    integer k;
+    localparam WIDTH = 31;
+    integer unsigned k;
 
     reg [WIDTH-1:0] a;
     wire [$clog2(WIDTH)-1:0] o;

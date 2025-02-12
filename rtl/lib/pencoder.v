@@ -3,7 +3,7 @@ module pencoder #(parameter WIDTH=32)(
     output reg [$clog2(WIDTH)-1:0] o
 );
 
-    integer i;
+    integer unsigned i;
     always@(*) begin
         for(i = 0; i < WIDTH; i = i + 1) begin
             if(a[i]) begin
