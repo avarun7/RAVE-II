@@ -26,6 +26,7 @@ module data_next_state #(parameter CL_SIZE = 512) (
     input [2:0] operation,
     input [3:0] selected_way, 
     input [5:0] addr_in,
+    input [1:0] size,
 
     output reg [CL_SIZE*4-1:0] data_next_state,
     output reg data_wb
@@ -70,7 +71,7 @@ localparam PLS = 15; //Pending Load Store (edge case where store comes after loa
             default : data_to_mod <= data_cur_state;
         endcase
     end
-    replace_32_bit r32b(.data_in(data_in[31:0]), .shift(addr_in), .data_512_in(data_to_mod), .data_512_out(data_st));
+    replace_32_bit r32b(.data_in(data_in[31:0]), .shift(addr_in), .data_512_in(data_to_mod),.size(size), .data_512_out(data_st));
     always @(*) begin
         case(operation)
 
@@ -96,6 +97,7 @@ module replace_32_bit (
     input [31:0] data_in,        
     input [5:0] shift,           
     input [511:0] data_512_in,   
+    input [1:0] size,
     output reg [511:0] data_512_out 
 );
 
@@ -103,10 +105,18 @@ module replace_32_bit (
 
     always @(*) begin
         data_512_out = data_512_in; 
-        for (i = 0; i < 16; i = i + 1) begin
-            if (i == shift) begin
-                data_512_out[(i * 32) +: 32] = data_in; 
+        for (i = 0; i < 64; i = i + 1) begin
+            case(size)
+            0:    if (i == shift) begin
+                    data_512_out[(i * 8) +: 8] = data_in; 
+                end
+            1: if (i == shift) begin
+                data_512_out[(i * 8) +: 16] = data_in; 
             end
+            2: if (i == shift) begin
+                data_512_out[(i * 8) +: 32] = data_in; 
+            end
+            endcase 
         end
     end
 endmodule
