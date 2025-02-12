@@ -72,6 +72,10 @@ initial begin
 end
 
 always @(posedge clk) begin
+    if(rst) begin
+        wr_ptr = 1;
+        rd_ptr = 1;
+    end
     if(operation == ST) wr_ptr <= wr_ptr[7] == 1 ? 1 : wr_ptr<<1;
 end
 
