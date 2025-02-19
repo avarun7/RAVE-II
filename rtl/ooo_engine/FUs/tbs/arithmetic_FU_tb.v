@@ -336,7 +336,6 @@ module arithmetic_FU_tb;
         $display("All Set Less Than Unsigned test cases passed!");
     else
         $display("Failed %d test cases.", errors);
-        
     $finish;
   end
 

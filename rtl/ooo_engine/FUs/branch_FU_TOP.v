@@ -1,44 +1,44 @@
-module br_FU#(parameter XLEN=32)(
-    input clk, rst, valid,
-    input[4:0] opcode,
-    input[3:0] branch_type,
+module branch_FU#(parameter XLEN=32)(
+    input clk, rst, valid_in,
+    input       additional_info,
+    input[4:0]  opcode,
+    input[2:0]  branch_type,
     input[31:0] rs1,
     input[31:0] rs2,
     input[31:0] pc,
     input[31:0] offset,
 
+    output reg       valid_out,
     output reg[31:0] result,
     output reg       taken,
     output reg       link
 );
 
-reg equals, less_than;
+reg equals, less_than, s_less_than;
 
     always @(posedge clk) begin
+        valid_out <= valid_in;
         case (opcode)
             5'b11000: begin// Branch Instruction
-                link <= 0'b1;
+                link <= 1'b0;
                 equals = (rs1 == rs2);
                 if(branch_type[2]) begin
                     less_than <= rs1 < rs2;
+                    s_less_than <= $signed(rs1) < $signed(rs2);
                     if(branch_type[1])  // Unsigned types, no need for other comparisons
-                        taken <= ((branch_type[0]) ? less_than : !less_than) & !equals;
-                    else begin
-                        if(rs1[31] && rs2[31])          taken <= ((branch_type[0]) ? less_than : !less_than) & !equals;
-                        else if(!rs1[31] && rs2[31])    taken <= 1'b1;
-                        else if(rs1[31] && !rs2[31])    taken <= 1'b0;
-                        else                            taken <= ((branch_type[0]) ? less_than : !less_than) & !equals;
-                    end
+                        taken <= ((additional_info) ? less_than : !less_than) & !equals;
+                    else 
+                        taken <= ((additional_info) ? s_less_than : !s_less_than) & !equals;
                 end
                 else begin
                     result <= pc + offset;
-                    taken <= (branch_type[0]) ? (!equals) : equals;
+                    taken <= (additional_info) ? (!equals) : equals;
                 end
             end
 
             5'b11001: begin // TODO: This assumes that ROB entry has the register allocated to store the result of the 
                 taken <= 1'b1;
-                link <= 0'b1;
+                link <= 1'b1;
                 result <= pc + 4;
             end  // TODO: JALR needs to put PC+4 in RD
                 
@@ -54,7 +54,7 @@ reg equals, less_than;
             end
 
             default: begin
-                taken <= 0'b1;
+                taken <= 1'b0;
                 result <= 0;
             end
         endcase
