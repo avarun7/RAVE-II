@@ -78,7 +78,8 @@ module logical_FU_tb;
     // Wait for reset to complete
     #20;
     test_phase = "Post-Reset";
-    
+    if(valid_out != valid_in)
+      $display("YO THIS SHIT BROKEN");
     
     valid_in = 1;
 
@@ -157,9 +158,9 @@ module logical_FU_tb;
 
     // Report final results
     if (errors == 0)
-        $display("\nAll XOR test cases passed!");
+        $display("All XOR test cases passed!");
     else
-        $display("\nFailed %d test cases.", errors);
+        $display("Failed %d test cases.", errors);
 
 /*#################################################################################*/
 
@@ -243,9 +244,9 @@ module logical_FU_tb;
     check_result;
 
     if (errors == 0)
-        $display("\nAll OR test cases passed!");
+        $display("All OR test cases passed!");
     else
-        $display("\nFailed %d test cases.", errors);
+        $display("Failed %d test cases.", errors);
 
 /*#################################################################################*/
 
@@ -329,9 +330,9 @@ module logical_FU_tb;
     check_result;
 
     if (errors == 0)
-        $display("\nAll AND test cases passed!");
+        $display("All AND test cases passed!");
     else
-        $display("\nFailed %d test cases.", errors);
+        $display("Failed %d test cases.", errors);
     
 /*#################################################################################*/
     
@@ -437,9 +438,9 @@ module logical_FU_tb;
     check_result;
 
     if (errors == 0)
-        $display("\nAll Left Shift test cases passed!");
+        $display("All Left Shift test cases passed!");
     else
-        $display("\nFailed %d test cases.", errors);
+        $display("Failed %d test cases.", errors);
 
 /*#################################################################################*/
 
@@ -564,9 +565,9 @@ module logical_FU_tb;
     check_result;
 
     if (errors == 0)
-        $display("\nAll Right Shift test cases passed!");
+        $display("All Right Shift test cases passed!");
     else
-        $display("\nFailed %d test cases.", errors);
+        $display("Failed %d test cases.", errors);
 
     $finish;
   end

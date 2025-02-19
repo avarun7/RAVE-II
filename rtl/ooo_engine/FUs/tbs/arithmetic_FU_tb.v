@@ -1,53 +1,35 @@
 `timescale 1ns/1ps
 
-module tlb_tb;
+module arithmetic_FU_tb;
   // Parameters
   parameter XLEN = 32;
-  parameter CLC_WIDTH = 26;
-  parameter TLB_ENTRIES = 16;
-  parameter TAG_WIDTH = 20;
-  parameter PAGE_OFFSET = 12;
   
   // Test bench signals
   reg clk;
   reg rst;
-  reg [XLEN-1:0] pc;
-  reg [CLC_WIDTH-1:0] clc_in;
-  reg [CLC_WIDTH-1:0] clc_nl_in;
-  reg RW_in;
   reg valid_in;
+  reg additional_info;
+  reg [2:0] arithmetic_type;
+  reg [XLEN-1:0] rs1;
+  reg [XLEN-1:0] rs2;
   
-  wire pcd;
-  wire hit;
-  wire exception;
-  wire [CLC_WIDTH-1:0] clc_paddr;
-  wire clc_paddr_valid;
-  wire [CLC_WIDTH-1:0] clc_nl_paddr;
-  wire clc_nl_paddr_valid;
-
-  // Signal groups for wave dumping
-  wire [3:0] status_signals;
-  assign status_signals = {pcd, hit, exception, valid_in};
+  wire            valid_out;
+  wire[XLEN - 1:0]  result;
   
   // Instantiate the TLB
-  tlb_TOP #(
-    .XLEN(XLEN),
-    .CLC_WIDTH(CLC_WIDTH)
-  ) dut (
+  arithmetic_FU #(
+    .XLEN(XLEN)
+  ) arithmetic_fu(
     .clk(clk),
     .rst(rst),
-    .pc(pc),
-    .clc_in(clc_in),
-    .clc_nl_in(clc_nl_in),
-    .RW_in(RW_in),
     .valid_in(valid_in),
-    .pcd(pcd),
-    .hit(hit),
-    .exception(exception),
-    .clc_paddr(clc_paddr),
-    .clc_paddr_valid(clc_paddr_valid),
-    .clc_nl_paddr(clc_nl_paddr),
-    .clc_nl_paddr_valid(clc_nl_paddr_valid)
+    .additional_info(additional_info),
+    .arithmetic_type(arithmetic_type),
+    .rs1(rs1),
+    .rs2(rs2),
+
+    .valid_out(valid_out),
+    .result(result)
   );
   
   // Clock generation
@@ -55,46 +37,37 @@ module tlb_tb;
     #5 clk = ~clk;
   end
   
-  // Test vector storage
-  reg [31:0] test_vectors [0:9];
-  integer errors = 0;
-  integer i;
-  
   // Initial block for waveform generation
   initial begin
     // Create VCD file
-    $dumpfile("tlb_test.vcd");
+    $dumpfile("arithmetic_FU.vcd");
     // Dump all variables including those in sub-modules
-    $dumpvars(0, tlb_tb);
-    
-    // Optional: Create FST format file (if simulator supports it)
-    // $fsdbDumpfile("tlb_test.fsdb");
-    // $fsdbDumpvars(0, tlb_tb);
-    
+    $dumpvars(0, arithmetic_FU_tb);
     // Add specific signals to wave window with hierarchy
-    $display("\nSimulation Wave Information:");
-    $display("----------------------------------------");
-    $display("Wave file: tlb_test.vcd");
-    $display("Simulation resolution: 1ns/1ps");
-    $display("----------------------------------------\n");
   end
 
   // Add string labels for test phases (for waveform viewer)
   reg [127:0] test_phase;
+
   initial begin
     test_phase = "Initialize";
   end
+
+  integer errors;
+  integer expected;
   
   // Test scenarios
   initial begin
     // Initialize signals
-    clk = 0;
     rst = 0;
-    pc = 0;
-    clc_in = 0;
-    clc_nl_in = 0;
-    RW_in = 0;
+    clk = 0;
+    additional_info = 0;
+    rst = 0;
     valid_in = 0;
+    arithmetic_type = 0;
+    rs1 = 0;
+    rs2 = 0;
+    errors = 0;
     
     // Apply reset
     #10;
@@ -105,93 +78,275 @@ module tlb_tb;
     // Wait for reset to complete
     #20;
     test_phase = "Post-Reset";
-    
-    // Test Case 1: Basic TLB miss
-    test_phase = "TLB Miss Test";
-    $display("Test Case 1: TLB Miss Test at time %0t", $time);
-    valid_in = 1;
-    clc_in = 26'h1234567;
-    #10;
-    if (!exception || hit) begin
-      $display("Error: TLB miss not properly detected");
-      errors = errors + 1;
-    end
-    
-    // Test Case 2: Invalid request
-    test_phase = "Invalid Request";
-    $display("Test Case 2: Invalid Request Test at time %0t", $time);
-    valid_in = 0;
-    #10;
-    if (exception) begin
-      $display("Error: Exception raised for invalid request");
-      errors = errors + 1;
-    end
-    
-    // Test Case 3: Read permission test
-    test_phase = "Read Permission";
-    $display("Test Case 3: Read Permission Test at time %0t", $time);
-    // Setup TLB entry
-    dut.tlb_valid[0] = 1'b1;
-    dut.tlb_tags[0] = clc_in[CLC_WIDTH-1:PAGE_OFFSET];
-    dut.tlb_physical_pages[0] = 32'hABCD0000;
-    dut.permission_bits[0] = 4'b0001; // Read only
-    valid_in = 1;
-    RW_in = 0; // Read access
-    #10;
-    if (exception || !hit) begin
-      $display("Error: Valid read access denied");
-      errors = errors + 1;
-    end
-    
-    // Test Case 4: Write permission violation
-    test_phase = "Write Permission";
-    $display("Test Case 4: Write Permission Test at time %0t", $time);
-    RW_in = 1; // Write access
-    #10;
-    if (!exception) begin
-      $display("Error: Write to read-only page not caught");
-      errors = errors + 1;
-    end
-    
-    // Test Case 5: Dual port operation
-    test_phase = "Dual Port Test";
-    $display("Test Case 5: Dual Port Operation Test at time %0t", $time);
-    clc_in = 26'h1234567;
-    clc_nl_in = 26'h7654321;
-    dut.tlb_valid[1] = 1'b1;
-    dut.tlb_tags[1] = clc_nl_in[CLC_WIDTH-1:PAGE_OFFSET];
-    dut.tlb_physical_pages[1] = 32'hDCBA0000;
-    #10;
-    if (!clc_nl_paddr_valid) begin
-      $display("Error: Second port translation failed");
-      errors = errors + 1;
-    end
+    if(valid_out != valid_in)
+      $display("YO THIS SHIT BROKEN");
 
-    // Wait for waveforms to settle
-    #20;
-    test_phase = "Complete";
+    valid_in = 1;
     
-    // Report results
+
+/*#################################################################################*/
+    test_phase = "Adder";
+    additional_info = 0;
+    arithmetic_type = 0;
+    errors = 0;
+    // Test Case 1: Basic addition
+    rs1 = 32'h00000001; rs2 = 32'h00000001; expected = 32'h00000002;
+    #10;
+    check_result;
+    
+    // Test Case 2: Zero addition
+    rs1 = 32'h00000000; rs2 = 32'h00000000; expected = 32'h00000000;
+    #10;
+    check_result;
+    
+    // Test Case 3: Large numbers
+    rs1 = 32'h7FFFFFFF; rs2 = 32'h00000001; expected = 32'h80000000;
+    #10;
+    check_result;
+    
+    // Test Case 4: Overflow
+    rs1 = 32'h80000000; rs2 = 32'h80000000; expected = 32'h00000000;
+    #10;
+    check_result;
+
+    // Test Case 9: Carry chain
+    rs1 = 32'hFFFFFFFF; rs2 = 32'h00000001; expected = 32'h00000000;
+    #10;
+    check_result;
+    
+    // Test Case 10: Multiple carries
+    rs1 = 32'hFFFFFFFF; rs2 = 32'hFFFFFFFF; expected = 32'hFFFFFFFE;
+    #10;
+    check_result;
+    
+     // Test Case 13: Max positive + 1
+    rs1 = 32'h7FFFFFFF; rs2 = 32'h00000001; expected = 32'h80000000;
+    #10;
+    check_result;
+    
+    // Test Case 14: Max negative + max negative
+    rs1 = 32'h80000000; rs2 = 32'h80000000; expected = 32'h00000000;
+    #10;
+    check_result;
+
+    // Test Case 17: Alternating bits
+    rs1 = 32'hAAAAAAAA; rs2 = 32'h55555555; expected = 32'hFFFFFFFF;
+    #10;
+    check_result;
+    
+    // Test Case 18: Mixed patterns
+    rs1 = 32'hDEADBEEF; rs2 = 32'h12345678; expected = 32'hF0E21567;
+    #10;
+    check_result;
+
     if (errors == 0)
-      $display("\nSimulation completed successfully at time %0t!", $time);
+        $display("All ADD test cases passed!");
     else
-      $display("\nSimulation completed with %d errors at time %0t", errors, $time);
+        $display("Failed %d test cases.", errors);
+
+    test_phase = "Subtractor";
+    additional_info = 1;
+    errors = 0;
+    // Test Case 6: Basic subtraction
+    rs1 = 32'h00000002; rs2 = 32'h00000001; expected = 32'h00000001;
+    #10;
+    check_result;
     
-    // Add some delay before ending simulation for waveform capture
-    #100;
-    $display("\nWaveform file tlb_test.vcd has been generated.");
+    // Test Case 7: Zero result
+    rs1 = 32'h00000001; rs2 = 32'h00000001; expected = 32'h00000000;
+    #10;
+    check_result;
+    
+    // Test Case 8: Negative result
+    rs1 = 32'h00000001; rs2 = 32'h00000002; expected = 32'hFFFFFFFF;
+    #10;
+    check_result;
+
+    // Test Case 11: Large number subtraction
+    rs1 = 32'h80000000; rs2 = 32'h00000001; expected = 32'h7FFFFFFF;
+    #10;
+    check_result;
+    
+    // Test Case 12: Borrow chain
+    rs1 = 32'h00000000; rs2 = 32'h00000001; expected = 32'hFFFFFFFF;
+    #10;
+    check_result;
+
+    // Test Case 15: Max positive - (-1)
+    rs1 = 32'h7FFFFFFF; rs2 = 32'hFFFFFFFF; expected = 32'h80000000;
+    #10;
+    check_result;
+    
+    // Test Case 16: Zero - max positive
+    rs1 = 32'h00000000; rs2 = 32'h7FFFFFFF; expected = 32'h80000001;
+    #10;
+    check_result;
+
+    // Test Case 19: Power of 2 differences
+    rs1 = 32'h00010000; rs2 = 32'h00001000; expected = 32'h0000F000;
+    #10;
+    check_result;
+    
+    // Test Case 20: Sparse bit patterns
+    rs1 = 32'h10101010; rs2 = 32'h01010101; expected = 32'h0F0F0F0F;
+    #10;
+    check_result;
+
+    if (errors == 0)
+        $display("All sub test cases passed!");
+    else
+        $display("Failed %d test cases.", errors);
+
+/*#################################################################################*/
+    
+    test_phase = "SLT";
+    additional_info = 0;
+    arithmetic_type = 2;
+    errors = 0;
+    
+    rs1 = 32'h00000001; rs2 = 32'h00000002; expected = 32'h00000001;  // 1 < 2 (true for both)
+    #10;
+    check_result;
+    rs1 = 32'h00000002; rs2 = 32'h00000001; expected = 32'h00000000;
+    #10;
+    check_result;
+    rs1 = 32'h00000005; rs2 = 32'h00000005; expected = 32'h00000000;
+    #10;
+    check_result;
+
+    // Comparing with zero
+    rs1 = 32'h00000000; rs2 = 32'h00000001; expected = 32'h00000001; 
+    #10;
+    check_result;
+    rs1 = 32'h00000001; rs2 = 32'h00000000; expected = 32'h00000000; 
+    #10;
+    check_result;
+    rs1 = 32'h00000000; rs2 = 32'h00000000; expected = 32'h00000000;
+    #10;
+    check_result;
+    // Signed vs Unsigned differences with negative numbers
+    rs1 = 32'hFFFFFFFF; rs2 = 32'h00000001; expected = 32'h00000001; 
+    #10;
+    check_result;
+    rs1 = 32'h00000001; rs2 = 32'hFFFFFFFF; expected = 32'h00000000; 
+    #10;
+    check_result;
+    rs1 = 32'hFFFFFFFF; rs2 = 32'hFFFFFFFE; expected = 32'h00000000; 
+    #10;
+    check_result;
+    // Edge cases
+    rs1 = 32'h80000000; rs2 = 32'h7FFFFFFF; expected = 32'h00000001; 
+    #10;
+    check_result;
+    rs1 = 32'h7FFFFFFF; rs2 = 32'h80000000; expected = 32'h00000000; 
+    #10;
+    check_result;
+    rs1 = 32'h80000000; rs2 = 32'h80000000; expected = 32'h00000000; 
+    #10;
+    check_result;
+    rs1 = 32'h7FFFFFFF; rs2 = 32'h7FFFFFFF; expected = 32'h00000000; 
+    #10;
+    check_result;
+    // Large number comparisons
+    rs1 = 32'h12345678; rs2 = 32'h87654321; expected = 32'h00000000; 
+    #10;
+    check_result;
+    rs1 = 32'h87654321; rs2 = 32'h12345678; expected = 32'h00000001; 
+    #10;
+    check_result;
+    // Pattern tests
+    rs1 = 32'hAAAAAAAA; rs2 = 32'h55555555; expected = 32'h00000001; 
+    #10;
+    check_result;
+    rs1 = 32'h55555555; rs2 = 32'hAAAAAAAA; expected = 32'h00000000; 
+    #10;
+    check_result;
+
+    if (errors == 0)
+        $display("All Set Less Than test cases passed!");
+    else
+        $display("Failed %d test cases.", errors);
+
+/*#################################################################################*/
+    
+    test_phase = "SLTU";
+    additional_info = 0;
+    arithmetic_type = 3;
+    errors = 0;
+
+    rs1 = 32'h00000001; rs2 = 32'h00000002; expected = 32'h00000001;  // 1 < 2 (true for both)
+    #10;
+    check_result;
+    rs1 = 32'h00000002; rs2 = 32'h00000001; expected = 32'h00000000;  // 2 < 1 (false for both)
+    #10;
+    check_result;
+    rs1 = 32'h00000005; rs2 = 32'h00000005; expected = 32'h00000000;  // 5 < 5 (false for both)
+    #10;
+    check_result;
+
+    // Comparing with zero
+    rs1 = 32'h00000000; rs2 = 32'h00000001; expected = 32'h00000001;  // 0 < 1 (true for both)
+    #10;
+    check_result;
+    rs1 = 32'h00000001; rs2 = 32'h00000000; expected = 32'h00000000;  // 1 < 0 (false for both)
+    #10;
+    check_result;
+    rs1 = 32'h00000000; rs2 = 32'h00000000; expected = 32'h00000000;  // 0 < 0 (false for both)
+    #10;
+    check_result;
+    // Signed vs Unsigned differences with negative numbers
+    rs1 = 32'hFFFFFFFF; rs2 = 32'h00000001; expected = 32'h00000000;  // -1 < 1 (true signed, false unsigned)
+    #10;
+    check_result;
+    rs1 = 32'h00000001; rs2 = 32'hFFFFFFFF; expected = 32'h00000001;  // 1 < -1 (false signed, true unsigned)
+    #10;
+    check_result;
+    rs1 = 32'hFFFFFFFF; rs2 = 32'hFFFFFFFE; expected = 32'h00000000;  // -1 < -2 (false for both)
+    #10;
+    check_result;
+    // Edge cases
+    rs1 = 32'h80000000; rs2 = 32'h7FFFFFFF; expected = 32'h00000000;  // MIN_INT < MAX_INT (true signed, false unsigned)
+    #10;
+    check_result;
+    rs1 = 32'h7FFFFFFF; rs2 = 32'h80000000; expected = 32'h00000001;  // MAX_INT < MIN_INT (false signed, true unsigned)
+    #10;
+    check_result;
+    rs1 = 32'h80000000; rs2 = 32'h80000000; expected = 32'h00000000;  // MIN_INT < MIN_INT (false for both)
+    #10;
+    check_result;
+    rs1 = 32'h7FFFFFFF; rs2 = 32'h7FFFFFFF; expected = 32'h00000000;  // MAX_INT < MAX_INT (false for both)
+    #10;
+    check_result;
+    // Large number comparisons
+    rs1 = 32'h12345678; rs2 = 32'h87654321; expected = 32'h00000001;  // Different results signed vs unsigned
+    #10;
+    check_result;
+    rs1 = 32'h87654321; rs2 = 32'h12345678; expected = 32'h00000000;  // Different results signed vs unsigned
+    #10;
+    check_result;
+    // Pattern tests
+    rs1 = 32'hAAAAAAAA; rs2 = 32'h55555555; expected = 32'h00000000;  // Alternating patterns
+    #10;
+    check_result;
+    rs1 = 32'h55555555; rs2 = 32'hAAAAAAAA; expected = 32'h00000001;  // Alternating patterns reversed
+    #10;
+    check_result;
+
+    if (errors == 0)
+        $display("All Set Less Than Unsigned test cases passed!");
+    else
+        $display("Failed %d test cases.", errors);
+        
     $finish;
   end
-  
-  // Monitor important signal changes for waveform verification
-  always @(posedge clk) begin
-    $display("Time=%0t Phase=%s hit=%b exception=%b pcd=%b valid_in=%b RW_in=%b",
-             $time, test_phase, hit, exception, pcd, valid_in, RW_in);
-  end
-  
-  // Monitor TLB internal state changes
-  // This will help in waveform analysis
-  always @(posedge clk) begin
-    if (hit)
-      $display("Time=%0t TLB Hit - Physical Address: %h", $time, clc_paddr);
-  end
+
+  task check_result;
+        begin
+            if (result !== expected) begin
+                errors = errors + 1;
+                $display("%0t\t%h\t%h\t%h\t%h\tFAIL", $time, rs1, rs2, expected, result);
+            end 
+        end
+    endtask
+
+endmodule
