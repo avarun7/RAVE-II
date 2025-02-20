@@ -5,7 +5,7 @@ module arithmetic_FU#(parameter XLEN=32)(
     input[XLEN-1:0] rs1,
     input[XLEN-1:0] rs2,
 
-    output reg[31:0] result,
+    output reg[XLEN-1:0] result,
     output reg       valid_out
 );
 

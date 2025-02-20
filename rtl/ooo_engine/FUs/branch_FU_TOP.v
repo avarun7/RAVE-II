@@ -3,13 +3,13 @@ module branch_FU#(parameter XLEN=32)(
     input       additional_info,
     input[4:0]  opcode,
     input[2:0]  branch_type,
-    input[31:0] rs1,
-    input[31:0] rs2,
-    input[31:0] pc,
-    input[31:0] offset,
+    input[XLEN-1:0] rs1,
+    input[XLEN-1:0] rs2,
+    input[XLEN-1:0] pc,
+    input[XLEN-1:0] offset,
 
     output reg       valid_out,
-    output reg[31:0] result,
+    output reg[XLEN-1:0] result,
     output reg       taken,
     output reg       link
 );
