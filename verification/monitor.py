@@ -1,13 +1,16 @@
 # Monitors outputs from the DUT
 from pyuvm import *
-from pyuvm import UVMComponent
 
-class Monitor(UVMComponent):
-    def run_phase(self):
+class ProcessorMonitor(uvm_component):
+    def build_phase(self):
+        self.analysis_port = uvm_analysis_port("analysis_port", self)  # For sending data
+
+    async def run_phase(self):
         while True:
-            # In real usage, capture outputs from the DUT
-            output = "mock_output"
-            self.send_output(output)
-
-    def send_output(self, data):
-        print(f"Monitoring output: {data}")
+            await Timer(10, "NS")  # Simulate sampling interval (adjust as needed)
+            
+            # TODO: Replace with actual DUT output capture logic
+            dut_output = "mock_output"  # Placeholder, replace with real signal from DUT
+            
+            self.logger.info(f"Captured DUT output: {dut_output}")
+            self.analysis_port.write(dut_output)  # Send output for checking
