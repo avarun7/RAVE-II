@@ -1,5 +1,5 @@
 # RAVE-II
-pipelined, Out-of-Order, RISC-V (RV64IMAC) processor
+pipelined, Out-of-Order, RISC-V (RV64IMAC) processor implemented on a Xilynx AAAAAA FPGA
 
 Built for Senior Capstone Project by:
 

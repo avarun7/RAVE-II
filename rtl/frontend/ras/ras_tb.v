@@ -3,29 +3,36 @@
 module ras_tb;
   // Parameters
   parameter XLEN = 32;
-  parameter DEPTH = 128;
+  parameter DEPTH = 8;
   
   // Test bench signals
   reg clk;
   reg rst;
   reg valid_in;
-  reg [4:0] opcode;
-  reg [2:0] branch_type;
-  reg [XLEN-1:0] rs1;
-  reg [XLEN-1:0] rs2;
+  reg pop;
+  reg push;
+  reg [XLEN-1:0] data_in;
   
-  wire            valid_out;
+  wire              valid_out;
   wire[XLEN - 1:0]  result;
+  wire              empty;
+  wire              full;
   
   // Instantiate the TLB
   ras #(
-    .XLEN(XLEN)
+    .XLEN(XLEN),
     .DEPTH(DEPTH)
   ) ras(
     .clk(clk),
     .rst(rst),
     .valid_in(valid_in),
-    
+    .pop(pop),
+    .push(push),
+    .data_in(data_in),
+    .valid_out(valid_out),
+    .result(result),
+    .empty(empty),
+    .full(full)
   );
   
   // Clock generation
@@ -57,12 +64,7 @@ module ras_tb;
     // Initialize signals
     rst = 0;
     clk = 0;
-    additional_info = 0;
-    rst = 0;
     valid_in = 0;
-    branch_type = 0;
-    rs1 = 0;
-    rs2 = 0;
     errors = 0;
     
     // Apply reset
@@ -78,17 +80,68 @@ module ras_tb;
       $display("YO THIS SHIT BROKEN");
 
     valid_in = 1;
+
+    // Test Case 1: Push operations until full
+    test_phase= "Push";
+    repeat(8) begin
+        @(posedge clk);
+        push = 1;
+        pop = 0;
+        data_in = $random;
+        #10;
+    end
+
+    // Test Case 2: Try to push when full
+    test_phase="Push Full";
+    @(posedge clk);
+    push = 1;
+    pop = 0;
+    data_in = 32'hDEADBEEF;
+    #10;
+
+    // Test Case 3: Pop operations until empty
+    test_phase="Pop";
+    push = 0;
+    repeat(8) begin
+        @(posedge clk);
+        pop = 1;
+        #10;
+    end
+
+    // Test Case 4: Try to pop when empty
+    test_phase="Pop Empty";
+    @(posedge clk);
+    pop = 1;
+    #10;
+
+    // Test Case 5: Alternating push and pop
+    test_phase="Push/Pop";
+    repeat(4) begin
+        @(posedge clk);
+        push = 1;
+        pop = 0;
+        data_in = $random;
+        #10;
+        @(posedge clk);
+        push = 0;
+        pop = 1;
+        #10;
+    end
+
+    // Test Case 6: Reset while operations in progress
+    @(posedge clk);
+    push = 1;
+    data_in = 32'hAAAAAAAA;
+    #5;
+    rst = 1;
+    #10;
+    rst = 0;
+
+    // End simulation
+    #100;
+
     
     $finish;
   end
-
-  task check_result;
-        begin
-            if (result !== expected) begin
-                errors = errors + 1;
-                $display("%0t\t%h\t%h\t%h\t%h\tFAIL", $time, rs1, rs2, expected, result);
-            end 
-        end
-    endtask
 
 endmodule
