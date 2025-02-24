@@ -42,11 +42,11 @@ tag update
     output mshr_full, //
     //Cache
     output lsq_alloc,
-    output lsq_data, //TODO: Implement replaced data
+    output lsq_data, 
 
     //Outputs to RWND Q
-    output rwnd_alloc, //TODO:
-    output [31:0] rwnd_data, //TODO:
+    output rwnd_alloc, 
+    output [31:0] rwnd_data,
 
 
     //Requests to DRAM/Directory
@@ -105,8 +105,9 @@ assign size_out = size_buffer;
 assign operation_out = operation_buffer;
 assign ooo_tag_out = OOO_TAG_buffer;
 assign data_out = data_evict;
-
+assign st_fwd = !stall_cache && addr_in[31:5] == addr_buffer[31:5] && valid_operation_in; 
 assign rwnd_alloc = operation_buffer == ST;
+assign lsq_data = data_buffer;
 
 always @(posedge clk) begin
     if(rst) begin
@@ -116,10 +117,7 @@ always @(posedge clk) begin
         operation_buffer <= 0;
         OOO_TAG_buffer <= 0;
     end
-    else if(!stall_cache && addr_in[31:5] == addr_buffer[31:5] && valid_operation_in ) begin
-        //TODO: Finish once instantied rest of modules 
-    end
-    else if (!stall_cache) begin
+    else if (!stall_cache && valid_operation_in) begin
         addr_buffer <= addr_in;
         data_buffer <= data_in;
         size_buffer <= size_in;
@@ -146,6 +144,8 @@ wire[TAG_SIZE*4-1:0] tag_lines_old, tag_lines_new;
     .tag_in_wb(tag_lines_new),
     .idx_in_wb(idx_buf),
     .alloc(tag_store_alloc),
+    .st_fwd(st_fwd),
+
 
     //initial read ou()t
     .tag_lines_out (tag_lines_old) 
@@ -164,6 +164,8 @@ data_store #(.CL_SIZE(CL_SIZE),  .IDX_CNT(IDX_CNT)) ds1(
     .cl_in_wb(data_lines_new),
     .idx_in_wb(idx_buf),
     .alloc(data_store_alloc),
+    .st_fwd(st_fwd),
+
 
     //initial read out
     .cl_lines_out(data_lines_old)  
@@ -182,6 +184,8 @@ meta_store #(.META_SIZE(8),  .IDX_CNT(IDX_CNT)) ms1(
     .meta_in_wb(meta_lines_new),
     .idx_in_wb(idx_buf),
     .alloc(valid_operation_buffer),
+
+    .st_fwd(st_fwd),
 
     //initial read out
     .meta_lines_out(meta_lines_old)  
