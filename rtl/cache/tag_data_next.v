@@ -29,7 +29,8 @@ module data_next_state #(parameter CL_SIZE = 512) (
     input [1:0] size,
 
     output reg [CL_SIZE*4-1:0] data_next_state,
-    output reg data_wb
+    output reg data_wb,
+    output wire [CL_SIZE -1 :0] data_evic
 );
     //Opeartion Names
 localparam  NO_OP= 0;
@@ -49,7 +50,7 @@ localparam  M= 4; //Modified
 localparam  S= 2; //Shared
 localparam PLS = 15; //Pending Load Store (edge case where store comes after load but before write)
 
-
+    assign data_evic = data_to_mod;
     reg [CL_SIZE-1:0] data_to_mod, mod_data;
     wire [CL_SIZE-1:0] data_st;
     always @(*) begin 

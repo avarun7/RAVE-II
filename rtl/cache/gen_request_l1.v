@@ -34,8 +34,8 @@ localparam  M= 4; //Modified
 localparam  S= 2; //Shared
 localparam PLS = 15; //Pending Load Store (edge case where store comes after load but before write)
 
-assign alloc_miss = ~tag_hit && ~mshr_hit && (operation == LD || operation == ST || operation ==INV);
-assign alloc_evic = alloc_miss && is_evict;
+assign alloc_miss = ~tag_hit && ~mshr_hit && (operation == LD || operation == ST);
+assign alloc_evic = (alloc_miss && is_evict) || (tag_hit && operation ==INV);
 always @(*) begin
     if(is_evict) begin
         operation_out_miss <= operation == ST ? RWITM : RD;
@@ -55,12 +55,12 @@ end
 
 always @(*) begin
     case(current_state) 
-    I: operation_out_evic <= 0;
-    PL: operation_out_evic <=0;
-    PLS: operation_out_evic <=0;
-    PS:operation_out_evic <=0;
-    S:  operation_out_evic <= 0;
-    PM:operation_out_evic <=0;
+    I: operation_out_evic <= WR;
+    PL: operation_out_evic <= WR;
+    PLS: operation_out_evic <= WR;
+    PS:operation_out_evic <= WR;
+    S:  operation_out_evic <= WR;
+    PM:operation_out_evic <=WR;
     M: operation_out_evic <= WR;
     endcase
 end

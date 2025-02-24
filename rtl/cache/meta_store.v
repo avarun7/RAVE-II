@@ -1,11 +1,10 @@
-module data_store #(parameter META_SIZE = 8,  IDX_CNT = 8) (
+module meta_store #(parameter META_SIZE = 8,  IDX_CNT = 8) (
     input clk,
     input rst,
 
     //initial read
     input [2:0] operation,
     input [IDX_CNT-1:0] idx,
-    input [META_SIZE-1:0] meta_in_rd,
 
     //writeback
     input [META_SIZE*4-1:0]meta_in_wb,

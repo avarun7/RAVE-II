@@ -1,4 +1,4 @@
-module meta_next #(parameter META_SIZE = 8) (
+module meta_next_state #(parameter META_SIZE = 8) (
     input [META_SIZE*4-1:0] meta_in,
     input [3:0] hits,
     input mshr_hit,
@@ -9,19 +9,28 @@ module meta_next #(parameter META_SIZE = 8) (
     output [3:0] way_out, //done
     output wire mshr_alloc, //done
     output wire pending_stall, //done
-    output wb_to_l2 //done
+    output wb_to_l2, //done
+    output[3:0] cur_state,
+    output is_evict
 
 );
-assign miss = ~(|hits);
-assign valid = |operation;
-assign way_out = |hits ? hits : selected_way_miss;
+localparam  NO_OP= 0;
+localparam LD = 1;
+localparam ST = 2;
+localparam RD = 3;
+localparam  WR= 4;
+localparam  INV = 5;
+localparam  UPD= 6;
+localparam RWITM = 7;
 wire [META_SIZE*4:0] meta_way_split [3:0];
 wire[3:0] lru_concat[3:0];
 wire[3:0] selected_way_miss;
 wire[3:0] selected_way_hit;
 wire[3:0] pending;
 wire[3:0] pmsi_concat[3:0];
-
+assign miss = ~(|hits);
+assign valid = |operation;
+assign way_out = |hits ? hits : selected_way_miss;
 
 genvar i;
 for(i = 0; i < 4; i = i + 1) begin
@@ -32,9 +41,10 @@ for(i = 0; i < 4; i = i + 1) begin
     assign pending[i] = meta_way_split[i][3];
 end
 
-assign mshr_alloc = ~(|operation) && ~(|hits) && ~(mshr_hit);
+assign mshr_alloc = (operation == LD || operation == ST) && ~(|hits) && ~(mshr_hit); //TODO:Check if |opeariton should be op=LD/ST
 assign tag_alloc = mshr_alloc;
-
+assign cur_state = hits[3] ? pmsi_concat[3] : hits[2] ? pmsi_concat[2] : hits[1] ? pmsi_concat[1] : hits[0] ? pmsi_concat[0] : 0;
+assign is_evict = pmsi_concat[3] != 0 && pmsi_concat[2] != 0 && pmsi_concat[1] != 0 && pmsi_concat[0] != 0 && miss;
 //Choose which way to evict if there is a miss
 max4 way_select(
 .a(lru_concat[0]),

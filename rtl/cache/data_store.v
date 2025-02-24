@@ -5,7 +5,6 @@ module data_store #(parameter CL_SIZE = 512,  IDX_CNT = 8) (
     //initial read
     input [2:0] operation,
     input [IDX_CNT-1:0] idx,
-    input [CL_SIZE-1:0] cl_in_rd,
 
     //writeback
     input [CL_SIZE*4-1:0]cl_in_wb,
