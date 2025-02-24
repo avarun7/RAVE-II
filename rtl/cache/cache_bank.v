@@ -27,7 +27,7 @@ tag update
     //TODO: allocate and select data
     //Pipeline Output : 
     output [31:0] addr_out,
-    output [31:0] data_out,
+    output [CL_SIZE-1:0] data_out,
     output [1:0] size_out,
     output [2:0] operation_out,
     output [OOO_TAG_SIZE-1:0] ooo_tag_out,
@@ -44,6 +44,10 @@ tag update
     output lsq_alloc,
     output lsq_data, //TODO: Implement replaced data
 
+    //Outputs to RWND Q
+    output rwnd_alloc, //TODO:
+    output [31:0] rwnd_data, //TODO:
+
 
     //Requests to DRAM/Directory
     //Eviction Q
@@ -57,6 +61,9 @@ tag update
     output alloc_miss
 
 );
+
+
+
 localparam  NO_OP= 0;
 localparam LD = 1;
 localparam ST = 2;
@@ -90,8 +97,16 @@ assign tag_buf = addr_buffer[31:32-TAG_SIZE];
 
 assign valid_operation_in = |operation_in;
 assign valid_operation_buf = |operation_buffer;
-assign lsq_alloc = is_miss && valid_operation_buf;
+assign lsq_alloc = (is_miss || is_pending) && valid_operation_buf;
 
+assign hit = is_hit;
+assign addr_out = addr_buffer;
+assign size_out = size_buffer;
+assign operation_out = operation_buffer;
+assign ooo_tag_out = OOO_TAG_buffer;
+assign data_out = data_evict;
+
+assign rwnd_alloc = operation_buffer == ST;
 
 always @(posedge clk) begin
     if(rst) begin
@@ -187,6 +202,7 @@ meta_store #(.META_SIZE(8),  .IDX_CNT(IDX_CNT)) ms1(
 
 wire[3:0] selected_replacement_way;
 wire [3:0] current_state_buf;
+assign is_pending = current_state_buf[3];
  meta_next_state #(.META_SIZE(8)) mns1 (
     .meta_in(meta_lines_old),
     .hits(hits),
@@ -222,7 +238,8 @@ wire [3:0] current_state_buf;
 
     .data_next_state(data_lines_new),
     .data_wb(data_store_alloc),
-    .data_evic(data_evict)
+    .data_evic(data_evict),
+    .rewind_data(rwnd_data)
 );
 
 
