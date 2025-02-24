@@ -2,18 +2,23 @@ module br_FU#(parameter XLEN=32)(
     input clk, rst, valid,
     input[4:0] opcode,
     input[3:0] ld_st_type,
-    input[31:0] rs1,
-    input[31:0] rs2,
+    input[XLEN-1:0] rs1,
+    input[XLEN-1:0] rs2,
 
-    output reg[31:0] result
+    output reg[XLEN-1:0] result,
+    output reg[XLEN-1:0] address
 );
 
 reg equals, less_than;
 
     always @(posedge clk) begin
-        case (opcode)
+        if(!opcode[3])begin
+            //loads
+        end
+        else begin
+            //stores
+        end
             
-        endcase
     end
 
 endmodule

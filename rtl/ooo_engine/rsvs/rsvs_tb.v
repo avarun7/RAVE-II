@@ -1,16 +1,15 @@
 `timescale 1ns/1ps
 
-module ras_tb;
+module rsv_tb;
   // Parameters
   parameter XLEN = 32;
-  parameter DEPTH = 128;
   
   // Test bench signals
   reg clk;
   reg rst;
   reg valid_in;
   reg [4:0] opcode;
-  reg [2:0] branch_type;
+  reg [2:0] opcode_type;
   reg [XLEN-1:0] rs1;
   reg [XLEN-1:0] rs2;
   
@@ -18,14 +17,18 @@ module ras_tb;
   wire[XLEN - 1:0]  result;
   
   // Instantiate the TLB
-  ras #(
+  rsv #(
     .XLEN(XLEN)
-    .DEPTH(DEPTH)
-  ) ras(
+  ) rsv(
     .clk(clk),
     .rst(rst),
     .valid_in(valid_in),
-    
+    .rsv_type(rsv_type),
+    .rs1(rs1),
+    .rs2(rs2),
+
+    .valid_out(valid_out),
+    .result(result)
   );
   
   // Clock generation
@@ -36,9 +39,9 @@ module ras_tb;
   // Initial block for waveform generation
   initial begin
     // Create VCD file
-    $dumpfile("ras.vcd");
+    $dumpfile("rsv.vcd");
     // Dump all variables including those in sub-modules
-    $dumpvars(0, ras_tb);
+    $dumpvars(0, rsv_tb);
     // Add specific signals to wave window with hierarchy
   end
 
@@ -60,7 +63,7 @@ module ras_tb;
     additional_info = 0;
     rst = 0;
     valid_in = 0;
-    branch_type = 0;
+    rsv_type = 0;
     rs1 = 0;
     rs2 = 0;
     errors = 0;
