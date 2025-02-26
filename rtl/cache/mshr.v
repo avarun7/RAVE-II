@@ -15,6 +15,7 @@ module mshr #(parameter Q_LEGNTH = 8) (
 
     //output to cache
     output mshr_hit, //done
+    output [$clog2(Q_LEGNTH)-1:0] mshr_hit_ptr,
     output reg [$clog2(Q_LEGNTH)-1:0] mshr_wr_ptr, //done
     output [$clog2(Q_LEGNTH)-1:0] mshr_fin_ptr, //done
     output mshr_fin,//done
@@ -65,7 +66,10 @@ onehot_2_bin o2b(
     .a(modify_vector),
     .b(mshr_fin_ptr)
 );
-
+onehot_2_bin o2b2(
+    .a(hit_vector),
+    .b(mshr_hit_ptr)
+);
 endmodule
 
 module onehot_2_bin (

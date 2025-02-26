@@ -24,7 +24,11 @@ tag update
     input [2:0] operation_in,
     input [OOO_TAG_SIZE-1:0] ooo_tag_in,
 
-    //TODO: allocate and select data
+    //Cache Inputs
+    input rwnd_full,
+    input lsq_full,
+
+
     //Pipeline Output : 
     output [31:0] addr_out,
     output [CL_SIZE-1:0] data_out,
@@ -36,6 +40,7 @@ tag update
     //Outputs to LSQ
     //MSHR
     output mshr_hit, //
+    output [2:0] mshr_hit_ptr,
     output [2:0]  mshr_wr_ptr, 
     output [2:0] mshr_fin_ptr, 
     output mshr_fin,//
@@ -52,7 +57,7 @@ tag update
     //Requests to DRAM/Directory
     //Eviction Q
     output [2:0] operation_evic,
-    output [31:0] addr_evic,
+    output [31:0] addr_evic, //TODO: implement
     output alloc_evic,
     output [CL_SIZE-1:0] data_evic,
     //Miss Q
@@ -109,6 +114,9 @@ assign st_fwd = !stall_cache && addr_in[31:5] == addr_buffer[31:5] && valid_oper
 assign rwnd_alloc = operation_buffer == ST;
 assign lsq_data = data_buffer;
 
+//TODO: adjust mshr_alloc to be mshr_alloc_pre_stall
+assign stall_cache = pending_stall  || mshr_alloc_pre && mshr_full || rwnd_full && rwnd_alloc_pre || lsq_full && lsq_alloc_pre;
+
 always @(posedge clk) begin
     if(rst) begin
         addr_buffer <= 32'hFFFF_FFFF;
@@ -123,9 +131,6 @@ always @(posedge clk) begin
         size_buffer <= size_in;
         operation_buffer <= operation_in;
         OOO_TAG_buffer <= ooo_tag_in;
-    end
-    else begin
-        operation_buffer <= 0;
     end
 end
 
@@ -183,7 +188,7 @@ meta_store #(.META_SIZE(8),  .IDX_CNT(IDX_CNT)) ms1(
     //writeback
     .meta_in_wb(meta_lines_new),
     .idx_in_wb(idx_buf),
-    .alloc(valid_operation_buffer),
+    .alloc(valid_operation_buffer && !stall_cache),
 
     .st_fwd(st_fwd),
 
@@ -217,7 +222,7 @@ assign is_pending = current_state_buf[3];
     .tag_alloc(tag_store_alloc), //done
     .way_out(selected_replacement_way), //done
     .mshr_alloc(mshr_alloc), //done
-    .pending_stall(), //TODO: implement stall logic
+    .pending_stall(pending_stall),
     .wb_to_l2(alloc_wb_l2), //done
     .cur_state(current_state_buf),
     .is_evict(is_evict)
@@ -264,11 +269,12 @@ mshr #(.Q_LEGNTH(8)) mshr1(
 
     //output to cache
     .mshr_hit(mshr_hit), //
+    .mshr_hit_ptr(mshr_hit_ptr),
     .mshr_wr_ptr(mshr_wr_ptr), //
     .mshr_fin_ptr(mshr_fin_ptr), //
     .mshr_fin(mshr_fin),
 
-    .mshr_full(mshr_full) //TODO: STALL LOGIC
+    .mshr_full(mshr_full) 
 );
 gen_request_l1 gr1(
     .operation(operation_buffer),
