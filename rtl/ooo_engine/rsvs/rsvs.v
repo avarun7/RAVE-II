@@ -1,3 +1,10 @@
+module rsv_entry #(parameter XLEN = 32)(
+
+);
+
+endmodule
+
+
 module rsv #(parameter XLEN=32, SIZE=16)( // Assume mapper handles SEXT
     input clk, rst, valid_in,
 
@@ -13,7 +20,7 @@ module rsv #(parameter XLEN=32, SIZE=16)( // Assume mapper handles SEXT
     input                   rs2_received,
     input[4:0]              rs2_reg,
 
-    /*   Update Vars, from ROB   */
+    /*   Update Vars, from ring from ROB   */
     input                   update,
     input[4:0]              update_reg,
     input[XLEN-1:0]         update_val,

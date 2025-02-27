@@ -80,8 +80,8 @@ module branch_FU_tb;
     branch_type = 0;
     rs1 = 0;
     rs2 = 0;
-    errors = 0;
     pc = 0;
+    link_expected = 0;
     
     // Apply reset
     #10;
@@ -101,14 +101,13 @@ module branch_FU_tb;
     test_phase = "BEQ";
     pc = 32'h30000000;
     offset = 32'hF;
-    errors = 0;
     opcode = 5'b11000;
     branch_type = 3'b000;
     
-    rs1 = 32'h12345678; rs1 = 32'h12345678; taken_expected = 1; expected_res = 32'h3000000F;
+    rs1 = 32'h12345678; rs2 = 32'h12345678; taken_expected = 1; expected_res = 32'h3000000F;
     #10;
 
-    rs1 = 32'h12345678; rs1 = 32'h12345768; taken_expected = 0; expected_res = 32'h30000000;
+    rs1 = 32'h12345678; rs2 = 32'h12345768; taken_expected = 0; expected_res = 32'h30000000;
     #10;
 
 /*#################################################################################*/
@@ -116,14 +115,13 @@ module branch_FU_tb;
     test_phase = "BNE";
     pc = 32'h3000000F;
     offset = -32'hF;
-    errors = 0;
     opcode = 5'b11000;
     branch_type = 3'b001;
     
-    rs1 = 32'h12345678; rs1 = 32'h12345678; taken_expected = 0; expected_res = 32'h3000000F;
+    rs1 = 32'h12345678; rs2 = 32'h12345678; taken_expected = 0; expected_res = 32'h3000000F;
     #10;
 
-    rs1 = 32'h12345678; rs1 = 32'h12345768; taken_expected = 1; expected_res = 32'h30000000;
+    rs1 = 32'h12345678; rs2 = 32'h12345768; taken_expected = 1; expected_res = 32'h30000000;
     #10;
 
 /*#################################################################################*/
@@ -131,20 +129,19 @@ module branch_FU_tb;
     test_phase = "BLT";
     pc = 32'h3000000F;
     offset = 32'hF;
-    errors = 0;
     opcode = 5'b11000;
     branch_type = 3'b100;
 
-    rs1 = -32'd 25; -rs1 = -32'd23; taken_expected = 1; expected_res = 32'h3000001E;
+    rs1 = -32'd25; rs2 = -32'd23; taken_expected = 1; expected_res = 32'h3000001E;
     #10;
     
-    rs1 = 32'd 25; rs1 = 32'd23; taken_expected = 0; expected_res = 32'h3000000F;
+    rs1 = 32'd25; rs2 = 32'd23; taken_expected = 0; expected_res = 32'h3000000F;
     #10;
 
-    rs1 = 32'd25; rs1 = 32'd26; taken_expected = 1; expected_res = 32'h3000001E;
+    rs1 = 32'd25; rs2 = 32'd26; taken_expected = 1; expected_res = 32'h3000001E;
     #10;
 
-    rs1 = 32'd25; rs1 = 32'd25; taken_expected = 0; expected_res = 32'h3000000F;
+    rs1 = 32'd25; rs2 = 32'd25; taken_expected = 0; expected_res = 32'h3000000F;
     #10;
 
 /*#################################################################################*/
@@ -152,20 +149,19 @@ module branch_FU_tb;
     test_phase = "BGE";
     pc = 32'h3000000F;
     offset = 32'hF;
-    errors = 0;
     opcode = 5'b11000;
     branch_type = 3'b101;
     
-    rs1 = 32'd 25; rs1 = 32'd23; taken_expected = 1; expected_res = 32'h3000001E;
+    rs1 = 32'd 25; rs2 = 32'd23; taken_expected = 1; expected_res = 32'h3000001E;
     #10;
 
-    rs1 = 32'd25; rs1 = 32'd26; taken_expected = 0; expected_res = 32'h3000000F;
+    rs1 = 32'd25; rs2 = 32'd26; taken_expected = 0; expected_res = 32'h3000000F;
     #10;
 
-    rs1 = -32'd23; rs1 = -32'd26; taken_expected = 1; expected_res = 32'h3000001E;
+    rs1 = -32'd23; rs2 = -32'd26; taken_expected = 1; expected_res = 32'h3000001E;
     #10;
 
-    rs1 = 32'd25; rs1 = 32'd25; taken_expected = 0; expected_res = 32'h3000000F;
+    rs1 = 32'd25; rs2 = 32'd25; taken_expected = 0; expected_res = 32'h3000000F;
     #10;
 
 /*#################################################################################*/
@@ -173,20 +169,19 @@ module branch_FU_tb;
     test_phase = "BLTU";
     pc = 32'h3000000F;
     offset = 32'hF;
-    errors = 0;
     opcode = 5'b11000;
     branch_type = 3'b110;
 
-    rs1 = 32'd 25; rs1 = 32'd23; taken_expected = 0; expected_res = 32'h3000000F;
+    rs1 = 32'd 25; rs2 = 32'd23; taken_expected = 0; expected_res = 32'h3000000F;
     #10;
 
-    rs1 = 32'd25; rs1 = 32'd26; taken_expected = 1; expected_res = 32'h3000001E;
+    rs1 = 32'd25; rs2 = 32'd26; taken_expected = 1; expected_res = 32'h3000001E;
     #10;
 
-    rs1 = 32'd25; rs1 = 32'd25; taken_expected = 0; expected_res = 32'h3000000F;
+    rs1 = 32'd25; rs2 = 32'd25; taken_expected = 0; expected_res = 32'h3000000F;
     #10;
 
-    rs1 = -32'd25; rs1 = 32'd25; taken_expected = 1; expected_res = 32'h3000001E; // Negative nums larger than positive in unsigned
+    rs1 = 32'd25; rs2 = -32'd25; taken_expected = 1; expected_res = 32'h3000001E; // Negative nums larger than positive in unsigned
     #10;
 
 /*#################################################################################*/
@@ -194,20 +189,19 @@ module branch_FU_tb;
     test_phase = "BGEU";
     pc = 32'h3000000;
     offset = 32'hF;
-    errors = 0;
     opcode = 5'b11000;
     branch_type = 3'b101;
     
-    rs1 = 32'd 25; rs1 = 32'd23; taken_expected = 1; expected_res = 32'h3000000F;
+    rs1 = 32'd 25; rs2 = 32'd23; taken_expected = 1; expected_res = 32'h3000000F;
     #10;
 
-    rs1 = 32'd25; rs1 = 32'd26; taken_expected = 0; expected_res = 32'h30000000;
+    rs1 = 32'd25; rs2 = 32'd26; taken_expected = 0; expected_res = 32'h30000000;
     #10;
 
-    rs1 = -32'd25; rs1 = 32'd25; taken_expected = 1; expected_res = 32'h3000000F; // Negative nums larger than positive in unsigned
+    rs1 = 32'd25; rs2 = -32'd25; taken_expected = 1; expected_res = 32'h3000000F; // Negative nums larger than positive in unsigned
     #10;
 
-    rs1 = 32'd25; rs1 = 32'd25; taken_expected = 0; expected_res = 32'h30000000;
+    rs1 = 32'd25; rs2 = 32'd25; taken_expected = 0; expected_res = 32'h30000000;
     #10;
 
     
@@ -217,7 +211,6 @@ module branch_FU_tb;
     test_phase = "JALR";
     pc = 32'h3000000F;
     offset = 32'hF;
-    errors = 0;
     opcode = 5'b11001;
     rs1 = 0;
     
@@ -229,7 +222,6 @@ module branch_FU_tb;
     test_phase = "JAL";
     pc = 32'h30000000;
     offset = 32'hFF;
-    errors = 0;
     opcode = 5'b11011;
     
     taken_expected = 1; link_expected = 1; expected_res = 32'h3000001E; expected_link = 32'h300000FF;
@@ -240,22 +232,12 @@ module branch_FU_tb;
     test_phase = "AUIPC";
     pc = 32'h30000000;
     offset = 32'h100;
-    errors = 0;
     opcode = 5'b00101;
     
-    taken_expected = 1; expected_res = 32'h3000001E;
+    taken_expected = 1; expected_res = 32'h30000100;
     #10;
 
     $finish;
   end
-
-  task check_result;
-        begin
-            if (result !== expected_res) begin
-                errors = errors + 1;
-                $display("%0t\t%h\t%h\t%h\t%h\tFAIL", $time, rs1, rs2, expected, result);
-            end 
-        end
-    endtask
 
 endmodule

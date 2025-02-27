@@ -25,13 +25,13 @@ reg equals, less_than, s_less_than;
             5'b11000: begin
                 link <= 1'b0;
                 equals = (rs1 == rs2);
+                less_than = rs1 < rs2;
+                s_less_than = $signed(rs1) < $signed(rs2);
                 if(branch_type[2]) begin
-                    less_than <= rs1 < rs2;
-                    s_less_than <= $signed(rs1) < $signed(rs2);
                     if(branch_type[1])  // Unsigned types, no need for other comparisons
-                        taken <= ((branch_type[0]) ? less_than : !less_than) & !equals;
+                        taken <= (((branch_type[0]) ? (!less_than) : less_than) && (!equals));
                     else 
-                        taken <= ((branch_type[0]) ? s_less_than : !s_less_than) & !equals;
+                        taken <= (((branch_type[0]) ? (!s_less_than) : s_less_than) && (!equals));
                 end
                 else begin
                     taken <= (branch_type[0]) ? (!equals) : equals;
@@ -53,18 +53,20 @@ reg equals, less_than, s_less_than;
                 taken <= 1'b1;
                 link <= 1'b1;
                 link_reg <= pc + 4; 
-                result <= rs1 + $signed(offset);
+                result <= pc + $signed(offset);
             end  //JAL does same thing
                 
             // AUIPC
             5'b00101: begin
                 taken <= 1'b1;
                 result <= pc + $signed(offset);
+                link <= 0;
             end
 
             default: begin
                 taken <= 1'b0;
                 result <= 0;
+                link <= 0;
             end
         endcase
     end

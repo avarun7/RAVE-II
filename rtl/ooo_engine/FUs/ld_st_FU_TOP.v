@@ -1,4 +1,4 @@
-module br_FU#(parameter XLEN=32)(
+module ldst_FU#(parameter XLEN=32)(
     input clk, rst, valid,
     input[4:0] opcode,
     input[3:0] ld_st_type,
@@ -10,7 +10,8 @@ module br_FU#(parameter XLEN=32)(
 );
 
 reg equals, less_than;
-
+    // Output to D$
+    // if LD/ST, data, data size, sext bit, address, valid, OoO tag
     always @(posedge clk) begin
         if(!opcode[3])begin
             //loads
