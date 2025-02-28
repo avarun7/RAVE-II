@@ -1,7 +1,7 @@
 module TOP;
 
     localparam CYCLE_TIME = 2.0;
-    localparam WIDTH = 31;
+    localparam WIDTH = 127;
     integer unsigned k;
 
     reg [WIDTH-1:0] a;
@@ -11,8 +11,8 @@ module TOP;
 
     initial begin
         a = {WIDTH{1'b0}};
-        for (k = 0; k < 2**WIDTH; k = (k << 1)+17) begin
-            a = k[WIDTH-1:0];
+        for (k = 0; k < 2**31; k = (k << 1)+17) begin
+            a = k[31:0] << 96;
             #CYCLE_TIME; 
         end
         #CYCLE_TIME;
