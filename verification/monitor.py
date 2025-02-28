@@ -1,5 +1,6 @@
 # Monitors outputs from the DUT
 from pyuvm import *
+from cocotb.triggers import Timer
 
 class ProcessorMonitor(uvm_component):
     def build_phase(self):
