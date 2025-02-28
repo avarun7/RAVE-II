@@ -1,15 +1,11 @@
 # Verifies outputs
 from pyuvm import *
-from pyuvm import UVMComponent
 
-class Scoreboard(UVMComponent):
-    def __init__(self, name, parent):
-        super().__init__(name, parent)
-        self.expected = []
-        self.actual = []
+class ProcessorScoreboard(uvm_component):
+    def build_phase(self):
+        self.analysis_export = uvm_analysis_export("analysis_export", self)  # Receives data from Monitor
 
-    def compare(self, expected, actual):
-        if expected == actual:
-            print("PASS")
-        else:
-            print(f"FAIL: Expected {expected}, got {actual}")
+    def write(self, data):
+        # TODO: Implement logic to compare monitored data with expected values
+        self.logger.info(f"Received data in Scoreboard: {data}")
+        # For now, just log the received data

@@ -1,6 +1,8 @@
-mshr module
 Store Forwarding
-Exception logic???
-Request module 
+d$merge
+d$split
+d$_sendq
+d$_stall
+
 d$ top
 i$ top

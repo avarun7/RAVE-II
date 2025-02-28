@@ -1,16 +1,17 @@
-module data_store #(parameter META_SIZE = 8,  IDX_CNT = 8) (
+module meta_store #(parameter META_SIZE = 8,  IDX_CNT = 8) (
     input clk,
     input rst,
 
     //initial read
     input [2:0] operation,
     input [IDX_CNT-1:0] idx,
-    input [META_SIZE-1:0] meta_in_rd,
 
     //writeback
     input [META_SIZE*4-1:0]meta_in_wb,
     input [IDX_CNT-1:0] idx_in_wb,
     input alloc,
+
+    input st_fwd,
 
     //initial read out
     output reg[META_SIZE*4-1:0] meta_lines_out  
@@ -33,7 +34,7 @@ always @(posedge clk) begin
     end
     else begin
         if(operation != 0) begin
-            meta_lines_out <= meta_store[idx];
+            meta_lines_out <= st_fwd ? meta_in_wb :  meta_store[idx];
         end
         if(alloc) begin
             meta_store[idx_in_wb] <= meta_in_wb;

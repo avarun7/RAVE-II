@@ -6,15 +6,16 @@ module mshr #(parameter Q_LEGNTH = 8) (
     //alloc from cache
     input alloc,
     input [2:0] operation_cache,
-    input [25:0] addr_cache,
+    input [27:0] addr_cache,
 
     //from l2
     input l22q_valid,
     input l2_ldst,
-    input [25:0] addr_l2,
+    input [27:0] addr_l2,
 
     //output to cache
     output mshr_hit, //done
+    output [$clog2(Q_LEGNTH)-1:0] mshr_hit_ptr,
     output reg [$clog2(Q_LEGNTH)-1:0] mshr_wr_ptr, //done
     output [$clog2(Q_LEGNTH)-1:0] mshr_fin_ptr, //done
     output mshr_fin,//done
@@ -24,19 +25,19 @@ module mshr #(parameter Q_LEGNTH = 8) (
 assign mshr_hit = |hit_vector;
 assign mshr_fin = |modify_vector && l22q_valid;
 wire[7:0] modify_vector, hit_vector;
-wire [28*8-1:0] new_m_vector;
+wire [30*8-1:0] new_m_vector;
 genvar i;
 for(i = 0; i < 8; i = i + 1) begin
-    assign modify_vector[i]  = {addr_l2, l2_ldst} == old_m_vector[27+i*8:1+8*i];
-    assign new_m_vector[i*28] = 1;
-    assign new_m_vector[i*28 + 27 : i*28 +1 ] = old_m_vector[1*28 + 27 : i * 28 + 1];
-    assign hit_vector[i] = {addr_cache, operation_cache == 2} == old_m_vector[27+i*8:1+8*i];
+    assign modify_vector[i]  = {addr_l2, l2_ldst} == old_m_vector[29+i*8:1+8*i];
+    assign new_m_vector[i*30] = 1;
+    assign new_m_vector[i*30 + 27 : i*30 +1 ] = old_m_vector[1*30 + 27 : i * 30 + 1];
+    assign hit_vector[i] = {addr_cache, operation_cache == 2} == old_m_vector[29+i*8:1+8*i];
 
 end
 
-wire [28*8-1:0] old_m_vector;
-wire[26:0] addr_out;
-qnm #(.N_WIDTH(0), .M_WIDTH(1+1+26), .Q_LENGTH(8)) q1(
+wire [30*8-1:0] old_m_vector;
+wire[27:0] addr_out;
+qnm #(.N_WIDTH(0), .M_WIDTH(1+1+28), .Q_LENGTH(8)) q1(
     .m_din({addr_cache, operation_cache == 2,0}),
     .n_din(),
     .new_m_vector(new_m_vector),
@@ -65,7 +66,10 @@ onehot_2_bin o2b(
     .a(modify_vector),
     .b(mshr_fin_ptr)
 );
-
+onehot_2_bin o2b2(
+    .a(hit_vector),
+    .b(mshr_hit_ptr)
+);
 endmodule
 
 module onehot_2_bin (

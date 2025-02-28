@@ -1,11 +1,12 @@
  # Generates sequences for tests
 from pyuvm import *
-from pyuvm import UVMSequence
+from transactions import ProcessorTransaction  # Import transaction class
 
-class InstructionSequence(UVMSequence):
-    def body(self):
+class InstructionSequence(uvm_sequence):
+    async def body(self):
         for i in range(5):
-            instr = f"INSTR_{i}"
-            self.start_item(instr)
-            print(f"Generated instruction: {instr}")
-            self.finish_item(instr)
+            instr_tx = ProcessorTransaction()
+            instr_tx.randomize()
+            await self.start_item(instr_tx)
+            print(f"Generated instruction: {instr_tx}")
+            await self.finish_item(instr_tx)

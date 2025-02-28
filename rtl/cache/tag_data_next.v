@@ -20,15 +20,18 @@ module tag_next_state #(parameter TAG_SIZE = 20) (
     end
 endmodule
 
-module data_next_state #(parameter CL_SIZE = 512) (
+module data_next_state #(parameter CL_SIZE = 128) (
     input [CL_SIZE*4-1:0] data_cur_state,
     input [CL_SIZE-1:0] data_in,
     input [2:0] operation,
     input [3:0] selected_way, 
     input [5:0] addr_in,
+    input [1:0] size,
 
     output reg [CL_SIZE*4-1:0] data_next_state,
-    output reg data_wb
+    output reg data_wb,
+    output wire [CL_SIZE -1 :0] data_evic,
+    output wire [31:0] rewind_data
 );
     //Opeartion Names
 localparam  NO_OP= 0;
@@ -48,7 +51,7 @@ localparam  M= 4; //Modified
 localparam  S= 2; //Shared
 localparam PLS = 15; //Pending Load Store (edge case where store comes after load but before write)
 
-
+    assign data_evic = data_to_mod;
     reg [CL_SIZE-1:0] data_to_mod, mod_data;
     wire [CL_SIZE-1:0] data_st;
     always @(*) begin 
@@ -70,7 +73,7 @@ localparam PLS = 15; //Pending Load Store (edge case where store comes after loa
             default : data_to_mod <= data_cur_state;
         endcase
     end
-    replace_32_bit r32b(.data_in(data_in[31:0]), .shift(addr_in), .data_512_in(data_to_mod), .data_512_out(data_st));
+    replace_32_bit r32b(.data_in(data_in[31:0]), .shift({2'b00,addr_in[3:0]}), .data_512_in(data_to_mod),.size(size), .data_512_out(data_st), .data_replaced(rewind_data));
     always @(*) begin
         case(operation)
 
@@ -95,8 +98,10 @@ endmodule
 module replace_32_bit (
     input [31:0] data_in,        
     input [5:0] shift,           
-    input [511:0] data_512_in,   
-    output reg [511:0] data_512_out 
+    input [127:0] data_512_in,   
+    input [1:0] size,
+    output reg [127:0] data_512_out,
+    output reg [31:0] data_replaced
 );
 
     integer i;
@@ -104,9 +109,22 @@ module replace_32_bit (
     always @(*) begin
         data_512_out = data_512_in; 
         for (i = 0; i < 16; i = i + 1) begin
-            if (i == shift) begin
-                data_512_out[(i * 32) +: 32] = data_in; 
+            case(size)
+            0:    if (i == shift) begin
+                    data_replaced = data_512_out[(i * 8) +: 32];
+                    data_512_out[(i * 8) +: 8] = data_in; 
+                end
+            1: if (i == shift) begin
+                data_replaced = data_512_out[(i * 8) +: 32];
+                data_512_out[(i * 8) +: 16] = data_in; 
+                
             end
+            2: if (i == shift) begin
+                data_replaced = data_512_out[(i * 8) +: 32];
+                data_512_out[(i * 8) +: 32] = data_in; 
+            end
+            endcase 
         end
     end
 endmodule
+
