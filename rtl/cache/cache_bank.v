@@ -63,10 +63,13 @@ tag update
     //Miss Q
     output [2:0] operation_miss,
     output [31:0] addr_miss,
-    output alloc_miss
+    output alloc_miss,
+
+    output stall_cache
 
 );
-
+assign addr_miss = addr_out;
+assign addr_evic = addr_out;
 
 
 localparam  NO_OP= 0;
@@ -82,7 +85,7 @@ wire[TAG_SIZE-1:0] tag_in, tag_buf;
 wire[IDX_CNT-1:0] idx_in, idx_buf;
 wire[32-IDX_CNT-TAG_SIZE-2:0] offset_in, offset_buf;
 wire parity_in, parity_buf;
-wire stall_cache;
+
 reg [31:0] addr_buffer;
 reg [CL_SIZE-1:0] data_buffer;
 reg [1:0] size_buffer;
@@ -110,6 +113,7 @@ assign size_out = size_buffer;
 assign operation_out = operation_buffer;
 assign ooo_tag_out = OOO_TAG_buffer;
 assign data_out = data_evict;
+assign data_evic = data_evict;
 assign st_fwd = !stall_cache && addr_in[31:5] == addr_buffer[31:5] && valid_operation_in; 
 assign rwnd_alloc = operation_buffer == ST;
 assign lsq_data = data_buffer;

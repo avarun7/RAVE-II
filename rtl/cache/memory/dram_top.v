@@ -1,4 +1,4 @@
-module memory #(parameter CL_SIZE = 128) (
+module dram_top #(parameter CL_SIZE = 128) (
     input clk,
     input rst,
 
@@ -330,7 +330,7 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(2)) queue_arb_odd(
     .dealloc(dealloc_odd)
 );
 
-dram_bank #(.CL_SIZE(128), .file_name(1)) db_odd(
+dram_bank #(.CL_SIZE(128), .file_name(2)) db_odd(
 .rst(clk),
 .clk(rst),
 
