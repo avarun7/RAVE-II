@@ -1,4 +1,7 @@
 module directory_gen_request #(parameter CL_SIZE = 128) (
+    input clk,
+    input rst,
+
     input [3:0] current_state,
     input [2:0] operation,
     input [1:0] source,
@@ -81,6 +84,7 @@ always @(*) begin
                 mem_instr_q_alloc = 1;
             end
         end
+        //TODO: mem v wb
         WR: begin
             
         end
@@ -127,4 +131,53 @@ always @(*) begin
     endcase
 end
 
+reg [8*6:1] opcode_names [0:7]; // Each string is max 6 chars long
+reg [8*6:1] state_names[0:3];
+reg [8*6:1] src_names[0:3];
+integer file;
+  integer count = 0;
+initial begin
+    file = $fopen("dir_req_log.csv", "w");
+    opcode_names[0] = "NOOP";
+    opcode_names[1] = "?????"; // Unused index
+    opcode_names[2] = "REPLY";
+    opcode_names[3] = "RD";
+    opcode_names[4] = "WR";
+    opcode_names[5] = "INV";
+    opcode_names[6] = "UPD";
+    opcode_names[7] = "RWITM";
+    state_names[1] = "S";
+    state_names[2] = "M";
+    state_names[0] = "???";
+    state_names[3] = "???";
+    src_names[0] = "???";
+    src_names[1] = "I$";
+    src_names[2] = "D$";
+    src_names[3] = "MEM";
+
+    if (file == 0) begin
+      $display("Error: Unable to open file.");
+      $stop;
+    end
+    
+    $fdisplay(file, "Time,Cycle,I$State, D$State,Source,Destination,Operation,"); // Write header
+  end
+
+  always @(posedge clk) begin
+    if (rst) begin
+      count <= 0;  // Reset count on reset
+    end else begin
+      count <= count + 1; // Increment count
+      if(operation != 0) begin 
+      // Write data to file at every posedge clk
+         $fdisplay(file, "%t,%d,%s,%s, %s,%s,%s", $time, count, state_names[current_state[1:0]], state_names[current_state[3:2]], src_names[source], src_names[dest], operation_names[operation]);
+      end 
+    end
+  end
+
+//   final begin
+//     // Close the file at the end of simulation
+//     $fclose(file);
+//     $display("File write complete.");
+//   end
 endmodule

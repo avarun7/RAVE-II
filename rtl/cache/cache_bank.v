@@ -104,7 +104,7 @@ assign valid_operation_in = |operation_in;
 assign valid_operation_buf = |operation_buffer;
 assign lsq_alloc = (is_miss || is_pending) && valid_operation_buf;
 
-assign hit = is_hit;
+assign hit = is_hit && !is_pending;
 assign addr_out = addr_buffer;
 assign size_out = size_buffer;
 assign operation_out = operation_buffer;
@@ -115,7 +115,7 @@ assign rwnd_alloc = operation_buffer == ST;
 assign lsq_data = data_buffer;
 
 //TODO: adjust mshr_alloc to be mshr_alloc_pre_stall
-assign stall_cache = pending_stall  || mshr_alloc_pre && mshr_full || rwnd_full && rwnd_alloc_pre || lsq_full && lsq_alloc_pre;
+assign stall_cache = pending_stall  || mshr_alloc && mshr_full || rwnd_full && rwnd_alloc || lsq_full && lsq_alloc;
 
 always @(posedge clk) begin
     if(rst) begin
@@ -148,7 +148,7 @@ wire[TAG_SIZE*4-1:0] tag_lines_old, tag_lines_new;
     //writebac()k
     .tag_in_wb(tag_lines_new),
     .idx_in_wb(idx_buf),
-    .alloc(tag_store_alloc),
+    .alloc(tag_store_alloc && !stall_cache),
     .st_fwd(st_fwd),
 
 
@@ -168,7 +168,7 @@ data_store #(.CL_SIZE(CL_SIZE),  .IDX_CNT(IDX_CNT)) ds1(
     //writeback
     .cl_in_wb(data_lines_new),
     .idx_in_wb(idx_buf),
-    .alloc(data_store_alloc),
+    .alloc(data_store_alloc  && !stall_cache),
     .st_fwd(st_fwd),
 
 
@@ -258,7 +258,7 @@ mshr #(.Q_LEGNTH(8)) mshr1(
     .rst(rst),    
 
     //alloc from cache
-    .alloc(mshr_alloc),
+    .alloc(mshr_alloc  && !stall_cache),
     .operation_cache(operation_buffer),
     .addr_cache(addr_buffer),
 
@@ -276,6 +276,9 @@ mshr #(.Q_LEGNTH(8)) mshr1(
 
     .mshr_full(mshr_full) 
 );
+assign alloc_evic = alloc_evic_pre_stall  && !stall_cache;
+assign alloc_miss = alloc_miss_pre_stall  && !stall_cache;
+
 gen_request_l1 gr1(
     .operation(operation_buffer),
     .current_state(current_state_buf),
@@ -284,11 +287,11 @@ gen_request_l1 gr1(
     .is_evict(is_evict),
     
     //output miss
-    .alloc_miss(alloc_miss),
+    .alloc_miss(alloc_miss_pre_stall),
     .operation_out_miss(operation_miss),
 
     //output evic
-    .alloc_evic(alloc_evic),
+    .alloc_evic(alloc_evic_pre_stall),
     .operation_out_evic(operation_evic)
 );
 

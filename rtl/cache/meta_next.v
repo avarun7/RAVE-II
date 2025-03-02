@@ -22,6 +22,7 @@ localparam  WR= 4;
 localparam  INV = 5;
 localparam  UPD= 6;
 localparam RWITM = 7;
+localparam RINV = 2;
 wire [META_SIZE*4:0] meta_way_split [3:0];
 wire[3:0] lru_concat[3:0];
 wire[3:0] selected_way_miss;

@@ -1,4 +1,5 @@
 module directory_next_state(
+    input rst,
     input [3:0] current_state,
     input [2:0] operation,
     input [1:0] src,
@@ -27,9 +28,14 @@ assign oii = !oim && ! ois; //other is invalid
 assign sim = src_state[1]; //source is modified
 assign sis = src_state[0];
 assign sii = !oim && ! ois;
-
+initial osn = 0;
+initial ssn = 0;
 reg [1:0] osn, ssn; //osn == other state next, ssn = source state next
 always @(*) begin
+    if(rst) begin
+        osn = 0;
+        ssn = 0;
+    end
     osn = other_state;
     ssn = src_state;
     case(operation)

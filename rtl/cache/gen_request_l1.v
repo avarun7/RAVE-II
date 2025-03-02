@@ -25,6 +25,8 @@ localparam  WR= 4;
 localparam  INV = 5;
 localparam  UPD= 6;
 localparam RWITM = 7;
+localparam RINV = 7;
+localparam REPLY = 2;
 //State Names
 localparam I = 1; //Invalid
 localparam  PL= 11; //Pending Load
@@ -35,7 +37,7 @@ localparam  S= 2; //Shared
 localparam PLS = 15; //Pending Load Store (edge case where store comes after load but before write)
 
 assign alloc_miss = ~tag_hit && ~mshr_hit && (operation == LD || operation == ST);
-assign alloc_evic = (alloc_miss && is_evict) || (tag_hit && operation == INV);
+assign alloc_evic = (alloc_miss && is_evict) || (tag_hit && operation == INV) || (tag_hit && operation == RINV) || (tag_hit && operation == RD);
 always @(*) begin
     if(is_evict) begin
         operation_out_miss <= operation == ST ? RWITM : RD;
@@ -52,16 +54,16 @@ always @(*) begin
         endcase
     end
 end
-
+//TODO: Insert support for replies
 always @(*) begin
     case(current_state) 
     I: operation_out_evic <= INV;
-    PL: operation_out_evic <= INV;
-    PLS: operation_out_evic <= INV;
-    PS:operation_out_evic <= INV;
-    S:  operation_out_evic <= INV;
-    PM:operation_out_evic <= INV;
-    M: operation_out_evic <= WR;
+    PL: operation_out_evic <= operation == RINV || operation == RD ? REPLY : INV;
+    PLS: operation_out_evic <= operation == RINV || operation == RD ? REPLY :INV;
+    PS:operation_out_evic <= operation == RINV || operation == RD ? REPLY :INV;
+    S:  operation_out_evic <= operation == RINV || operation == RD ? REPLY : INV;
+    PM:operation_out_evic <= operation == RINV || operation == RD ? REPLY : INV;
+    M: operation_out_evic <=  operation == RINV || operation == RD ? REPLY : WR;
     endcase
 end
 
