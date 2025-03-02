@@ -512,9 +512,12 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(6)) queue_arb_even(
         dir_is_flush_in_dc_instr_q_even
     }),
     
+    .stall_in(0),
+
     .addr_out(dir_addr_in_even),
     .operation_out(dir_operation_in_even), 
-    .valid_out(dir_data_in_even),
+    .data_out(dir_data_in_even),
+    .valid_out(dir_valid_in_even),
     .src_out(dir_src_in_even),
     .dest_out(dir_dest_in_even),
     .is_flush_out(dir_is_flush_in_even),
@@ -528,7 +531,7 @@ directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .T
 
     .addr_in(dir_addr_in_even),
     .data_in(dir_data_in_even),
-    .operation_in(dir_operation_in_even),
+    .operation_in(dir_operation_in_even & {3{dir_valid_in_even}}),
     .src_in(dir_src_in_even),
     .dest_in(dir_is_flush_in_even),
 
@@ -787,9 +790,12 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(6)) queue_arb_odd(
         dir_is_flush_in_dc_instr_q_odd
     }),
     
+    .stall_in(0),
+
     .addr_out(dir_addr_in_odd),
     .operation_out(dir_operation_in_odd), 
-    .valid_out(dir_data_in_odd),
+    .data_out(dir_data_in_odd),
+    .valid_out(dir_valid_in_odd),
     .src_out(dir_src_in_odd),
     .dest_out(dir_dest_in_odd),
     .is_flush_out(dir_is_flush_in_odd),
@@ -803,7 +809,7 @@ directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .T
 
     .addr_in(dir_addr_in_odd),
     .data_in(dir_data_in_odd),
-    .operation_in(dir_operation_in_odd),
+    .operation_in(dir_operation_in_odd & {3{dir_valid_in_odd}}),
     .src_in(dir_src_in_odd),
     .dest_in(dir_is_flush_in_odd),
 

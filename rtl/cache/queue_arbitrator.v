@@ -7,6 +7,8 @@ module queue_arbitrator #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
     input[2*Q_WIDTH-1:0]    dest_in,
     input [Q_WIDTH-1:0]     is_flush_in,
 
+    input stall_in,
+
     output reg[32-1:0]      addr_out,
     output wire[3-1:0]       operation_out, 
     output wire             valid_out,
@@ -20,7 +22,7 @@ module queue_arbitrator #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
 reg[3-1:0]       operation_out_temp;
 wire[Q_WIDTH-1:0] op_choice;
 pencoder_copy #(.WIDTH(Q_WIDTH)) pec1(.a(valid_in), .o(op_choice));
-assign dealloc = op_choice;
+assign dealloc = op_choice & {8{stall_in}};
 assign valid_out = |op_choice;
 assign operation_out = valid_out ? operation_out_temp : 0;
 
