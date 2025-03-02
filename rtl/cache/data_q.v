@@ -1,4 +1,4 @@
-module data_q #(parameter Q_LEGNTH = 8, OOO_TAG_SIZE = 10, CL_SIZE = 128) (
+module data_q #(parameter Q_LEGNTH = 8, CL_SIZE = 128) (
     //System     
     input clk,
     input rst,
@@ -11,6 +11,7 @@ module data_q #(parameter Q_LEGNTH = 8, OOO_TAG_SIZE = 10, CL_SIZE = 128) (
     input alloc,
     input [1:0] src,
     input [1:0] dest,
+    
     //From reciever
     input dealloc,
 

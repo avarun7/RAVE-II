@@ -1,4 +1,4 @@
-module instr_q #(parameter Q_LEGNTH = 8, OOO_TAG_SIZE = 10, CL_SIZE = 128) (
+module instr_q #(parameter Q_LEGNTH = 8, CL_SIZE = 128) (
     //System     
     input clk,
     input rst,
@@ -24,8 +24,6 @@ module instr_q #(parameter Q_LEGNTH = 8, OOO_TAG_SIZE = 10, CL_SIZE = 128) (
     output [1:0] src_out,
     output [1:0] dest_out,
     output is_flush_out
-    
-
 );
 assign valid = !valid_n;
 qnm #(.N_WIDTH(32 + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(

@@ -132,6 +132,8 @@ always @(posedge clk) begin
         operation_buffer <= operation_in;
         OOO_TAG_buffer <= ooo_tag_in;
     end
+    else if(stall_cache && valid_operation_in) begin end
+    else operation_buffer <= 0;
 end
 
 wire[TAG_SIZE*4-1:0] tag_lines_old, tag_lines_new;
