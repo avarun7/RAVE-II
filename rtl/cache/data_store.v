@@ -4,11 +4,11 @@ module data_store #(parameter CL_SIZE = 512,  IDX_CNT = 8) (
 
     //initial read
     input [2:0] operation,
-    input [IDX_CNT-1:0] idx,
+    input [$clog2(IDX_CNT)-1:0] idx,
 
     //writeback
     input [CL_SIZE*4-1:0]cl_in_wb,
-    input [IDX_CNT-1:0] idx_in_wb,
+    input [$clog2(IDX_CNT)-1:0] idx_in_wb,
     input alloc,
     input st_fwd,
 
@@ -27,7 +27,7 @@ end
 
 always @(posedge clk) begin
     if(rst) begin
-    
+        
     end
     else begin
         if(operation != 0) begin

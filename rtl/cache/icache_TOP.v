@@ -18,8 +18,11 @@ module icache_TOP #(parameter CL_SIZE = 128) (
     output is_write_e, //Tells whether the data being processed is a write (probably want to ignore results if it is)
     output is_write_o,
 
-    output stall //Signal to say stop feeding data to cache. I don't think its needed since this is blocking
+    output stall, //Signal to say stop feeding data to cache. I don't think its needed since this is blocking
     
+    //TLB
+    output exception
+
     //TODO: All other I/O memory facing and I will handle
     //Shouldn't affect people working on integrating the pipeline
 

@@ -17,6 +17,7 @@ localparam UPD = 6; //request on st from a hit
 
 localparam S = 1;
 localparam M = 2;
+localparam I = 0;
 
 wire[1:0] src_state, other_state;
 assign src_state = src == 2 ? current_state[3:2] : src == 1 ? current_state[1:0] : 0;
@@ -30,6 +31,8 @@ assign sis = src_state[0];
 assign sii = !oim && ! ois;
 initial osn = 0;
 initial ssn = 0;
+
+assign next_state = src == 2 ? {ssn, osn} : src == 1 ? {osn, ssn } : current_state;
 reg [1:0] osn, ssn; //osn == other state next, ssn = source state next
 always @(*) begin
     if(rst) begin
@@ -44,32 +47,61 @@ always @(*) begin
             ssn = S;
         end
         if(oim) begin
-            
+            osn = S;
         end
     end
 
     WR:begin
-
+        if(sii) begin
+            ssn = M;
+        end
+        if(ois) begin
+            osn = I;
+        end
     end
 
     RWITM:begin
-
+        if(sii) begin
+            ssn = M;
+        end
+        if(sis) begin
+            ssn = M;
+        end
+        if(ois) begin
+            osn = I;
+        end
     end
 
     UPD:begin
-
+        if(sii) begin
+            ssn = M;
+        end
+        if(sis) begin
+            ssn = M;
+        end
+        if(ois) begin
+            osn = I;
+        end
     end
 
     INV:begin
-
+        if(sis || sim) begin
+            ssn = I;
+        end
     end
 
     NOOP:begin
-
+        ssn = src_state;
+        osn = other_state;
     end
 
     REPLY:begin
-
+        ssn = src_state;
+        osn = other_state;
+    end
+    default: begin
+        ssn = src_state;
+        osn = other_state;
     end
     endcase
 end

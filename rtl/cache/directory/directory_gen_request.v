@@ -32,6 +32,7 @@ localparam NOOP = 0; //WHAT DO YOU THINK IT DOES EINSTEIN????
 localparam REPLY = 2; //Response from A RD request
 localparam RWITM = 7; //Request from an cache miss on st
 localparam UPD = 6; //request on st from a hit
+localparam RINV = 7; //READ AND INVALIDATE
 
 
 assign d_is_src = source == 2;
@@ -43,7 +44,7 @@ assign other_state = source == 2 ? current_state [1:0] : source == 1 ? current_s
 assign oim = other_state[1]; //other is modifed
 assign ois = other_state[0]; //other is shared
 assign oii = !oim && ! ois; //other is invalid
-
+assign from_mem = source == 3;
 assign sim = src_state[1]; //source is modified
 assign sis = src_state[0];
 assign sii = !oim && ! ois;
@@ -86,7 +87,19 @@ always @(*) begin
         end
         //TODO: mem v wb
         WR: begin
-            
+            if(source != 3) begin
+                mem_data_q_alloc = 1;
+                mem_data_q_operation = WR;
+            end
+            else if(dest == 1) begin 
+                src_data_alloc = 1;
+                src_data_operation = WR;
+            end
+            else if(dest == 2) begin 
+                other_data_alloc = 1;
+                other_data_operation = WR;
+            end
+
         end
         INV : begin 
             if(sim) begin
@@ -94,14 +107,22 @@ always @(*) begin
                 mem_data_q_operation = WR;
             end
         end
-        //TODO: evaluate if this causes an issue on returms from memory where source is MEM (maybe default source to be where it was from)
         REPLY : begin
-            src_data_alloc = 1;
-            src_data_operation = WR;
+            other_data_alloc = 1;
+            other_data_operation = WR;
         end
 
         RWITM : begin
-            
+            if(ois) begin
+                other_instr_alloc = 1;
+                other_instr_operation = RINV;
+                src_instr_alloc = 1;
+                src_instr_operation = UPD;
+            end
+            if(oii) begin
+                mem_instr_q_alloc = 1;
+                mem_instr_q_operation = RD;
+            end
         end
 
         UPD : begin
@@ -134,6 +155,7 @@ end
 reg [8*6:1] opcode_names [0:7]; // Each string is max 6 chars long
 reg [8*6:1] state_names[0:3];
 reg [8*6:1] src_names[0:3];
+
 integer file;
   integer count = 0;
 initial begin
@@ -160,7 +182,7 @@ initial begin
       $stop;
     end
     
-    $fdisplay(file, "Time,Cycle,I$State, D$State,Source,Destination,Operation,"); // Write header
+    $fdisplay(file, "Time,Cycle,I$State, D$State,Source,Destination,Operation In,MEM_INSTR_ALLOC,MEM_INSTR_OPER,MEM_DATA_ALLOC,MEM_DATA_OPER,IC_INSTR_ALLOC,IC_INSTR_OPER,IC_DATA_ALLOC,IC_DATA_OPER,DC_INSTR_ALLOC,DC_INSTR_OPER,DC_DATA_ALLOC,DC_DATA_OPER"); // Write header
   end
 
   always @(posedge clk) begin
@@ -169,15 +191,8 @@ initial begin
     end else begin
       count <= count + 1; // Increment count
       if(operation != 0) begin 
-      // Write data to file at every posedge clk
-         $fdisplay(file, "%t,%d,%s,%s, %s,%s,%s", $time, count, state_names[current_state[1:0]], state_names[current_state[3:2]], src_names[source], src_names[dest], operation_names[operation]);
-      end 
+        $fdisplay(file, "%t,%d,%s,%s, %s,%s,%s,%d,%s,%d,%s,%d,%s,%d,%s,%d,%s,%d,%s", $time, count, state_names[current_state[1:0]], state_names[current_state[3:2]], src_names[source], src_names[dest], opcode_names[operation], mem_instr_q_alloc, opcode_names[mem_instr_q_operation], mem_data_q_alloc, opcode_names[mem_data_q_operation], ic_inst_q_alloc, opcode_names[ic_inst_q_operation], ic_data_q_alloc, opcode_names[ic_data_q_operation], dc_inst_q_alloc, opcode_names[dc_inst_q_operation], dc_data_q_alloc, opcode_names[dc_data_q_operation]);
+    end 
     end
   end
-
-//   final begin
-//     // Close the file at the end of simulation
-//     $fclose(file);
-//     $display("File write complete.");
-//   end
 endmodule

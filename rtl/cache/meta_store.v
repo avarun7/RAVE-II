@@ -4,11 +4,11 @@ module meta_store #(parameter META_SIZE = 8,  IDX_CNT = 8) (
 
     //initial read
     input [2:0] operation,
-    input [IDX_CNT-1:0] idx,
+    input [$clog2(IDX_CNT)-1:0] idx,
 
     //writeback
     input [META_SIZE*4-1:0]meta_in_wb,
-    input [IDX_CNT-1:0] idx_in_wb,
+    input [$clog2(IDX_CNT)-1:0] idx_in_wb,
     input alloc,
 
     input st_fwd,

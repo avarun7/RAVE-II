@@ -4,12 +4,12 @@ module tag_store #(parameter TAG_SIZE = 20,  IDX_CNT = 8) (
 
     //initial read
     input [2:0] operation,
-    input [IDX_CNT-1:0] idx,
+    input [$clog2(IDX_CNT)-1:0] idx,
     input [TAG_SIZE-1:0] tag_in_rd,
 
     //writeback
     input [TAG_SIZE*4-1:0]tag_in_wb,
-    input [IDX_CNT-1:0] idx_in_wb,
+    input [$clog2(IDX_CNT)-1:0] idx_in_wb,
     input alloc,
     input st_fwd,
 
