@@ -11,7 +11,7 @@ module directory_select_way #(parameter CL_SIZE = 4, TAG_SIZE = 18) (
     input [1:0] dest,
 
     output [TAG_SIZE*8-1:0] tag_next_state,
-    output [CL_SIZE*8-1:0] data_next_state
+    output reg [CL_SIZE*8-1:0] data_next_state
 );
 
 wire[7:0] hits;
@@ -27,7 +27,7 @@ for(i = 0; i < 8; i = i + 1) begin : ands
 end
 
 always @(*) begin
-    data_next_sate = data_cur_state;
+    data_next_state = data_cur_state;
     casex(hits)
         8'b1XXX_XXXX :  begin selected_data = data_cur_state[7*4+3:7*4]; data_next_state[7*4+3:7*4] = data_next; end
         8'b01XX_XXXX :  begin selected_data = data_cur_state[6*4+3:6*4]; data_next_state[6*4+3:6*4] = data_next; end

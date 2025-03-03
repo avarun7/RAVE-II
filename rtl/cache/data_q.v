@@ -1,4 +1,4 @@
-module data_q #(parameter Q_LEGNTH = 8, CL_SIZE = 128) (
+module data_q #(parameter Q_LENGTH = 8, CL_SIZE = 128) (
     //System     
     input clk,
     input rst,
@@ -31,7 +31,7 @@ module data_q #(parameter Q_LEGNTH = 8, CL_SIZE = 128) (
 assign valid = !valid_n;
 qnm #(.N_WIDTH(32 + CL_SIZE + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
     .m_din(),
-    .n_din({src, dest, is_flush, operation, addr_in, data_in}),
+    .n_din({src, dest, is_flush, operation_in, addr_in, data_in}),
     .new_m_vector(0),
     .wr(alloc), 
     .rd(dealloc),
@@ -41,7 +41,7 @@ qnm #(.N_WIDTH(32 + CL_SIZE + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
     .full(full), 
     .empty(valid_n),
     .old_m_vector(),
-    .dout({src_out, dest_out, is_flush_out, operation, addr_in, data_out})
+    .dout({src_out, dest_out, is_flush_out, operation_out, addr_in, data_out})
 );
 
 endmodule 

@@ -20,6 +20,7 @@ localparam M = 2;
 localparam I = 0;
 
 wire[1:0] src_state, other_state;
+reg[1:0] osn, ssn;
 assign src_state = src == 2 ? current_state[3:2] : src == 1 ? current_state[1:0] : 0;
 assign other_state = src == 1 ? current_state[3:2] : src ==  2? current_state[1:0] : 0;
 assign oim = other_state[1]; //other is modifed

@@ -30,7 +30,7 @@ genvar i;
 for(i = 0; i < 8; i = i + 1) begin
     assign modify_vector[i]  = {addr_l2, l2_ldst} == old_m_vector[29+i*8:1+8*i];
     assign new_m_vector[i*30] = 1;
-    assign new_m_vector[i*30 + 27 : i*30 +1 ] = old_m_vector[1*30 + 27 : i * 30 + 1];
+    assign new_m_vector[i*30 + 27 : i*30 +1 ] = old_m_vector[i*30 + 27 : i * 30 + 1];
     assign hit_vector[i] = {addr_cache, operation_cache == 2} == old_m_vector[29+i*8:1+8*i];
 
 end
@@ -73,8 +73,8 @@ onehot_2_bin o2b2(
 endmodule
 
 module onehot_2_bin (
-    input a[7:0],
-    output b[2:0]
+    input [7:0]a,
+    output reg[2:0]b
 );
     always @(*) begin
         case(a)

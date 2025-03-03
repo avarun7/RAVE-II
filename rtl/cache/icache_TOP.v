@@ -113,7 +113,18 @@ module icache_TOP #(parameter CL_SIZE = 128, IDX_CNT = 512, OOO_TAG_SIZE = 10, T
 
     input full_in_ic_instr_q_odd
 );
-
+assign stall = stall_cache_even || stall_cache_odd;
+//Opeartion Names
+localparam  NO_OP= 0;
+localparam LD = 1;
+localparam ST = 2;
+localparam RD = 3;
+localparam  WR= 4;
+localparam  INV = 5;
+localparam  UPD= 6;
+localparam RWITM = 7;
+localparam RINV = 7;
+localparam REPLY = 2;
      //I$_DATA_Q_in
 wire [31:0] icache_addr_in_ic_data_q_even;
 wire  [CL_SIZE-1:0] icache_data_in_ic_data_q_even;
@@ -148,8 +159,8 @@ wire  icache_valid_in_ic_instr_q_odd;
 wire  [1:0] icache_src_in_ic_instr_q_odd;
 wire  [1:0] icache_dest_in_ic_instr_q_odd;
 
-
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
+wire [2:0]dealloc_even;
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -163,7 +174,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
     .src(src_in_ic_data_q_even),
     .dest(dest_in_ic_data_q_even),
     //From reciever
-    .dealloc(dealloc_even[3]),
+    .dealloc(dealloc_even[2]),
 
     //output sender
     .full(full_out_ic_data_q_even),
@@ -178,7 +189,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
     .is_flush_out(icache_is_flush_in_ic_data_q_even)
 );
 
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_even(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -192,7 +203,7 @@ instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_even(
     .dest(dest_in_ic_instr_q_even),
 
     //From reciever
-    .dealloc(dealloc_even[2]),
+    .dealloc(dealloc_even[1]),
 
     //output sender
     .full(full_out_ic_instr_q_even),
@@ -318,8 +329,8 @@ assign dest_out_ic_data_q_even = operation_out_ic_data_q_even == WR ? 3 : 2;
 assign is_flush_out_ic_instr_q_even = 0;
 assign src_out_ic_instr_q_even = 1;
 assign dest_out_ic_instr_q_even = operation_out_ic_instr_q_even == WR || operation_out_ic_instr_q_even == RD ? 3 : 2;
-
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_odd(
+wire[2:0] dealloc_odd;
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
@@ -333,7 +344,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_odd(
     .src(src_in_ic_data_q_odd),
     .dest(dest_in_ic_data_q_odd),
     //From reciever
-    .dealloc(dealloc_odd[3]),
+    .dealloc(dealloc_odd[2]),
 
     //output sender
     .full(full_out_ic_data_q_odd),
@@ -348,7 +359,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_odd(
     .is_flush_out(icache_is_flush_in_ic_data_q_odd)
 );
 
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_odd(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
@@ -362,7 +373,7 @@ instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_odd(
     .dest(dest_in_ic_instr_q_odd),
 
     //From reciever
-    .dealloc(dealloc_odd[2]),
+    .dealloc(dealloc_odd[1]),
 
     //output sender
     .full(full_out_ic_instr_q_odd),

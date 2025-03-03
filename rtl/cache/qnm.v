@@ -65,7 +65,7 @@ always @(posedge clk or rst) begin
         end
         for(p = 0; p < Q_LENGTH; p = p + 1) begin : m_update
             if(modify_vector[p] == 1) begin
-                queue[p] <= {queue[p][N_WIDTH+M_WIDTH-1:M_WIDTH], new_m_vector[p*M_WIDTH +: M_WIDTH]};           
+                queue[p] <= {queue[p][M_WIDTH +: N_WIDTH], new_m_vector[p*M_WIDTH +: M_WIDTH]};           
             end
         end
         

@@ -2,7 +2,8 @@ module memory_system_tb ();
 
 reg clk, rst;
 reg [31:0] addr_even, addr_odd;
-
+wire[31:0]addr_out_even, addr_out_odd;
+wire[127:0] cl_odd, cl_even;
 always begin
     #5
     clk = !clk;
@@ -12,8 +13,11 @@ initial begin
     clk = 0;
     rst = 1;
     addr_even = 32'b010_0000;
-    addr_even = 32'b011_0000;
-    
+    addr_odd = 32'b011_0000;
+
+    #20
+    rst = 0;
+
 
 end
 

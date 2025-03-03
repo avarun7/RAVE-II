@@ -8,11 +8,11 @@ module directory_bank #(parameter DATA_SIZE = 4, CL_SIZE = 128, IDX_CNT = 512, T
     input [1:0] src_in,
     input [1:0] dest_in,
 
-    output reg mem_instr_q_alloc,
-    output reg [2:0] mem_instr_q_operation,
+    output  mem_instr_q_alloc,
+    output  [2:0] mem_instr_q_operation,
 
-    output reg mem_data_q_alloc,
-    output reg[2:0] mem_data_q_operation,
+    output  mem_data_q_alloc,
+    output [2:0] mem_data_q_operation,
     
     output  ic_inst_q_alloc,
     output  [2:0] ic_inst_q_operation,
@@ -31,6 +31,8 @@ module directory_bank #(parameter DATA_SIZE = 4, CL_SIZE = 128, IDX_CNT = 512, T
     output [31:0] addr_out,
     output [CL_SIZE-1:0] data_out
 );
+localparam IDX_ROW = $clog2(IDX_CNT);
+
 wire st_fwd, valid_operation_in;
 reg [31:0] addr_buffer;
 reg[CL_SIZE-1:0] data_buffer;
@@ -38,8 +40,8 @@ reg [2:0] operation_buffer;
 reg [1:0] src_buffer, dest_buffer;
 
 wire[TAG_SIZE-1:0] tag_in, tag_buf;
-wire[IDX_CNT-1:0] idx_in, idx_buf;
-wire[32-IDX_CNT-TAG_SIZE-2:0] offset_in, offset_buf;
+wire[IDX_ROW-1:0] idx_in, idx_buf;
+wire[32-IDX_ROW-TAG_SIZE-2:0] offset_in, offset_buf;
 wire parity_in, parity_buf;
 
 assign src_out = src_buffer;
@@ -47,14 +49,14 @@ assign dest_out = dest_buffer;
 assign addr_out = addr_buffer;
 assign data_out = data_buffer;
 
-assign offset_in = addr_in[32-IDX_CNT-TAG_SIZE-1:0];
-assign parity_in = addr_in[32-IDX_CNT-TAG_SIZE+1:32-IDX_CNT-TAG_SIZE];
-assign idx_in = addr_in[32-1-TAG_SIZE:32-IDX_CNT-TAG_SIZE+2];
+assign offset_in = addr_in[32-IDX_ROW-TAG_SIZE-1:0];
+assign parity_in = addr_in[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
+assign idx_in = addr_in[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE+2];
 assign tag_in = addr_in[31:32-TAG_SIZE];
 
-assign offset_buf = addr_buffer[32-IDX_CNT-TAG_SIZE-1:0];
-assign parity_buf = addr_buffer[32-IDX_CNT-TAG_SIZE+1:32-IDX_CNT-TAG_SIZE];
-assign idx_buf = addr_buffer[32-1-TAG_SIZE:32-IDX_CNT-TAG_SIZE+2];
+assign offset_buf = addr_buffer[32-IDX_ROW-TAG_SIZE-1:0];
+assign parity_buf = addr_buffer[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
+assign idx_buf = addr_buffer[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE+2];
 assign tag_buf = addr_buffer[31:32-TAG_SIZE];
 
 assign valid_operation_buffer = |operation_buffer;
@@ -102,7 +104,7 @@ directory_data_store #(.CL_SIZE(DATA_SIZE),  .IDX_CNT(IDX_CNT)) dds(
 );
 wire[TAG_SIZE*8-1:0] tag_lines_old, tag_lines_new;
 
-tag_store #( .TAG_SIZE(TAG_SIZE),  .IDX_CNT(IDX_CNT)) dts(
+directory_tag_store #( .TAG_SIZE(TAG_SIZE),  .IDX_CNT(IDX_CNT)) dts(
     .clk(clk),
     .rst(rst),
 

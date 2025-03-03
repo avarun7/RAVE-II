@@ -291,9 +291,9 @@ directory_top #(
     //TODO: UNZERO OUT
     .addr_in_dc_data_q_even(dc_2_dir_addr_data_q_even),
     .data_in_dc_data_q_even(dc_2_dir_data_data_q_even),
-    .operation_in_dc_data_q_even(dc_2_dir_operation_data_q_even & 0),
+    .operation_in_dc_data_q_even(dc_2_dir_operation_data_q_even & 3'd0),
     .is_flush_in_dc_data_q_even(dc_2_dir_is_flush_data_q_even),
-    .alloc_in_dc_data_q_even(dc_2_dir_valid_data_q_even & 0),
+    .alloc_in_dc_data_q_even(dc_2_dir_valid_data_q_even & 1'd0),
     .src_in_dc_data_q_even(dc_2_dir_src_data_q_even),
     .dest_in_dc_data_q_even(dc_2_dir_dest_data_q_even),
     
@@ -301,9 +301,9 @@ directory_top #(
 
     //TODO: UNZERO OUT
     .addr_in_dc_instr_q_even(dc_2_dir_addr_instr_q_even),
-    .operation_in_dc_instr_q_even(dc_2_dir_operation_instr_q_even & 0),
+    .operation_in_dc_instr_q_even(dc_2_dir_operation_instr_q_even &  & 3'd0),
     .is_flush_in_dc_instr_q_even(dc_2_dir_is_flush_instr_q_even),
-    .alloc_in_dc_instr_q_even(dc_2_dir_valid_instr_q_even & 0),
+    .alloc_in_dc_instr_q_even(dc_2_dir_valid_instr_q_even &  & 1'd0),
     .src_in_dc_instr_q_even(dc_2_dir_src_instr_q_even),
     .dest_in_dc_instr_q_even(dc_2_dir_dest_instr_q_even),
     
@@ -339,9 +339,9 @@ directory_top #(
     .full_out_mem_data_q_odd(),
 
     .addr_in_mem_instr_q_odd(mem_2_dir_addr_instr_q_odd),
-    .operation_in_mem_instr_q_odd(mem_2_dir_operation_instr_q_odd & 0),
+    .operation_in_mem_instr_q_odd(mem_2_dir_operation_instr_q_odd &  & 3'd0),
     .is_flush_in_mem_instr_q_odd(mem_2_dir_is_flush_instr_q_odd),
-    .alloc_in_mem_instr_q_odd(mem_2_dir_valid_instr_q_odd & 0),
+    .alloc_in_mem_instr_q_odd(mem_2_dir_valid_instr_q_odd &  & 1'd0),
     .src_in_mem_instr_q_odd(mem_2_dir_src_instr_q_odd),
     .dest_in_mem_instr_q_odd(mem_2_dir_dest_instr_q_odd),
     
@@ -369,9 +369,9 @@ directory_top #(
     //TODO: UNZERO OUT
     .addr_in_dc_data_q_odd(dc_2_dir_addr_data_q_odd),
     .data_in_dc_data_q_odd(dc_2_dir_data_data_q_odd),
-    .operation_in_dc_data_q_odd(dc_2_dir_operation_data_q_odd & 0),
+    .operation_in_dc_data_q_odd(dc_2_dir_operation_data_q_odd &  & 3'd0),
     .is_flush_in_dc_data_q_odd(dc_2_dir_is_flush_data_q_odd),
-    .alloc_in_dc_data_q_odd(dc_2_dir_valid_data_q_odd & 0),
+    .alloc_in_dc_data_q_odd(dc_2_dir_valid_data_q_odd & 1'd0),
     .src_in_dc_data_q_odd(dc_2_dir_src_data_q_odd),
     .dest_in_dc_data_q_odd(dc_2_dir_dest_data_q_odd),
     
@@ -379,9 +379,9 @@ directory_top #(
 
     //TODO: UNZERO OUT
     .addr_in_dc_instr_q_odd(dc_2_dir_addr_instr_q_odd),
-    .operation_in_dc_instr_q_odd(dc_2_dir_operation_instr_q_odd & 0),
+    .operation_in_dc_instr_q_odd(dc_2_dir_operation_instr_q_odd &  & 3'd0),
     .is_flush_in_dc_instr_q_odd(dc_2_dir_is_flush_instr_q_odd),
-    .alloc_in_dc_instr_q_odd(dc_2_dir_valid_instr_q_odd & 0),
+    .alloc_in_dc_instr_q_odd(dc_2_dir_valid_instr_q_odd &  & 1'd0),
     .src_in_dc_instr_q_odd(dc_2_dir_src_instr_q_odd),
     .dest_in_dc_instr_q_odd(dc_2_dir_dest_instr_q_odd),
     

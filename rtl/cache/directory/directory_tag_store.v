@@ -1,4 +1,4 @@
-module tag_store #(parameter TAG_SIZE = 18,  IDX_CNT = 512) (
+module directory_tag_store #(parameter TAG_SIZE = 18,  IDX_CNT = 512) (
     input clk,
     input rst,
 

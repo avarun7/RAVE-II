@@ -280,7 +280,7 @@ wire  dir_valid_in_dc_instr_q_odd;
 wire  [1:0] dir_src_in_dc_instr_q_odd;
 wire  [1:0] dir_dest_in_dc_instr_q_odd;
 
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_even(
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -309,7 +309,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_even(
     .is_flush_out(dir_is_flush_in_mem_data_q_even)
 );
 
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_even(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -337,7 +337,7 @@ instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_even(
     .is_flush_out(dir_is_flush_in_mem_instr_q_even)
 );
 
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -366,7 +366,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
     .is_flush_out(dir_is_flush_in_ic_data_q_even)
 );
 
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_even(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -394,7 +394,7 @@ instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_even(
     .is_flush_out(dir_is_flush_in_ic_instr_q_even)
 );
 
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) dcache_data_q_even(
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) dcache_data_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -422,7 +422,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) dcache_data_q_even(
     .dest_out(dir_dest_in_dc_data_q_even),
     .is_flush_out(dir_is_flush_in_dc_data_q_even)
 );
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) dcache_instr_q_even(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) dcache_instr_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -558,7 +558,7 @@ directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .T
     .addr_out(addr_out_even),
     .data_out(data_out_even)
 );
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_odd(
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
@@ -587,7 +587,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_odd(
     .is_flush_out(dir_is_flush_in_mem_data_q_odd)
 );
 
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_odd(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
@@ -615,7 +615,7 @@ instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_odd(
     .is_flush_out(dir_is_flush_in_mem_instr_q_odd)
 );
 
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_odd(
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
@@ -644,7 +644,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_odd(
     .is_flush_out(dir_is_flush_in_ic_data_q_odd)
 );
 
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_odd(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
@@ -672,7 +672,7 @@ instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_odd(
     .is_flush_out(dir_is_flush_in_ic_instr_q_odd)
 );
 
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) dcache_data_q_odd(
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) dcache_data_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
@@ -700,7 +700,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) dcache_data_q_odd(
     .dest_out(dir_dest_in_dc_data_q_odd),
     .is_flush_out(dir_is_flush_in_dc_data_q_odd)
 );
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) dcache_instr_q_odd(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) dcache_instr_q_odd(
     //System     
     .clk(clk),
     .rst(rst),

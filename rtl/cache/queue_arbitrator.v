@@ -1,6 +1,6 @@
 module queue_arbitrator #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
     input[32*Q_WIDTH-1:0]   addr_in,
-    input[Q_WIDTH/2 * CL_SIZE-1:0] data_in,
+    input[Q_WIDTH * CL_SIZE-1:0] data_in,
     input[3*Q_WIDTH-1:0]    operation_in, 
     input [Q_WIDTH-1:0]     valid_in,
     input[2*Q_WIDTH-1:0]    src_in,
@@ -29,7 +29,7 @@ assign operation_out = valid_out ? operation_out_temp : 0;
 genvar i;
 for(i = 0; i < Q_WIDTH; i = i + 1) begin
     always @(*) begin
-    if(i == op_choice) begin
+    if(op_choice[i]) begin
         addr_out = addr_in [i*32 + 31:i*32] ;  
         operation_out_temp = operation_in [i*3 + 2:i*3] ;
         src_out = src_in [i*2 + 1:i*2] ;

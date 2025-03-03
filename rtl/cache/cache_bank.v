@@ -70,7 +70,7 @@ tag update
 );
 assign addr_miss = addr_out;
 assign addr_evic = addr_out;
-
+localparam IDX_ROW = $clog2(IDX_CNT);
 
 localparam  NO_OP= 0;
 localparam LD = 1;
@@ -82,8 +82,8 @@ localparam  UPD= 6;
 localparam WR_LD = 7;
 
 wire[TAG_SIZE-1:0] tag_in, tag_buf;
-wire[IDX_CNT-1:0] idx_in, idx_buf;
-wire[32-IDX_CNT-TAG_SIZE-2:0] offset_in, offset_buf;
+wire[IDX_ROW-1:0] idx_in, idx_buf;
+wire[32-IDX_ROW-TAG_SIZE-2:0] offset_in, offset_buf;
 wire parity_in, parity_buf;
 
 reg [31:0] addr_buffer;
@@ -92,14 +92,15 @@ reg [1:0] size_buffer;
 reg [2:0] operation_buffer;
 reg [OOO_TAG_SIZE-1:0] OOO_TAG_buffer;
 
-assign offset_in = addr_in[32-IDX_CNT-TAG_SIZE-1:0];
-assign parity_in = addr_in[32-IDX_CNT-TAG_SIZE+1:32-IDX_CNT-TAG_SIZE];
-assign idx_in = addr_in[32-1-TAG_SIZE:32-IDX_CNT-TAG_SIZE+2];
+
+assign offset_in = addr_in[32-IDX_ROW-TAG_SIZE-1:0];
+assign parity_in = addr_in[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
+assign idx_in = addr_in[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE+2];
 assign tag_in = addr_in[31:32-TAG_SIZE];
 
-assign offset_buf = addr_buffer[32-IDX_CNT-TAG_SIZE-1:0];
-assign parity_buf = addr_buffer[32-IDX_CNT-TAG_SIZE+1:32-IDX_CNT-TAG_SIZE];
-assign idx_buf = addr_buffer[32-1-TAG_SIZE:32-IDX_CNT-TAG_SIZE+2];
+assign offset_buf = addr_buffer[32-IDX_ROW-TAG_SIZE-1:0];
+assign parity_buf = addr_buffer[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
+assign idx_buf = addr_buffer[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE+2];
 assign tag_buf = addr_buffer[31:32-TAG_SIZE];
 
 

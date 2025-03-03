@@ -94,7 +94,7 @@ wire  [1:0] bank_src_in_mem_instr_q_even;
 wire  [1:0] bank_dest_in_mem_instr_q_even;
 wire [CL_SIZE -1 : 0] bank_data_in_even, bank_data_in_odd;
 
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_even(
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -123,7 +123,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_even(
     .is_flush_out(bank_is_flush_in_mem_data_q_even)
 );
 
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_even(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_even(
     //System     
     .clk(clk),
     .rst(rst),
@@ -232,7 +232,7 @@ wire  bank_valid_in_mem_instr_q_odd;
 wire  [1:0] bank_src_in_mem_instr_q_odd;
 wire  [1:0] bank_dest_in_mem_instr_q_odd;
 
-data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_odd(
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
@@ -261,7 +261,7 @@ data_q #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_data_q_odd(
     .is_flush_out(bank_is_flush_in_mem_data_q_odd)
 );
 
-instr_q  #(.Q_LEGNTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_odd(
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_odd(
     //System     
     .clk(clk),
     .rst(rst),
