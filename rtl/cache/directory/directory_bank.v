@@ -122,7 +122,7 @@ directory_tag_store #( .TAG_SIZE(TAG_SIZE),  .IDX_CNT(IDX_CNT)) dts(
     //initial read out
     .tag_lines_out(tag_lines_old) 
 );
-
+wire[3:0] current_state;
 directory_select_way #(.CL_SIZE(DATA_SIZE), .TAG_SIZE(TAG_SIZE)) dsw(
     .clk(clk),
     .rst(rst),
@@ -136,14 +136,15 @@ directory_select_way #(.CL_SIZE(DATA_SIZE), .TAG_SIZE(TAG_SIZE)) dsw(
     .dest(dest_buffer),
 
     .tag_next_state(tag_lines_new),
-    .data_next_state(data_lines_new)
+    .data_next_state(data_lines_new),
+    .current_state(current_state)
 );
 
 directory_gen_request #( .CL_SIZE(CL_SIZE)) dgr(
     .clk(clk),
     .rst(rst),
 
-    .current_state(data_lines_new),
+    .current_state(current_state),
     .operation(operation_buffer),
     .source(src_buffer),
     .dest(dest_buffer),

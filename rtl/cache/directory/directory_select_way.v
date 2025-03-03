@@ -11,7 +11,9 @@ module directory_select_way #(parameter CL_SIZE = 4, TAG_SIZE = 18) (
     input [1:0] dest,
 
     output [TAG_SIZE*8-1:0] tag_next_state,
-    output reg [CL_SIZE*8-1:0] data_next_state
+    output reg [CL_SIZE*8-1:0] data_next_state,
+
+    output[CL_SIZE-1:0] current_state
 );
 
 wire[7:0] hits;
@@ -20,6 +22,7 @@ wire[7:0] selected_way;
 reg[3:0] selected_data;
 wire[3:0] data_next;
 genvar i;
+assign current_state = selected_data;
 for(i = 0; i < 8; i = i + 1) begin : ands
     assign hits[i] = tag_in == tag_cur_state[i*8+7:i*8];
     assign valid_list[i] = |data_cur_state[i*4+3:i*4];

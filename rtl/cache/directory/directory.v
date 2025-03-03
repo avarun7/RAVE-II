@@ -468,8 +468,11 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(6)) queue_arb_even(
     }),
     .data_in({
         dir_data_in_mem_data_q_even,
+        128'd0,
         dir_data_in_ic_data_q_even,
-        dir_data_in_dc_data_q_even
+        128'd0,
+        dir_data_in_dc_data_q_even,
+        128'd0
     }),
     .operation_in({
         dir_operation_in_mem_data_q_even,
@@ -512,7 +515,7 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(6)) queue_arb_even(
         dir_is_flush_in_dc_instr_q_even
     }),
     
-    .stall_in(0),
+    .stall_in(1'b0),
 
     .addr_out(dir_addr_in_even),
     .operation_out(dir_operation_in_even), 
@@ -533,7 +536,7 @@ directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .T
     .data_in(dir_data_in_even),
     .operation_in(dir_operation_in_even & {3{dir_valid_in_even}}),
     .src_in(dir_src_in_even),
-    .dest_in(dir_is_flush_in_even),
+    .dest_in(dir_dest_in_even),
 
     .mem_instr_q_alloc(mem_instr_q_alloc_even),
     .mem_instr_q_operation(mem_instr_q_operation_even),
@@ -746,8 +749,11 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(6)) queue_arb_odd(
     }),
     .data_in({
         dir_data_in_mem_data_q_odd,
+        128'd0,
         dir_data_in_ic_data_q_odd,
-        dir_data_in_dc_data_q_odd
+        128'd0,
+        dir_data_in_dc_data_q_odd,
+        128'd0
     }),
     .operation_in({
         dir_operation_in_mem_data_q_odd,

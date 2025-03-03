@@ -29,10 +29,10 @@ assign valid = !valid_n;
 qnm #(.N_WIDTH(32 + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
     .m_din(),
     .n_din({src, dest, is_flush, operation_in, addr_in}),
-    .new_m_vector(0),
+    .new_m_vector(2'b0),
     .wr(alloc), 
     .rd(dealloc),
-    .modify_vector(0),
+    .modify_vector(8'd0),
     .rst(rst),
     .clk(clk),
     .full(full), 
