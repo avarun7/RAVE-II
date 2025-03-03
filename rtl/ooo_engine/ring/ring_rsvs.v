@@ -74,8 +74,9 @@ module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, RF_QUEUE=8, ROB_SIZE=256
     output reg                               ld_st_rs2_received,
     output reg[$clog2(PHYS_REG_SIZE)-1:0]    ld_st_rs2_reg
 );
+// TODO: Add in offset for the branch unit
 
-reg[($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+13):0] logical_ring;
+reg[($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+13):0] logical_ring; 
 reg[($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+13):0] arithmetic_ring;
 reg[($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+13):0] branch_ring;
 reg[($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+13):0] ld_st_ring;
@@ -87,7 +88,7 @@ always @(posedge clk ) begin
     // Use 3-bit sat counter, clear your entry when 6, only zero at insertion
     if(valid_in) begin
         uop_disperse[($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+13):($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+11)]   <= functional_unit_num;
-        uop_disperse[($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+10):($clog2(PHYS_REG_SIZE)+3*XLEN+11)]                      <= uop_rs1_reg;
+        uop_disperse[($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+10):($clog2(PHYS_REG_SIZE)+3*XLEN+11)]                      <= rob_entry;
         uop_disperse[(2*$clog2(PHYS_REG_SIZE)+3*XLEN+10):($clog2(PHYS_REG_SIZE)+3*XLEN+11)]                                       <= uop_rs1_reg;
         uop_disperse[($clog2(PHYS_REG_SIZE)+3*XLEN+10)]                                                                           <= uop_rs1_received;
         uop_disperse[($clog2(PHYS_REG_SIZE)+3*XLEN+9):($clog2(PHYS_REG_SIZE)+2*XLEN+10)]                                          <= uop_rs1_value;

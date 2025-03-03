@@ -1,4 +1,4 @@
-module branch_FU#(parameter XLEN=32)(
+module branch_FU#(parameter XLEN=32, ROB_SIZE=256)(
     input clk, rst, valid_in,
     input[4:0]  opcode,
     input[2:0]  branch_type,
@@ -6,19 +6,21 @@ module branch_FU#(parameter XLEN=32)(
     input[XLEN-1:0]      rs2,
     input[XLEN-1:0]      pc,
     input[XLEN-1:0]      offset,
+    input[$clog2(ROB_SIZE)-1:0] rob_entry_in,
 
     output reg           valid_out,
     output reg[XLEN-1:0] result,
     output reg[XLEN-1:0] link_reg,
     output reg           taken,
-    output reg           link
+    output reg           link,
+    output reg          rob_entry
 );
 
 reg equals, less_than, s_less_than;
 
     always @(posedge clk) begin
         valid_out <= valid_in;
-
+        rob_entry <= rob_entry_in;
         case (opcode)
 
             //Branch
