@@ -23,12 +23,54 @@ module c_TOP #(parameter XLEN=32) (
     input ras_push,
     input ras_pop,
     input [XLEN - 1:0] ras_ret_addr,
+    input ras_valid_in,
     
     //outputs
-    output [25:0] clc, //cacheline counter 
-    output [25:0] nlpf, //next-line prefetch
-    output [25:0] bppf  //branch-predictor prefetch
+    output reg [25:0] clc, //cacheline counter 
+    output reg  [25:0] nlpf //next-line prefetch
+    // output reg [25:0] bppf  //branch-predictor prefetch
 );
 
-endmodule
+    reg [XLEN - 1:0] ras_data_out;
+    reg ras_valid_out; //TODO: should these be regs or wires?
 
+    // instantiate RAS
+    ras ras1 (
+        .clk(clk),
+        .rst(rst),
+        .valid_in(ras_valid_in),
+        .push(ras_push),
+        .pop(ras_pop),
+        .data_in(ras_ret_addr),
+
+        .result(ras_data_out),
+        .empty(),
+        .full(),
+        .valid_out(ras_valid_out),
+    );
+
+    // logic to update the cacheline counter
+    always @(posedge clk) begin
+        if (rst) begin
+            clc <= 0;
+        end else if (stall_in) begin
+            clc <= clc;
+        end else if (resteer) begin
+            if (resteer_taken_ROB) begin
+                clc <= resteer_target_ROB [31:6];
+            end else if (resteer_taken_D1) begin
+                clc <= resteer_target_D1 [31:6];
+            end else if (resteer_taken_BR) begin
+                clc <= resteer_target_BR [31:6];
+            end else if (ras_valid_out) begin
+                clc <= ras_data_out [31:6];
+            end else begin //next line
+                clc <= clc + 64; //TODO: we should not reach here, what to do if we do?
+            end
+        end else begin
+            clc <= clc + 64;
+        end
+    end
+
+
+endmodule

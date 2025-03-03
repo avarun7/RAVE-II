@@ -1,0 +1,27 @@
+//Use luigi for the server
+// Go to misc/scratct/mcdermot/RISCV
+// cant use module load, must use vivado 2020.2
+// usr/local/packages/ 
+!viv
+//start from template
+//axi?
+//included IP repo @ /misc/scratch/mcdermot/ip_repo
+
+//bit file at RISCV/RISCV.runs/impl_1
+//inet:  10.159.177.51
+//net mask: 255.255.255.0
+
+sftp 10.159.177.51
+//upload to tmp
+fpgautil -b <file_name>.bit (loads bitsream)
+dm 0xa000_0000 32
+fm addr writedata 
+fm 0xb0000000 0x55 32 1
+
+//Run vnc
+sudo bash
+//pswd for RV1 = rv1, pswd for RV2 = rv2
+dm 0xb0000000 32
+
+//Use at start of vnc session
+kill_vnc 
