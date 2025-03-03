@@ -75,8 +75,6 @@ fi
 mv "${BASENAME}.o" "${BASENAME}_asm/${BASENAME}.o"
 mv "${BASENAME}.elf" "${BASENAME}_asm/${BASENAME}.elf"
 
-"${BASENAME}.elf"
-
 # Success message
 echo "Files generated:"
 echo "  - Disassembly: ${BASENAME}_asm/${BASENAME}.dump"
