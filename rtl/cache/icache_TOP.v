@@ -489,6 +489,4 @@ assign is_flush_out_ic_instr_q_odd = 0;
 assign src_out_ic_instr_q_odd = 1;
 assign dest_out_ic_instr_q_odd = operation_out_ic_instr_q_odd == WR || operation_out_ic_instr_q_odd == RD ? 3 : 2;
 
-
-
 endmodule 
