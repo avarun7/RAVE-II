@@ -539,7 +539,7 @@ icache_TOP #(
     // addr_dir_2_all_odd
     // data_dir_2_all_odd
     // ODD SIDE INPUTS FROM MEM
-    .addr_in_ic_data_q_odd(dir_2_ic_addr_data_q_odd),
+    .addr_in_ic_data_q_odd(addr_dir_2_all_odd),
     .data_in_ic_data_q_odd(data_dir_2_all_odd),
     .operation_in_ic_data_q_odd(dir_2_ic_operation_data_q_odd),
     .is_flush_in_ic_data_q_odd(dir_2_ic_is_flush_data_q_odd),
