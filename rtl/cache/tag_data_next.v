@@ -25,7 +25,7 @@ module data_next_state #(parameter CL_SIZE = 128) (
     input [CL_SIZE-1:0] data_in,
     input [2:0] operation,
     input [3:0] selected_way, 
-    input [5:0] addr_in,
+    input [31:0] addr_in,
     input [1:0] size,
 
     output reg [CL_SIZE*4-1:0] data_next_state,

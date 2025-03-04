@@ -10,7 +10,7 @@ module directory_select_way #(parameter CL_SIZE = 4, TAG_SIZE = 18) (
     input [1:0] src,
     input [1:0] dest,
 
-    output [TAG_SIZE*8-1:0] tag_next_state,
+    output reg[TAG_SIZE*8-1:0] tag_next_state,
     output reg [CL_SIZE*8-1:0] data_next_state,
 
     output[CL_SIZE-1:0] current_state
@@ -18,7 +18,7 @@ module directory_select_way #(parameter CL_SIZE = 4, TAG_SIZE = 18) (
 
 wire[7:0] hits;
 wire[7:0] valid_list;
-wire[7:0] selected_way;
+wire[7:0] selected_way, replacement_way;
 reg[3:0] selected_data;
 wire[3:0] data_next;
 genvar i;
@@ -28,7 +28,7 @@ for(i = 0; i < 8; i = i + 1) begin : ands
     assign valid_list[i] = |data_cur_state[i*4+3:i*4];
     assign selected_way[i] = hits[i] & valid_list[i]; 
 end
-
+//TODO: Implement TAG adding lol
 always @(*) begin
     data_next_state = data_cur_state;
     casex(hits)
@@ -43,6 +43,14 @@ always @(*) begin
     endcase
 end
 
+
+genvar j;
+for( j = 0; j < 8; j = j + 1) begin
+    always @(*) begin
+        tag_next_state[j*TAG_SIZE+TAG_SIZE-1:j*TAG_SIZE] = !(|hits) && replacement_way[i] ? tag_in : tag_cur_state[j*TAG_SIZE+TAG_SIZE-1:j*TAG_SIZE];
+    end
+end
+
 directory_next_state dns(
    .rst(rst),
    .current_state(selected_data),
@@ -51,5 +59,10 @@ directory_next_state dns(
    .dest(dest),
 //Ouptuts
    .next_state(data_next)
+);
+
+pencoder_copy #(.WIDTH(8)) pc1(
+    .a(~valid_list),
+    .o(replacement_way)
 );
 endmodule

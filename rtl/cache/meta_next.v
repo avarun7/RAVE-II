@@ -23,10 +23,9 @@ localparam  INV = 5;
 localparam  UPD= 6;
 localparam RWITM = 7;
 localparam RINV = 2;
-wire [META_SIZE*4:0] meta_way_split [3:0];
+wire [META_SIZE*4-1:0] meta_way_split [3:0];
 wire[3:0] lru_concat[3:0];
 wire[3:0] selected_way_miss;
-wire[3:0] selected_way_hit;
 wire[3:0] pending;
 wire[3:0] pmsi_concat[3:0];
 assign miss = ~(|hits);
@@ -44,8 +43,8 @@ end
 
 assign mshr_alloc = (operation == LD || operation == ST) && ~(|hits) && ~(mshr_hit); //TODO:Check if |opeariton should be op=LD/ST
 assign tag_alloc = mshr_alloc;
-assign cur_state = hits[3] ? pmsi_concat[3] : hits[2] ? pmsi_concat[2] : hits[1] ? pmsi_concat[1] : hits[0] ? pmsi_concat[0] : 0;
-assign is_evict = pmsi_concat[3] != 0 && pmsi_concat[2] != 0 && pmsi_concat[1] != 0 && pmsi_concat[0] != 0 && miss;
+assign cur_state = hits[3] ? pmsi_concat[3] : hits[2] ? pmsi_concat[2] : hits[1] ? pmsi_concat[1] : hits[0] ? pmsi_concat[0] : 1;
+assign is_evict = (pmsi_concat[3] != 1 && pmsi_concat[2] != 1 && pmsi_concat[1] != 1 && pmsi_concat[0] != 1) && miss;
 //Choose which way to evict if there is a miss
 max4 way_select(
 .a(lru_concat[0]),
@@ -57,16 +56,20 @@ max4 way_select(
 .max_valid(pending_stall_temp)
 );
 assign pending_stall = pending_stall_temp && miss && valid;
-assign is_evict = pmsi_concat[0] != 1 && pmsi_concat[1] != 1  && pmsi_concat[2] != 1 && pmsi_concat[3] != 1;
-
+// assign is_evict = pmsi_concat[0] != 1 && pmsi_concat[1] != 1  && pmsi_concat[2] != 1 && pmsi_concat[3] != 1;
+wire [3:0] new_state;
 pmsi_next_state pns(
     .operation(operation),
-    .current_state({pmsi_concat[3], pmsi_concat[2], pmsi_concat[1], pmsi_concat[0]}),
+    .current_state(cur_state),
     .is_evict(is_evict),
-    .next_state({meta_out[27:24],meta_out[19:16],meta_out[11:8] ,meta_out[3:0]}),
+    .next_state(new_state),
     .wb_to_l2(wb_to_l2)
 );
-
+//{meta_out[27:24],meta_out[19:16],meta_out[11:8] ,meta_out[3:0]}
+genvar j;
+for(j = 0; j < 4; j = j + 1) begin
+    assign meta_out[j*8+3:j*8] = way_out[j] ? new_state : meta_in[j*8+3:j * 8];
+end
 lru_next_state lns(
     .selected_way(way_out),
     .lru_state_in({lru_concat[3], lru_concat[2], lru_concat[1], lru_concat[0]}),
@@ -91,28 +94,28 @@ module max4 (
     always @(*) begin
         temp_max = 32'b0;
         found_valid = 0;
-
-        if (p[0]) begin
+        way_sel = 0;
+        if (~p[0]) begin
             temp_max = a;
             found_valid = 1;
             way_sel = 1;
         end
-        if (p[1] && (!found_valid || b >= temp_max)) begin
+        if (~p[1] && (!found_valid || b >= temp_max)) begin
             temp_max = b;
             found_valid = 1;
             way_sel = 2;
 
         end
-        if (p[2] && (!found_valid || c >= temp_max)) begin
+        if (~p[2] && (!found_valid || c >= temp_max)) begin
             temp_max = c;
             found_valid = 1;
             way_sel = 4;
 
         end
-        if (p[3] && (!found_valid || d >= temp_max)) begin
+        if (~p[3] && (!found_valid || d >= temp_max)) begin
             temp_max = d;
             found_valid = 1;
-            way_sel = 4;
+            way_sel = 8;
 
         end
 

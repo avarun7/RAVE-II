@@ -57,19 +57,19 @@ tag update
     //Requests to DRAM/Directory
     //Eviction Q
     output [2:0] operation_evic,
-    output [31:0] addr_evic, //TODO: implement
+    output reg[31:0]  addr_evic, //TODO: implement
     output alloc_evic,
     output [CL_SIZE-1:0] data_evic,
     //Miss Q
     output [2:0] operation_miss,
-    output [31:0] addr_miss,
+    output reg[31:0]  addr_miss,
     output alloc_miss,
 
     output stall_cache
 
 );
-assign addr_miss = addr_out;
-assign addr_evic = addr_out;
+//TODO: REBUILD ADDR
+
 localparam IDX_ROW = $clog2(IDX_CNT);
 
 localparam  NO_OP= 0;
@@ -92,6 +92,12 @@ reg [1:0] size_buffer;
 reg [2:0] operation_buffer;
 reg [OOO_TAG_SIZE-1:0] OOO_TAG_buffer;
 
+initial addr_buffer = 0;
+initial operation_buffer = 0;
+initial size_buffer = 0;
+initial data_buffer = 0;
+initial OOO_TAG_buffer = 0;
+
 
 assign offset_in = addr_in[32-IDX_ROW-TAG_SIZE-1:0];
 assign parity_in = addr_in[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
@@ -107,7 +113,7 @@ assign tag_buf = addr_buffer[31:32-TAG_SIZE];
 assign valid_operation_in = |operation_in;
 assign valid_operation_buf = |operation_buffer;
 assign lsq_alloc = (is_miss || is_pending) && valid_operation_buf;
-
+wire [CL_SIZE-1:0] data_evict;
 assign hit = is_hit && !is_pending;
 assign addr_out = addr_buffer;
 assign size_out = size_buffer;
@@ -124,21 +130,36 @@ assign stall_cache = pending_stall  || mshr_alloc && mshr_full || rwnd_full && r
 
 always @(posedge clk) begin
     if(rst) begin
-        addr_buffer <= 32'hFFFF_FFFF;
-        data_buffer <= 0;
-        size_buffer <= 0;
-        operation_buffer <= 0;
-        OOO_TAG_buffer <= 0;
+        addr_buffer = 32'hFFFF_FFFF;
+        data_buffer = 0;
+        size_buffer = 0;
+        operation_buffer = 0;
+        OOO_TAG_buffer  = 0;
+        addr_miss = addr_buffer;
+        addr_evic = addr_buffer;
     end
     else if (!stall_cache && valid_operation_in) begin
-        addr_buffer <= addr_in;
-        data_buffer <= data_in;
-        size_buffer <= size_in;
-        operation_buffer <= operation_in;
-        OOO_TAG_buffer <= ooo_tag_in;
+        addr_buffer = addr_in;
+        data_buffer = data_in;
+        size_buffer = size_in;
+        operation_buffer = operation_in;
+        OOO_TAG_buffer = ooo_tag_in;
+        addr_miss = addr_buffer;
+        addr_evic = addr_buffer;
     end
-    else if(stall_cache && valid_operation_in) begin end
-    else operation_buffer <= 0;
+    else if(stall_cache && valid_operation_in) begin 
+        addr_buffer = addr_buffer;
+        data_buffer = data_buffer;
+        size_buffer = size_buffer;
+        operation_buffer = operation_buffer;
+        OOO_TAG_buffer = OOO_TAG_buffer;
+        addr_miss = addr_buffer;
+        addr_evic = addr_buffer;
+    end
+    else begin operation_buffer = 0;
+        addr_miss = addr_buffer;
+        addr_evic = addr_buffer;
+    end
 end
 
 wire[TAG_SIZE*4-1:0] tag_lines_old, tag_lines_new;
@@ -195,7 +216,7 @@ meta_store #(.META_SIZE(8),  .IDX_CNT(IDX_CNT)) ms1(
     //writeback
     .meta_in_wb(meta_lines_new),
     .idx_in_wb(idx_buf),
-    .alloc(valid_operation_buffer && !stall_cache),
+    .alloc(valid_operation_buf && !stall_cache),
 
     .st_fwd(st_fwd),
 
@@ -209,6 +230,7 @@ meta_store #(.META_SIZE(8),  .IDX_CNT(IDX_CNT)) ms1(
  tag_select #(.TAG_SIZE(TAG_SIZE)) ts2 (
     .tag_cur_state(tag_lines_old),
     .tag_in(tag_buf),
+    .meta_in(meta_lines_old),
 
     .hit(is_hit), 
     .miss(is_miss),

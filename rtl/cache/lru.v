@@ -25,9 +25,9 @@ module lru_next_state (
     generate 
         for(i = 0; i < 4; i = i + 1) begin: looper
             always @(*) begin
-                if(lru_state_in[i*4+3:i*4] > updated_way) lru_state_out[i*4+3:i*4] <= lru_state_in[i*4+3:i*4];
-                else if (lru_state_in[i*4+3:i*4] < updated_way) lru_state_out[i*4+3:i*4] <= lru_state_in[i*4+3:i*4] << 1;
-                else lru_state_out[i*4+3:i*4] <= 4'b0001;
+                if(lru_state_in[i*4+3:i*4] < updated_way) lru_state_out[i*4+3:i*4] <= lru_state_in[i*4+3:i*4];
+                else if (lru_state_in[i*4+3:i*4] > updated_way) lru_state_out[i*4+3:i*4] <= lru_state_in[i*4+3:i*4] >> 1;
+                else lru_state_out[i*4+3:i*4] <= 4'b1000;
             end
         end
     endgenerate 
