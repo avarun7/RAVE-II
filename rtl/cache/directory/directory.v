@@ -796,7 +796,7 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(6)) queue_arb_odd(
         dir_is_flush_in_dc_instr_q_odd
     }),
     
-    .stall_in(0),
+    .stall_in(1'b0),
 
     .addr_out(dir_addr_in_odd),
     .operation_out(dir_operation_in_odd), 
@@ -817,7 +817,7 @@ directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .T
     .data_in(dir_data_in_odd),
     .operation_in(dir_operation_in_odd & {3{dir_valid_in_odd}}),
     .src_in(dir_src_in_odd),
-    .dest_in(dir_is_flush_in_odd),
+    .dest_in(dir_dest_in_odd),
 
     .mem_instr_q_alloc(mem_instr_q_alloc_odd),
     .mem_instr_q_operation(mem_instr_q_operation_odd),

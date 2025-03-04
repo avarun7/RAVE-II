@@ -461,7 +461,7 @@ dram_top #(
     .src_out_mem_data_q_even(mem_2_dir_src_data_q_even),
     .dest_out_mem_data_q_even(mem_2_dir_dest_data_q_even),
     
-    .full_in_mem_data_q_even(0),
+    .full_in_mem_data_q_even(1'b0),
 
     // ODD SIDE OUTPUTS
     .addr_out_mem_data_q_odd(mem_2_dir_addr_data_q_odd),
@@ -472,7 +472,7 @@ dram_top #(
     .src_out_mem_data_q_odd(mem_2_dir_src_data_q_odd),
     .dest_out_mem_data_q_odd(mem_2_dir_dest_data_q_odd),
     
-    .full_in_mem_data_q_odd(0)
+    .full_in_mem_data_q_odd(1'b0)
 );
 
 icache_TOP #(
@@ -550,7 +550,7 @@ icache_TOP #(
     .src_out_ic_data_q_even(ic_2_dir_src_data_q_even),
     .dest_out_ic_data_q_even(ic_2_dir_dest_data_q_even),
 
-    .full_in_ic_data_q_even(0),
+    .full_in_ic_data_q_even(1'b0),
 
     .addr_out_ic_instr_q_even(ic_2_dir_addr_instr_q_even),
     .operation_out_ic_instr_q_even(ic_2_dir_operation_instr_q_even),
@@ -559,7 +559,7 @@ icache_TOP #(
     .src_out_ic_instr_q_even(ic_2_dir_src_instr_q_even),
     .dest_out_ic_instr_q_even(ic_2_dir_dest_instr_q_even),
     
-    .full_in_ic_instr_q_even(0),
+    .full_in_ic_instr_q_even(1'b0),
 
     // ODD SIDE OUTPUTS TO MEM
     .addr_out_ic_data_q_odd(ic_2_dir_addr_data_q_odd),
@@ -570,7 +570,7 @@ icache_TOP #(
     .src_out_ic_data_q_odd(ic_2_dir_src_data_q_odd),
     .dest_out_ic_data_q_odd(ic_2_dir_dest_data_q_odd),
 
-    .full_in_ic_data_q_odd(0),
+    .full_in_ic_data_q_odd(1'b0),
 
     .addr_out_ic_instr_q_odd(ic_2_dir_addr_instr_q_odd),
     .operation_out_ic_instr_q_odd(ic_2_dir_operation_instr_q_odd),
@@ -579,7 +579,7 @@ icache_TOP #(
     .src_out_ic_instr_q_odd(ic_2_dir_src_instr_q_odd),
     .dest_out_ic_instr_q_odd(ic_2_dir_dest_instr_q_odd),
 
-    .full_in_ic_instr_q_odd(0)
+    .full_in_ic_instr_q_odd(1'b0)
 );
 
 

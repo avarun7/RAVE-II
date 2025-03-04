@@ -1,4 +1,4 @@
-module qnm #(parameter N_WIDTH = 8, M_WIDTH = 8, Q_LENGTH = 8) (
+module qm #(parameter N_WIDTH = 8, M_WIDTH = 8, Q_LENGTH = 8) (
     input [M_WIDTH-1:0] m_din,
     input [N_WIDTH-1:0] n_din,
     input [M_WIDTH*Q_LENGTH-1:0] new_m_vector,
@@ -8,22 +8,22 @@ module qnm #(parameter N_WIDTH = 8, M_WIDTH = 8, Q_LENGTH = 8) (
     input clk,
     output full, empty,
     output [M_WIDTH*Q_LENGTH-1:0] old_m_vector,
-    output [M_WIDTH+N_WIDTH-1:0] dout
+    output [M_WIDTH-1:0] dout
 );
 
 reg [Q_LENGTH-1:0] wr_ptr, rd_ptr;
-reg [N_WIDTH+M_WIDTH-1:0] queue[Q_LENGTH-1:0];
-wire [(M_WIDTH+N_WIDTH) * Q_LENGTH -1:0] flat_queue;
+reg [M_WIDTH-1:0] queue[Q_LENGTH-1:0];
+wire [(M_WIDTH) * Q_LENGTH -1:0] flat_queue;
 genvar k;
 generate
     for (k = 0; k < Q_LENGTH; k = k + 1) begin : flatten
-        assign flat_queue[(k * (M_WIDTH+N_WIDTH)) +: (M_WIDTH+N_WIDTH)] = queue[k];
-        assign old_m_vector[(k * (M_WIDTH)) +: (M_WIDTH)] = flat_queue[(k * (M_WIDTH+N_WIDTH)) +: (M_WIDTH)];
+        assign flat_queue[(k * (M_WIDTH)) +: (M_WIDTH)] = queue[k];
+        assign old_m_vector[(k * (M_WIDTH)) +: (M_WIDTH)] = flat_queue[(k * (M_WIDTH)) +: (M_WIDTH)];
     end
 endgenerate
 
 
-mux_nm #(M_WIDTH+N_WIDTH, Q_LENGTH) mnm1 (
+mux_nm #(M_WIDTH, Q_LENGTH) mnm1 (
     .data_in(flat_queue),   
     .one_hot_sel(rd_ptr),
     .data_out(dout) 
@@ -56,8 +56,9 @@ always @(posedge clk or rst) begin
     else begin
         if(!full) begin
             if(wr) begin
-                wr_ptr <= wr_ptr[Q_LENGTH-1] == 1 ? 1 : wr_ptr << 1;
-                queue[wr_ptr] <= {n_din, m_din};
+                
+                queue[wr_ptr] = {m_din};
+                wr_ptr = wr_ptr[Q_LENGTH-1] == 1 ? 0 : wr_ptr == 0 ? 1 : wr_ptr << 1;
             end
         end  
         if(rd) begin
@@ -65,7 +66,7 @@ always @(posedge clk or rst) begin
         end
         for(p = 0; p < Q_LENGTH; p = p + 1) begin : m_update
             if(modify_vector[p] == 1) begin
-                queue[p] <= {queue[p][M_WIDTH +: N_WIDTH], new_m_vector[p*M_WIDTH +: M_WIDTH]};           
+                queue[p] <= { new_m_vector[p*M_WIDTH +: M_WIDTH]};           
             end
         end
         

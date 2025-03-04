@@ -150,14 +150,29 @@ instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) mem_instr_q_even(
     .dest_out(bank_dest_in_mem_instr_q_even),
     .is_flush_out(bank_is_flush_in_mem_instr_q_even)
 );
+wire [31:0] bank_addr_in_even;
+wire [2:0] bank_operation_in_even;
+wire bank_valid_in_even;
+// wire [CL_SIZE - 1:0] bank_data_in_even;
+wire [1:0] bank_src_in_even;
+wire [1:0] bank_dest_in_even;
+wire bank_is_flush_in_even;
 
+wire [31:0] bank_addr_in_odd;
+wire [2:0] bank_operation_in_odd;
+wire bank_valid_in_odd;
+// wire [CL_SIZE - 1:0] bank_data_in_odd;
+wire [1:0] bank_src_in_odd;
+wire [1:0] bank_dest_in_odd;
+wire bank_is_flush_in_odd;
 queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(2)) queue_arb_even(
     .addr_in({
         bank_addr_in_mem_data_q_even,
         bank_addr_in_mem_instr_q_even
     }),
     .data_in({
-        bank_data_in_mem_data_q_even
+        bank_data_in_mem_data_q_even,
+        128'd0
     }),
     .operation_in({
         bank_operation_in_mem_data_q_even,
@@ -182,13 +197,13 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(2)) queue_arb_even(
     .stall_in(bank_stall_even),
 
 
-    .addr_out(bank_addr_in_even),
-    .operation_out(bank_operation_in_even), 
-    .valid_out(bank_valid_in_even),
-    .data_out(bank_data_in_even),
-    .src_out(bank_src_in_even),
-    .dest_out(bank_dest_in_even),
-    .is_flush_out(bank_is_flush_in_even),
+    .addr_out(      bank_addr_in_even),
+    .operation_out( bank_operation_in_even), 
+    .valid_out(     bank_valid_in_even),
+    .data_out(      bank_data_in_even),
+    .src_out(       bank_src_in_even),
+    .dest_out(      bank_dest_in_even),
+    .is_flush_out(  bank_is_flush_in_even),
 
     .dealloc(dealloc_even)
 );
@@ -294,7 +309,8 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(2)) queue_arb_odd(
         bank_addr_in_mem_instr_q_odd
     }),
     .data_in({
-        bank_data_in_mem_data_q_odd
+        bank_data_in_mem_data_q_odd,
+        128'd0
     }),
     .operation_in({
         bank_operation_in_mem_data_q_odd,
