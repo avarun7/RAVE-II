@@ -31,7 +31,7 @@ qn #(.N_WIDTH(32 + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
     .n_din({src, dest, is_flush, operation_in, addr_in}),
     .new_m_vector(2'b0),
     .wr(alloc), 
-    .rd(dealloc),
+    .rd(dealloc && valid),
     .modify_vector(8'd0),
     .rst(rst),
     .clk(clk),

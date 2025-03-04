@@ -58,11 +58,12 @@ always @(posedge clk or rst) begin
             if(wr) begin
                 
                 queue[wr_ptr] = {n_din, m_din};
-                wr_ptr = wr_ptr[Q_LENGTH-1] == 1 ? 0 : wr_ptr == 0 ? 1 : wr_ptr << 1;
+                wr_ptr = wr_ptr[Q_LENGTH-1] == 1 ? 1 : wr_ptr << 1;
             end
         end  
         if(rd) begin
-            rd_ptr = rd_ptr[Q_LENGTH-1] == 1 ? 0 : rd_ptr == 0 ? 1 : rd_ptr << 1;        end
+            rd_ptr = rd_ptr[Q_LENGTH-1] == 1 ? 1 : rd_ptr << 1;
+        end
         for(p = 0; p < Q_LENGTH; p = p + 1) begin : m_update
             if(modify_vector[p] == 1) begin
                 queue[p] <= {queue[p][M_WIDTH +: N_WIDTH], new_m_vector[p*M_WIDTH +: M_WIDTH]};           

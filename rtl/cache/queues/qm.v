@@ -58,7 +58,7 @@ always @(posedge clk or rst) begin
             if(wr) begin
                 
                 queue[wr_ptr] = {m_din};
-                wr_ptr = wr_ptr[Q_LENGTH-1] == 1 ? 0 : wr_ptr == 0 ? 1 : wr_ptr << 1;
+                wr_ptr = wr_ptr[Q_LENGTH-1] == 1 ? 1 : wr_ptr << 1;
             end
         end  
         if(rd) begin
