@@ -34,7 +34,7 @@ genvar i;
 for(i = 0; i < 8; i = i + 1) begin
     assign modify_vector[i]  = {addr_l2[31:4], l2_ldst} == old_m_vector[29+i*8:1+8*i];
     assign new_m_vector[i*30] = 1;
-    assign new_m_vector[i*30 + 27 : i*30 +1 ] = old_m_vector[i*30 + 27 : i * 30 + 1];
+    assign new_m_vector[i*30 + 29 : i*30 +1 ] = old_m_vector[i*30 + 29 : i * 30 + 1];
     assign hit_vector[i] = {addr_cache[31:4], operation_cache == 3} == old_m_vector[29+i*30:1+30*i];
     assign hit_second[i] = old_m_vector[29+i*30:1+30*i];
 

@@ -10,15 +10,15 @@ input [1:0]dest_in,
 input is_flush_in,
 input [CL_SIZE-1:0] data_in,
 
-output reg[31:0] addr_out,
-output reg [2:0] operation_out,
-output reg valid_out,
-output reg [1:0]src_out,
-output reg [1:0]dest_out,
-output reg is_flush_out,
-output reg [CL_SIZE-1:0] data_out,
+output reg[31:0]            addr_out,
+output reg [2:0]            operation_out,
+output reg                  valid_out,
+output reg [1:0]            src_out,
+output reg [1:0]            dest_out,
+output reg                  is_flush_out,
+output reg [CL_SIZE-1:0]    data_out,
 
-output reg stall_out
+output reg                  stall_out
 );
 localparam RD = 3; //Get cache line on miss from LD
 localparam WR = 4; //Send data to memory
@@ -39,62 +39,92 @@ reg [1:0]src_buf;
 reg [1:0]dest_buf;
 reg is_flush_buf;
 reg [CL_SIZE-1:0] data_buf;
-
+initial stall_out = 0;
+initial addr_out = 0;
+initial operation_out = 0;
+initial valid_out = 0;
+initial src_out = 0;
+initial dest_out = 0;
+initial is_flush_out = 0;
+initial data_out = 0;
+initial state_bank = 0;
+initial addr_buf = 0;
+initial         operation_buf = 0;
+initial valid_buf = 0;
+initial src_buf = 0;
+initial dest_buf = 0;
+initial is_flush_buf = 0;
+initial data_buf = 0;
 always @(posedge clk) begin
     if(rst) begin
+        addr_buf = 0;
         state_bank = 0;
         valid_buf = 0;
         operation_buf = 0;
         valid_out = 0;
         operation_out = 0;
+        stall_out = 0;
+        stall_out = 0;
+        addr_out = 0;
+        valid_out = 0;
+        src_out = 0;
+        dest_out = 0;
+        is_flush_out = 0;
+        data_out = 0;
+        src_buf = 0;
+        dest_buf = 0;
+        is_flush_buf = 0;
+        data_buf = 0;
     end
-    valid_out = 0;
-    operation_out = 0;
-    case(state_bank) 
-        0: begin 
-            stall_out = 0;
-            if(valid_in && operation_in != 0) begin
-                state_bank = 1;
-                addr_buf = addr_in;
-                operation_buf = operation_in;
-                valid_buf = valid_in;
-                src_buf = src_in;
-                dest_buf = dest_in;
-                is_flush_buf = is_flush_in;
-                data_buf = data_in;
+    else begin
+        valid_out = 0;
+        operation_out = 0;
+        case(state_bank) 
+            0: begin 
+                stall_out = 0;
+                if(valid_in && operation_in != 0) begin
+                    state_bank = 1;
+                    addr_buf = addr_in;
+                    operation_buf = operation_in;
+                    valid_buf = valid_in;
+                    src_buf = src_in;
+                    dest_buf = dest_in;
+                    is_flush_buf = is_flush_in;
+                    data_buf = data_in;
+                end
             end
-        end
-        1: begin
-            stall_out = 1;
-            state_bank = 2;
-        end
-        2: begin
-            stall_out = 1;
-            state_bank = 3;
-        end
-        3: begin
-            stall_out = 1;
-            state_bank = 4;
-        end
-        4: begin
-            stall_out = 1;
-            state_bank = 5;
-        end
-        5: begin 
-            state_bank = 0;
-            stall_out = 1;
-            data_out = mem_bank[addr_buf[16:5]];
-            if(operation_buf == WR) begin
-                mem_bank[addr_buf[16:5]] = data_buf;
+            1: begin
+                stall_out = 1;
+                state_bank = 2;
             end
-            valid_out = operation_buf == WR ? 0 : 1;
-            operation_out = operation_buf == RD ? WR : NOOP ;
-            src_out = 3;
-            dest_out = src_buf;
-            addr_out = addr_buf;
-            is_flush_out = 0;
-        end
-    endcase
+            2: begin
+                stall_out = 1;
+                state_bank = 3;
+            end
+            3: begin
+                stall_out = 1;
+                state_bank = 4;
+            end
+            4: begin
+                stall_out = 1;
+                state_bank = 5;
+            end
+            5: begin 
+                state_bank = 0;
+                stall_out = 1;
+                data_out = mem_bank[addr_buf[16:5]];
+                if(operation_buf == WR) begin
+                    mem_bank[addr_buf[16:5]] = data_buf;
+                end
+                valid_out = operation_buf == WR ? 0 : 1;
+                operation_out = operation_buf == RD ? WR : NOOP ;
+                src_out = 3;
+                dest_out = src_buf;
+                addr_out = addr_buf;
+                is_flush_out = 0;
+            end
+        endcase
+    end
 end
 
 initial begin

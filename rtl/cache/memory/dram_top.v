@@ -209,8 +209,8 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(2)) queue_arb_even(
 );
 
 dram_bank #(.CL_SIZE(CL_SIZE), .file_name(1)) db_even(
-.rst(clk),
-.clk(rst),
+.rst(rst),
+.clk(clk),
 
 .addr_in(bank_addr_in_even),
 .operation_in(bank_operation_in_even),
@@ -347,8 +347,8 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(2)) queue_arb_odd(
 );
 
 dram_bank #(.CL_SIZE(128), .file_name(2)) db_odd(
-.rst(clk),
-.clk(rst),
+.rst(rst),
+.clk(clk),
 
 .addr_in(bank_addr_in_odd),
 .operation_in(bank_operation_in_odd),
