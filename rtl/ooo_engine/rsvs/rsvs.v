@@ -4,7 +4,7 @@
 module rsv #(parameter XLEN=32, SIZE=16, PHYS_REG_SIZE=256, ROB_SIZE=265)( // Assume mapper handles SEXT
     input clk, rst, valid_in,
 
-    // Organized as such within the RSV, TODO: need rob entry
+    // Organized as such within the RSV
     input[$clog2(ROB_SIZE)-1:0]         rob_entry_in,
     input[$clog2(PHYS_REG_SIZE)-1:0]    rs1_reg,
     input                               rs1_received,
@@ -18,7 +18,7 @@ module rsv #(parameter XLEN=32, SIZE=16, PHYS_REG_SIZE=256, ROB_SIZE=265)( // As
     input[$clog2(PHYS_REG_SIZE)-1:0]    rs2_reg,
 
     /*   Update Vars, from ring from ROB   */
-    input                               update,
+    input                               update_valid,
     input[$clog2(PHYS_REG_SIZE)-1:0]    update_reg,
     input[XLEN-1:0]                     update_val,
     
@@ -31,15 +31,28 @@ module rsv #(parameter XLEN=32, SIZE=16, PHYS_REG_SIZE=256, ROB_SIZE=265)( // As
     output reg                          additional_info
 
 );
-reg [SIZE-1:0]                          free_list;
-reg [SIZE-1:0]                          available;
+reg[SIZE-1:0]                           free_list;
+reg[SIZE-1:0]                           available;
+reg[SIZE-1:0]                           rs1_update;
+reg[SIZE-1:0]                           rs2_update;
 wire [$clog2(SIZE)-1:0]                 dispatch;
 wire [$clog2(SIZE)-1:0]                 allocate;
 wire                                    none_dispatch;
 wire                                    none_allocate;
 
+reg[$clog2(ROB_SIZE)-1:0]         rob_queue                [0:SIZE-1];
+reg[$clog2(PHYS_REG_SIZE)-1:0]    rs1_reg_queue            [0:SIZE-1];
+reg                               rs1_received_queue       [0:SIZE-1];
+reg[XLEN-1:0]                     rs1_value_queue          [0:SIZE-1];
+reg[XLEN-1:0]                     pc_queue                 [0:SIZE-1];
+reg[4:0]                          opcode_queue             [0:SIZE-1];
+reg[2:0]                          opcode_type_queue        [0:SIZE-1];
+reg                               additional_info_queue    [0:SIZE-1];
+reg[XLEN-1:0]                     rs2_value_queue          [0:SIZE-1];
+reg                               rs2_received_queue       [0:SIZE-1];
+reg[$clog2(PHYS_REG_SIZE)-1:0]    rs2_reg_queue            [0:SIZE-1];
 
-reg [($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+10):0] rsv_entries[0:SIZE-1];
+
 pencoder(.SIZE(SIZE)) read(.a(available), .o(dispatch), .none(none_dispatch));
 pencoder(.SIZE(SIZE)) write(.a(free_list), .o(allocate), .none(none_allocate));
 
@@ -50,7 +63,23 @@ end
 integer unsigned i;
 always @(*) begin
     for(i = 0; i < SIZE; i = i + 1) begin
-        available[i] <= rsv_entries[i][1] & rsv_entries[i][$clog2(PHYS_REG_SIZE)+3*XLEN+10];
+        available[i] <= rs2_received_queue[i] & rs1_received_queue[i];
+    end
+end
+
+always @(*) begin
+    for(i = 0; i < SIZE; i = i + 1) begin
+        if(update_reg == rs1_reg_queue[i] && !rs1_received)
+            rs1_update[i] <= 1;
+        else rs1_update[i] <= 0;
+    end
+end
+
+always @(*) begin
+    for(i = 0; i < SIZE; i = i + 1) begin
+        if(update_reg == rs2_reg_queue[i] && !rs2_received)
+            rs2_update[i] <= 1;
+        else rs2_update[i] <= 0;
     end
 end
 
@@ -61,33 +90,47 @@ always @(posedge clk or posedge rst) begin
     
     if(!none_dispatch)begin
         // Dispatch to fu
-        rob_entry                <= rsv_entries[dispatch][($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+10):(2*$clog2(PHYS_REG_SIZE)+3*XLEN+11)];
-        rs1                      <= rsv_entries[dispatch][($clog2(PHYS_REG_SIZE)+3*XLEN+9):($clog2(PHYS_REG_SIZE)+2*XLEN+10)];
-        pc                       <= rsv_entries[dispatch][($clog2(PHYS_REG_SIZE)+2*XLEN+9):($clog2(PHYS_REG_SIZE)+XLEN+10)];
-        opcode                   <= rsv_entries[dispatch][($clog2(PHYS_REG_SIZE)+XLEN+9):($clog2(PHYS_REG_SIZE)+XLEN+5)];
-        opcode_type              <= rsv_entries[dispatch][($clog2(PHYS_REG_SIZE)+XLEN+4):($clog2(PHYS_REG_SIZE)+XLEN+2)];
-        additional_info          <= rsv_entries[dispatch][($clog2(PHYS_REG_SIZE)+XLEN+1)];
-        rs2                      <= rsv_entries[dispatch][($clog2(PHYS_REG_SIZE)+XLEN):($clog2(PHYS_REG_SIZE)+1)];
-        free_list[dispatch] <= 1'b1;
-        rsv_entries[i][1]        <= 1'b0;
+        rob_entry               <= rob_queue[dispatch];
+        rs1                     <= rs1_value_queue[dispatch];
+        pc                      <= pc_queue[dispatch];
+        opcode                  <= opcode_queue[dispatch];
+        opcode_type             <= opcode_type_queue[dispatch];
+        additional_info         <= additional_info_queue[dispatch];
+        rs2                     <= rs2_value_queue[dispatch];
+        free_list[dispatch]     <= 1'b1;
+        
 
     end
     // TODO: Needs double pointer method, no idea how imma do that
     if(~|free_list & valid_in) begin
         // Write to FU
-        rsv_entries[allocate][($clog2(ROB_SIZE)+2*$clog2(PHYS_REG_SIZE)+3*XLEN+10):($clog2(PHYS_REG_SIZE)+3*XLEN+11)]  <= rob_entry;
-        rsv_entries[allocate][(2*$clog2(PHYS_REG_SIZE)+3*XLEN+10):($clog2(PHYS_REG_SIZE)+3*XLEN+11)]                   <= rs1_reg;
-        rsv_entries[allocate][($clog2(PHYS_REG_SIZE)+3*XLEN+10)]                                                       <= rs1_received;
-        rsv_entries[allocate][($clog2(PHYS_REG_SIZE)+3*XLEN+9):($clog2(PHYS_REG_SIZE)+2*XLEN+10)]                      <= rs1_value;
-        rsv_entries[allocate][($clog2(PHYS_REG_SIZE)+2*XLEN+9):($clog2(PHYS_REG_SIZE)+XLEN+10)]                        <= pc_in;
-        rsv_entries[allocate][($clog2(PHYS_REG_SIZE)+XLEN+9):($clog2(PHYS_REG_SIZE)+XLEN+5)]                           <= opcode_in;
-        rsv_entries[allocate][($clog2(PHYS_REG_SIZE)+XLEN+4):($clog2(PHYS_REG_SIZE)+XLEN+2)]                           <= opcode_type_in;
-        rsv_entries[allocate][($clog2(PHYS_REG_SIZE)+XLEN+1)]                                                          <= additional_info_in;
-        rsv_entries[allocate][($clog2(PHYS_REG_SIZE)+XLEN):($clog2(PHYS_REG_SIZE)+1)]                                  <= rs2_value;
-        rsv_entries[allocate][$clog2(PHYS_REG_SIZE)]                                                                   <= rs2_received;
-        rsv_entries[allocate][($clog2(PHYS_REG_SIZE)-1):0]                                                             <= rs2_reg;
+        rob_queue[allocate]               <= rob_entry;
+        rs1_reg_queue[allocate]           <= rs1_reg;
+        rs1_received_queue[allocate]      <= rs1_received;
+        rs1_value_queue[allocate]         <= rs1_value;
+        pc_queue[allocate]                <= pc_in;
+        opcode_queue[allocate]            <= opcode_in;
+        opcode_type_queue[allocate]       <= opcode_type_in;
+        additional_info_queue[allocate]   <= additional_info_in;
+        rs2_value_queue[allocate]         <= rs2_value;
+        rs2_received_queue[allocate]      <= rs2_received;
+        rs2_reg_queue[allocate]           <= rs2_reg;
+        rs2_received_queue[allocate]      <= 1'b0;                                                        
     end
-       
+
+    // Update
+    if(update_valid)begin
+        for(i=0; i < SIZE; i++)begin
+            if(rs1_update[i])begin
+                rs1_received_queue[i] <= 1'b1;
+                rs1_value_queue[i]    <= update_val;
+            end
+            if(rs2_update[i])begin
+                rs2_received_queue[i] <= 1'b1;
+                rs2_value_queue[i]    <= update_val;
+            end
+        end
+    end
     
 end
 
