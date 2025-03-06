@@ -34,7 +34,7 @@ module multi_insertion_queue #(
     assign occupancy = count;
     
     // Calculate how many elements can be inserted this cycle
-    wire [$clog2(MAX_INSERTS_PER_CYCLE+1)-1:0] valid_insert_count;
+    reg [$clog2(MAX_INSERTS_PER_CYCLE+1)-1:0] valid_insert_count;
     wire [$clog2(MAX_INSERTS_PER_CYCLE+1)-1:0] accepted_insert_count;
     
     integer i;
@@ -66,8 +66,8 @@ module multi_insertion_queue #(
     assign remove_data = queue_mem[head];
     
     // Queue update logic
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or posedge rst_n) begin
+        if (rst_n) begin
             head <= 0;
             tail <= 0;
             count <= 0;
