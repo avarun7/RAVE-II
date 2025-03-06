@@ -95,12 +95,17 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
 
         always@(posedge clk) begin
             $fdisplay(fullfile, "cycle number: %d", cycle_cnt);
-
+            $fdisplay(fullfile, "[====REGFILE UPDATES====]");
+            $fdisplay(fullfile, "UPDATE FROM MAPPER: %b\t--\tarchR%0d <- UOP(archR%0d, archR%0d)", uop_update, arch_wr, arch_rd1, arch_rd2);
+            $fdisplay(fullfile, "UPDATE FROM MAPPER: %b\t--\tspec(archR%0d) <- physR%0d", uop_update, arch_wr, arch_wr_phys);
+            $fdisplay(fullfile, "UPDATE FROM MAPPER: %b\t--\trsv(physR%0d)", uop_update, arch_wr_phys);
+            $fdisplay(fullfile, "UPDATE FROM ROB:    %b\t--\tnonspec(archR%0d) <- physR%0d", rob_update, arch_rob_update, arch_rob_nonspec_phys);
+            $fdisplay(fullfile, "UPDATE FROM ROB:    %b\t--\tfree(physR%0d)", rob_update, phys_rob_free);
+            $fdisplay(fullfile, "UPDATE FROM RING:   %b\t--\tphysR%0d <- 0x%h", ring_update, phys_ring, phys_ring_val);
             $fdisplay(fullfile, "[====ARCH REGFILE====]");
             for(i = 0; i < ARCHFILE_SIZE; i = i + 1) begin
                 $fdisplay(fullfile, "archR%0d: \tnonspec = physR%0d,  \tspec = physR%0d", i, arf.nonspec_af.archvect[i], arf.spec_af.archvect[i]);
             end
-            
             $fdisplay(fullfile, "[====PHYS REGFILE====]");
             for(i = 0; i < PHYSFILE_SIZE/4; i = i + 1) begin
                 $fdisplay(fullfile, "physR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b",
@@ -109,8 +114,37 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
                             i+PHYSFILE_SIZE/2, prf.pf.physvect[i+PHYSFILE_SIZE/2], prf.fl.freevect[i+PHYSFILE_SIZE/2],
                             i+3*PHYSFILE_SIZE/4, prf.pf.physvect[i+3*PHYSFILE_SIZE/2], prf.fl.freevect[i+3*PHYSFILE_SIZE/4]);
             end
-
             $fdisplay(fullfile, "\n\n");
+
+            if(uop_update || rob_update || ring_update) begin
+                $fdisplay(sparsefile, "cycle number: %d", cycle_cnt);
+                $fdisplay(sparsefile, "[====REGFILE UPDATES====]");
+                if(uop_update) begin
+                    $fdisplay(sparsefile, "UPDATE FROM MAPPER: %b\t--\tarchR%0d <- UOP(archR%0d, archR%0d)", uop_update, arch_wr, arch_rd1, arch_rd2);
+                    $fdisplay(sparsefile, "UPDATE FROM MAPPER: %b\t--\tspec(archR%0d) <- physR%0d", uop_update, arch_wr, arch_wr_phys);
+                    $fdisplay(sparsefile, "UPDATE FROM MAPPER: %b\t--\trsv(physR%0d)", uop_update, arch_wr_phys);
+                end
+                if(rob_update) begin
+                    $fdisplay(sparsefile, "UPDATE FROM ROB:    %b\t--\tnonspec(archR%0d) <- physR%0d", rob_update, arch_rob_update, arch_rob_nonspec_phys);
+                    $fdisplay(sparsefile, "UPDATE FROM ROB:    %b\t--\tfree(physR%0d)", rob_update, phys_rob_free);
+                end
+                if(ring_update) begin
+                    $fdisplay(sparsefile, "UPDATE FROM RING:   %b\t--\tphysR%0d <- 0x%h", ring_update, phys_ring, phys_ring_val);
+                end 
+                $fdisplay(sparsefile, "[====ARCH REGFILE====]");
+                for(i = 0; i < ARCHFILE_SIZE; i = i + 1) begin
+                    $fdisplay(sparsefile, "archR%0d: \tnonspec = physR%0d,  \tspec = physR%0d", i, arf.nonspec_af.archvect[i], arf.spec_af.archvect[i]);
+                end
+                $fdisplay(sparsefile, "[====PHYS REGFILE====]");
+                for(i = 0; i < PHYSFILE_SIZE/4; i = i + 1) begin
+                    $fdisplay(sparsefile, "physR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b",
+                                i, prf.pf.physvect[i], prf.fl.freevect[i],
+                                i+PHYSFILE_SIZE/4, prf.pf.physvect[i+PHYSFILE_SIZE/4], prf.fl.freevect[i+PHYSFILE_SIZE/4],
+                                i+PHYSFILE_SIZE/2, prf.pf.physvect[i+PHYSFILE_SIZE/2], prf.fl.freevect[i+PHYSFILE_SIZE/2],
+                                i+3*PHYSFILE_SIZE/4, prf.pf.physvect[i+3*PHYSFILE_SIZE/2], prf.fl.freevect[i+3*PHYSFILE_SIZE/4]);
+                end
+                $fdisplay(sparsefile, "\n\n");
+            end
 
             cycle_cnt = cycle_cnt + 1;
         end
