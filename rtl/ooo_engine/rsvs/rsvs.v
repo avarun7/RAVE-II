@@ -28,15 +28,17 @@ module rsv #(parameter XLEN=32, SIZE=16, PHYS_REG_SIZE=256, ROB_SIZE=265)( // As
     output reg[XLEN-1:0]                pc,
     output reg[4:0]                     opcode,
     output reg[2:0]                     opcode_type,
-    output reg                          additional_info
+    output reg                          additional_info,
+    output reg                          valid_out
 
 );
+
 reg[SIZE-1:0]                           free_list;
 reg[SIZE-1:0]                           available;
 reg[SIZE-1:0]                           rs1_update;
 reg[SIZE-1:0]                           rs2_update;
-wire [$clog2(SIZE)-1:0]                 dispatch;
-wire [$clog2(SIZE)-1:0]                 allocate;
+wire[$clog2(SIZE)-1:0]                  dispatch;
+wire[$clog2(SIZE)-1:0]                  allocate;
 wire                                    none_dispatch;
 wire                                    none_allocate;
 
@@ -53,11 +55,16 @@ reg                               rs2_received_queue       [0:SIZE-1];
 reg[$clog2(PHYS_REG_SIZE)-1:0]    rs2_reg_queue            [0:SIZE-1];
 
 
-pencoder(.SIZE(SIZE)) read(.a(available), .o(dispatch), .none(none_dispatch));
-pencoder(.SIZE(SIZE)) write(.a(free_list), .o(allocate), .none(none_allocate));
+pencoder #(.WIDTH(SIZE)) out(.a(available), .o(dispatch), .none(none_dispatch));
+pencoder #(.WIDTH(SIZE)) in(.a(free_list), .o(allocate), .none(none_allocate));
 
 initial begin
     free_list = {SIZE{1'b1}};
+    available = {SIZE{1'b0}};
+    for(i = 0; i < SIZE; i = i + 1) begin
+        rs1_received_queue[i] <= 1'b0;
+        rs2_received_queue[i] <= 1'b0;
+    end
 end
 
 integer unsigned i;
@@ -69,7 +76,7 @@ end
 
 always @(*) begin
     for(i = 0; i < SIZE; i = i + 1) begin
-        if(update_reg == rs1_reg_queue[i] && !rs1_received)
+        if((update_reg == rs1_reg_queue[i]) & !rs1_received_queue[i])
             rs1_update[i] <= 1;
         else rs1_update[i] <= 0;
     end
@@ -77,32 +84,30 @@ end
 
 always @(*) begin
     for(i = 0; i < SIZE; i = i + 1) begin
-        if(update_reg == rs2_reg_queue[i] && !rs2_received)
+        if((update_reg == rs2_reg_queue[i]) & !rs2_received_queue[i])
             rs2_update[i] <= 1;
         else rs2_update[i] <= 0;
     end
 end
 
-
-
-
 always @(posedge clk or posedge rst) begin
     
     if(!none_dispatch)begin
         // Dispatch to fu
-        rob_entry               <= rob_queue[dispatch];
-        rs1                     <= rs1_value_queue[dispatch];
-        pc                      <= pc_queue[dispatch];
-        opcode                  <= opcode_queue[dispatch];
-        opcode_type             <= opcode_type_queue[dispatch];
-        additional_info         <= additional_info_queue[dispatch];
-        rs2                     <= rs2_value_queue[dispatch];
-        free_list[dispatch]     <= 1'b1;
+        rob_entry                       <= rob_queue[dispatch];
+        rs1                             <= rs1_value_queue[dispatch];
+        pc                              <= pc_queue[dispatch];
+        opcode                          <= opcode_queue[dispatch];
+        opcode_type                     <= opcode_type_queue[dispatch];
+        additional_info                 <= additional_info_queue[dispatch];
+        rs2                             <= rs2_value_queue[dispatch];
+        rs2_received_queue[dispatch]    <= 1'b0;
+        free_list[dispatch]             <= 1'b1;
+        valid_out                       <= 1'b1;
         
-
-    end
+    end else valid_out                  <= 1'b0;
     // TODO: Needs double pointer method, no idea how imma do that
-    if(~|free_list & valid_in) begin
+    if(!none_allocate & valid_in) begin
         // Write to FU
         rob_queue[allocate]               <= rob_entry;
         rs1_reg_queue[allocate]           <= rs1_reg;
@@ -115,12 +120,12 @@ always @(posedge clk or posedge rst) begin
         rs2_value_queue[allocate]         <= rs2_value;
         rs2_received_queue[allocate]      <= rs2_received;
         rs2_reg_queue[allocate]           <= rs2_reg;
-        rs2_received_queue[allocate]      <= 1'b0;                                                        
+        free_list[allocate]               <= 1'b0;                                                        
     end
 
     // Update
     if(update_valid)begin
-        for(i=0; i < SIZE; i++)begin
+        for(i=0; i < SIZE; i = i + 1)begin
             if(rs1_update[i])begin
                 rs1_received_queue[i] <= 1'b1;
                 rs1_value_queue[i]    <= update_val;
