@@ -136,12 +136,14 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
                     $fdisplay(sparsefile, "archR%0d: \tnonspec = physR%0d,  \tspec = physR%0d", i, arf.nonspec_af.archvect[i], arf.spec_af.archvect[i]);
                 end
                 $fdisplay(sparsefile, "[====PHYS REGFILE====]");
-                for(i = 0; i < PHYSFILE_SIZE/4; i = i + 1) begin
-                    $fdisplay(sparsefile, "physR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b",
-                                i, prf.pf.physvect[i], prf.fl.freevect[i],
-                                i+PHYSFILE_SIZE/4, prf.pf.physvect[i+PHYSFILE_SIZE/4], prf.fl.freevect[i+PHYSFILE_SIZE/4],
-                                i+PHYSFILE_SIZE/2, prf.pf.physvect[i+PHYSFILE_SIZE/2], prf.fl.freevect[i+PHYSFILE_SIZE/2],
-                                i+3*PHYSFILE_SIZE/4, prf.pf.physvect[i+3*PHYSFILE_SIZE/2], prf.fl.freevect[i+3*PHYSFILE_SIZE/4]);
+                if(&prf.fl.freevect) begin
+                    $fdisplay(sparsefile, "NO ACTIVE PHYSREGS");
+                end else begin 
+                    for(i = 0; i < PHYSFILE_SIZE; i = i + 1) begin
+                        if(~prf.fl.freevect[i]) begin
+                            $fdisplay(sparsefile, "physR%0d  \t= 0x%h", i, prf.pf.physvect[i]);
+                        end
+                    end
                 end
                 $fdisplay(sparsefile, "\n\n");
             end
