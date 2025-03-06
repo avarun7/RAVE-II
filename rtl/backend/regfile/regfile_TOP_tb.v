@@ -3,7 +3,7 @@ module TOP;
     localparam CYCLE_TIME = 2.0;
 
     localparam ARCHFILE_SIZE = 32;
-    localparam PHYSFILE_SIZE = 256;
+    localparam PHYSFILE_SIZE = 128;
     localparam REG_SIZE = 32;
 
     integer k;

@@ -102,8 +102,12 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
             end
             
             $fdisplay(fullfile, "[====PHYS REGFILE====]");
-            for(i = 0; i < PHYSFILE_SIZE; i = i + 1) begin
-                $fdisplay(fullfile, "physR%0d = 0x%h, FREE:%b", i, prf.pf.physvect[i], prf.fl.freevect[i]);
+            for(i = 0; i < PHYSFILE_SIZE/4; i = i + 1) begin
+                $fdisplay(fullfile, "physR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b",
+                            i, prf.pf.physvect[i], prf.fl.freevect[i],
+                            i+PHYSFILE_SIZE/4, prf.pf.physvect[i+PHYSFILE_SIZE/4], prf.fl.freevect[i+PHYSFILE_SIZE/4],
+                            i+PHYSFILE_SIZE/2, prf.pf.physvect[i+PHYSFILE_SIZE/2], prf.fl.freevect[i+PHYSFILE_SIZE/2],
+                            i+3*PHYSFILE_SIZE/4, prf.pf.physvect[i+3*PHYSFILE_SIZE/2], prf.fl.freevect[i+3*PHYSFILE_SIZE/4]);
             end
 
             $fdisplay(fullfile, "\n\n");
