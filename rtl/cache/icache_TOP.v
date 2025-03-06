@@ -160,6 +160,7 @@ wire  [1:0] icache_src_in_ic_instr_q_odd;
 wire  [1:0] icache_dest_in_ic_instr_q_odd;
 
 wire [2:0]dealloc_even;
+
 data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
     //System     
     .clk(clk),
@@ -516,7 +517,6 @@ assign dest_out_ic_data_q_odd = operation_out_ic_data_q_odd == WR ? 3 : 2;
 assign is_flush_out_ic_instr_q_odd = 0;
 assign src_out_ic_instr_q_odd = 1;
 assign dest_out_ic_instr_q_odd = operation_out_ic_instr_q_odd == WR || operation_out_ic_instr_q_odd == RD ? 3 : 2;
-
 
 
 
