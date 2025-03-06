@@ -44,7 +44,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
     input rf_src1_rdy, rf_src2_rdy,
     input [$clog2(PHYSFILE_SIZE)-1:0] rf_src1_tag, rf_src2_tag,
     input [XLEN-1:0] rf_src1_val, rf_src2_val,
-    input [$clog2(PHYSFILE_SIZE)-1:0] rf_dest_tag,
+    input [$clog2(PHYSFILE_SIZE)-1:0] rf_dest_tag, rf_dest_oldtag,
 
     input rob_full,
     input [$clog2(ROB_SIZE)-1:0] rob_entry_in,
@@ -62,7 +62,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
 
     output reg alloc_rob,
     output reg [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_out,
-    output reg [$clog2(PHYSFILE_SIZE)-1:0] dest_phys_out, //TODO: is redundant with dest_tag_out
+    output reg [$clog2(PHYSFILE_SIZE)-1:0] dest_phys_out, dest_oldphys_out, //TODO: is redundant with dest_tag_out
     output reg except_out
 );
 
@@ -101,7 +101,8 @@ module mapper_TOP #(parameter NUM_UOPS=32,
                    .pc_out(pc_prr_disp),
                    .except_out(except_prr_disp));
     
-    dispatch #(.NUM_UOPS(NUM_UOPS), .XLEN(XLEN), .ARCHFILE_SIZE(ARCHFILE_SIZE), .PHYSFILE_SIZE(PHYSFILE_SIZE), .ROB_SIZE(ROB_SIZE))
+    dispatch #(.NUM_UOPS(NUM_UOPS), .XLEN(XLEN), .ARCHFILE_SIZE(ARCHFILE_SIZE),
+               .PHYSFILE_SIZE(PHYSFILE_SIZE), .ROB_SIZE(ROB_SIZE))
             disp(.clk(clk), .rst(rst),
                  //RR inputs
                  .uop_in(uop_prr_disp), .eoi_in(eoi_prr_disp),
@@ -113,7 +114,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
                  .src1_rdy_in(rf_src1_rdy), .src2_rdy_in(rf_src2_rdy),
                  .src1_tag_in(rf_src1_tag), .src2_tag_in(rf_src2_tag),
                  .src1_val_in(rf_src1_val), .src2_val_in(rf_src2_val),
-                 .dest_tag_in(rf_dest_tag),
+                 .dest_tag_in(rf_dest_tag), .dest_oldtag_in(rf_dest_oldtag),
                  //ROB inputs
                  .rob_full(rob_full), .rob_entry_in(rob_entry_in),
                  //RSV outputs
@@ -123,10 +124,11 @@ module mapper_TOP #(parameter NUM_UOPS=32,
                  .op1_val_out(op1_val_out), .op2_val_out(op1_val_out),
                  .dest_tag_out(dest_tag_out),
                  .pc_out(pc_out),
-                 .rob_entry_out(rob_entry_out)
+                 .rob_entry_out(rob_entry_out),
                  //ROB outputs
                  .alloc_rob(alloc_rob),
-                 .dest_arch_out(dest_arch_out), .dest_phys_out(dest_phys_out),                 
+                 .dest_arch_out(dest_arch_out), .dest_phys_out(dest_phys_out), 
+                 .dest_oldphys_out(dest_oldphys_out),                
                  .except_out(except_out));
 
 endmodule

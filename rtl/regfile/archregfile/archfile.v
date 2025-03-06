@@ -9,7 +9,7 @@ module archfile #(parameter ARCHFILE_SIZE=32,
 
     input rollback,
 
-    output reg [$clog2(PHYSFILE_SIZE)-1:0] arch_rd1_phys, arch_rd2_phys
+    output reg [$clog2(PHYSFILE_SIZE)-1:0] arch_rd1_phys, arch_rd2_phys, arch_wr_oldphys
 );
 
     integer i;
@@ -26,6 +26,7 @@ module archfile #(parameter ARCHFILE_SIZE=32,
             end
             if(update) begin
                 if(arch_wr == i) begin
+                    arch_wr_oldphys <= archvect[i];
                     archvect[i] <= arch_wr_phys;
                 end
             end

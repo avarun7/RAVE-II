@@ -16,7 +16,7 @@ module dispatch #(parameter NUM_UOPS=32,
     input src1_rdy_in, src2_rdy_in,
     input [$clog2(PHYSFILE_SIZE)-1:0] src1_tag_in, src2_tag_in,
     input [XLEN-1:0] src1_val_in, src2_val_in,
-    input [$clog2(PHYSFILE_SIZE)-1:0] dest_tag_in,
+    input [$clog2(PHYSFILE_SIZE)-1:0] dest_tag_in, dest_oldtag_in,
 
     input rob_full,
     input [$clog2(ROB_SIZE)-1:0] rob_entry_in,
@@ -31,7 +31,7 @@ module dispatch #(parameter NUM_UOPS=32,
 
     output reg alloc_rob,
     output reg [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_out,
-    output reg [$clog2(PHYSFILE_SIZE)-1:0] dest_phys_out, //TODO: is redundant with dest_tag_out
+    output reg [$clog2(PHYSFILE_SIZE)-1:0] dest_phys_out, dest_oldphys_out, //TODO: is redundant with dest_tag_out
     output reg except_out
 );
 
@@ -50,6 +50,7 @@ always@(posedge clk) begin
     alloc_rob <= alloc_rob;
     dest_arch_out <= dest_arch_in;
     dest_phys_out <= dest_tag_in;
+    dest_oldphys_out <= dest_oldtag_in;
     except_out <= except_in;
 end
 
