@@ -81,4 +81,35 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
                     //1st cycle outputs
                 .none_free(none_free), .next_free(arch_wr_phys));
 
+    `ifdef DEBUG
+        integer cycle_cnt;
+        integer fullfile, sparsefile;
+
+        integer i;
+
+        initial begin
+            cycle_cnt = 0;
+            fullfile = $fopen("./out/regfile_full.dump");
+            sparsefile = $fopen("./out/regfile_sparse.dump");
+        end
+
+        always@(posedge clk) begin
+            $fdisplay(fullfile, "cycle number: %d", cycle_cnt);
+
+            $fdisplay(fullfile, "[====ARCH REGFILE====]");
+            for(i = 0; i < ARCHFILE_SIZE; i = i + 1) begin
+                $fdisplay(fullfile, "archR%0d: \tnonspec = physR%0d,  \tspec = physR%0d", i, arf.nonspec_af.archvect[i], arf.spec_af.archvect[i]);
+            end
+            
+            $fdisplay(fullfile, "[====PHYS REGFILE====]");
+            for(i = 0; i < PHYSFILE_SIZE; i = i + 1) begin
+                $fdisplay(fullfile, "physR%0d = 0x%h, FREE:%b", i, prf.pf.physvect[i], prf.fl.freevect[i]);
+            end
+
+            $fdisplay(fullfile, "\n\n");
+
+            cycle_cnt = cycle_cnt + 1;
+        end
+    `endif
+
 endmodule

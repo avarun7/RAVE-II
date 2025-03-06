@@ -19,9 +19,9 @@ module TOP;
     reg [REG_SIZE-1:0] phys_ring_val;
 
     reg rob_update;
-    reg [$clog2(ARCHFILE_SIZE)-1:0] arch_rob;
-    reg [$clog2(PHYSFILE_SIZE)-1:0] arch_rob_phys;
-    reg [$clog2(PHYSFILE_SIZE)-1:0] phys_rob;
+    reg [$clog2(ARCHFILE_SIZE)-1:0] arch_rob_update;
+    reg [$clog2(PHYSFILE_SIZE)-1:0] arch_rob_nonspec_phys;
+    reg [$clog2(PHYSFILE_SIZE)-1:0] phys_rob_free;
 
     reg rollback;
 
@@ -41,7 +41,7 @@ module TOP;
                .ring_update(ring_update),
                .phys_ring(phys_ring), .phys_ring_val(phys_ring_val),
                .rob_update(rob_update),
-               .arch_rob(arch_rob), .arch_rob_phys(arch_rob_phys), .phys_rob(phys_rob),
+               .arch_rob_update(arch_rob_update), .arch_rob_nonspec_phys(arch_rob_nonspec_phys), .phys_rob_free(phys_rob_free),
                .rollback(rollback),
                .phys_rd1_rdy(phys_rd1_rdy), .phys_rd2_rdy(phys_rd2_rdy),
                .phys_rd1(phys_rd1), .phys_rd2(phys_rd2),
@@ -60,7 +60,7 @@ module TOP;
         uop_update = 1'b0; ring_update = 1'b0; rob_update = 1'b0;
         arch_rd1 = 5'b0; arch_rd2 = 5'b0; arch_wr = 5'b0;
         phys_ring = 8'b0; phys_ring_val = 32'b0;
-        arch_rob = 5'b0; arch_rob_phys = 8'b0; phys_rob = 8'b0;
+        arch_rob_update = 5'b0; arch_rob_nonspec_phys = 8'b0; phys_rob_free = 8'b0;
         #CYCLE_TIME;
 
         rst = 1'b1;
