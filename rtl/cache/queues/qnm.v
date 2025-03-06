@@ -56,12 +56,13 @@ always @(posedge clk or rst) begin
     else begin
         if(!full) begin
             if(wr) begin
-                wr_ptr <= wr_ptr[Q_LENGTH-1] == 1 ? 1 : wr_ptr << 1;
-                queue[wr_ptr] <= {n_din, m_din};
+                
+                queue[wr_ptr-1] = {n_din, m_din};
+                wr_ptr = wr_ptr[Q_LENGTH-1] == 1 ? 1 : wr_ptr << 1;
             end
         end  
         if(rd) begin
-            rd_ptr <= rd_ptr[Q_LENGTH-1] == 1 ? 1 : rd_ptr << 1;
+            rd_ptr = rd_ptr[Q_LENGTH-1] == 1 ? 1 : rd_ptr << 1;
         end
         for(p = 0; p < Q_LENGTH; p = p + 1) begin : m_update
             if(modify_vector[p] == 1) begin

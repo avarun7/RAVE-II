@@ -216,7 +216,21 @@ instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_instr_q_even(
     .dest_out(icache_dest_in_ic_instr_q_even),
     .is_flush_out(icache_is_flush_in_ic_instr_q_even)
 );
+wire [31:0] icache_addr_in_even;
+wire  [2:0] icache_operation_in_even;
+wire [CL_SIZE-1:0] icache_data_in_even;
+wire icache_valid_in_even;
+wire [1:0]icache_src_in_even;
+wire [1:0] icache_dest_in_even;
+wire icache_is_flush_in_even;
 
+wire [31:0] icache_addr_in_odd;
+wire  [2:0] icache_operation_in_odd;
+wire [CL_SIZE-1:0] icache_data_in_odd;
+wire icache_valid_in_odd;
+wire [1:0]icache_src_in_odd;
+wire [1:0] icache_dest_in_odd;
+wire icache_is_flush_in_odd;
 queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(3)) queue_arb_even(
     .addr_in({
         icache_addr_in_ic_data_q_even,
@@ -224,7 +238,8 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(3)) queue_arb_even(
         addr_even
     }),
     .data_in({
-        icache_data_in_ic_data_q_even
+        icache_data_in_ic_data_q_even,
+        256'd0
     }),
     .operation_in({
         icache_operation_in_ic_data_q_even,
@@ -254,13 +269,13 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(3)) queue_arb_even(
     
     .stall_in(stall_cache_even),
 
-    .addr_out(icache_addr_in_even),
-    .operation_out(icache_operation_in_even), 
-    .data_out(icache_data_in_even),
-    .valid_out(icache_valid_in_even),
-    .src_out(icache_src_in_even),
-    .dest_out(icache_dest_in_even),
-    .is_flush_out(icache_is_flush_in_even),
+    .addr_out(      icache_addr_in_even),
+    .operation_out( icache_operation_in_even), 
+    .data_out(      icache_data_in_even),
+    .valid_out(     icache_valid_in_even),
+    .src_out(       icache_src_in_even),
+    .dest_out(      icache_dest_in_even),
+    .is_flush_out(  icache_is_flush_in_even),
 
     .dealloc(dealloc_even)
 );
@@ -274,13 +289,13 @@ cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG
     //Pipeline Input - done
     .addr_in(icache_addr_in_even),
     .data_in(icache_data_in_even),
-    .size_in(0),
+    .size_in(2'b0),
     .operation_in(icache_operation_in_even),
-    .ooo_tag_in(0),
+    .ooo_tag_in({OOO_TAG_SIZE{1'b0}}),
 
     //Cache Inputs
-    .rwnd_full(0),
-    .lsq_full(0),
+    .rwnd_full(1'b0),
+    .lsq_full(1'b0),
 
 
     //Pipeline Output : 
@@ -394,7 +409,9 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(3)) queue_arb_odd(
         addr_odd
     }),
     .data_in({
-        icache_data_in_ic_data_q_odd
+        icache_data_in_ic_data_q_odd,
+        128'd0,
+        128'd0
     }),
     .operation_in({
         icache_operation_in_ic_data_q_odd,
@@ -444,13 +461,13 @@ cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG
     //Pipeline Input - done
     .addr_in(icache_addr_in_odd),
     .data_in(icache_data_in_odd),
-    .size_in(0),
+    .size_in(2'b0),
     .operation_in(icache_operation_in_odd),
-    .ooo_tag_in(0),
+    .ooo_tag_in({OOO_TAG_SIZE{1'b0}}),
 
     //Cache Inputs
-    .rwnd_full(0),
-    .lsq_full(0),
+    .rwnd_full(1'b0),
+    .lsq_full(1'b0),
 
 
     //Pipeline Output : 

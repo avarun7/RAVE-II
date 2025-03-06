@@ -21,7 +21,7 @@ reg [META_SIZE*4-1:0] meta_store[IDX_CNT-1:0];
 genvar i;
 for(i = 0; i < IDX_CNT; i = i +1 ) begin : init_ts
     initial begin 
-        meta_store[i] = 0;
+        meta_store[i] = 32'h81_41_21_11;
     end
 end
 
@@ -29,7 +29,7 @@ integer j;
 always @(posedge clk) begin
     if(rst) begin
         for(j = 0; j < IDX_CNT; j = j + 1) begin 
-            meta_store[j] = 0;
+            meta_store[j] = 32'h81_41_21_11;
         end
     end
     else begin

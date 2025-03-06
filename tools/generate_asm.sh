@@ -33,7 +33,7 @@ XXD=xxd
 
 # Compile to object file
 echo "Compiling $INPUT_C_FILE to object file..."
-$GCC -march=rv32gc -mabi=ilp32 -c -o "${BASENAME}.o" "$INPUT_C_FILE"
+$GCC -march=rv32imac_zicsr_zifencei -mabi=ilp32 -c -o "${BASENAME}.o" "$INPUT_C_FILE"
 if [ $? -ne 0 ]; then
     echo "Error during compilation!"
     exit 1
@@ -41,7 +41,7 @@ fi
 
 # Link to ELF executable
 echo "Linking to ELF executable..."
-$GCC -march=rv32gc -mabi=ilp32 -o "${BASENAME}.elf" "${BASENAME}.o"
+$GCC -march=rv32imac_zicsr_zifencei -mabi=ilp32 -o "${BASENAME}.elf" "${BASENAME}.o"
 if [ $? -ne 0 ]; then
     echo "Error during linking!"
     exit 1
@@ -74,8 +74,6 @@ fi
 # Clean up intermediate files
 mv "${BASENAME}.o" "${BASENAME}_asm/${BASENAME}.o"
 mv "${BASENAME}.elf" "${BASENAME}_asm/${BASENAME}.elf"
-
-"${BASENAME}.elf"
 
 # Success message
 echo "Files generated:"

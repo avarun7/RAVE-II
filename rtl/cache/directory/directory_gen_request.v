@@ -64,12 +64,18 @@ assign dc_data_q_operation = !d_is_src ? other_instr_operation : src_instr_opera
 
 
 always @(*) begin
+    other_instr_operation = 0;
+    src_instr_operation=0;
+    other_data_operation = 0;
+    src_data_operation = 0;
     other_instr_alloc = 0;
     other_data_alloc = 0;
     src_instr_alloc = 0;
     src_data_alloc = 0;
     mem_instr_q_alloc = 0;
     mem_data_q_alloc = 0;
+    mem_data_q_operation = 0;
+    mem_instr_q_operation = 0;
     case(operation) 
         RD: begin
             if(oim) begin

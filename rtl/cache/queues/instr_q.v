@@ -26,19 +26,19 @@ module instr_q #(parameter Q_LENGTH = 8, CL_SIZE = 128) (
     output is_flush_out
 );
 assign valid = !valid_n;
-qnm #(.N_WIDTH(32 + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
+qn #(.N_WIDTH(32 + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
     .m_din(),
     .n_din({src, dest, is_flush, operation_in, addr_in}),
     .new_m_vector(2'b0),
     .wr(alloc), 
-    .rd(dealloc),
+    .rd(dealloc && valid),
     .modify_vector(8'd0),
     .rst(rst),
     .clk(clk),
     .full(full), 
     .empty(valid_n),
     .old_m_vector(),
-    .dout({src_out, dest_out, is_flush_out,operation_out, addr_in})
+    .dout({src_out, dest_out, is_flush_out,operation_out, addr_out})
 );
 
 endmodule 
