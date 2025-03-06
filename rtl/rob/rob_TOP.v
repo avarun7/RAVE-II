@@ -12,8 +12,8 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
     input [$clog2(ROB_SIZE)-1:0] uop_finish_rob_entry,
 
     output retire_uop,
-    output reg [$clog2(ARCHFILE_SIZE)-1:0] uop_dest_arch_out,
-    output reg [$clog2(PHYSFILE_SIZE)-1:0] uop_dest_phys_out, uop_dest_oldphys_out,
+    output [$clog2(ARCHFILE_SIZE)-1:0] uop_dest_arch_out,
+    output [$clog2(PHYSFILE_SIZE)-1:0] uop_dest_phys_out, uop_dest_oldphys_out,
 
     output [$clog2(ROB_SIZE)-1:0] next_rob_entry,
 
@@ -30,36 +30,29 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
     assign next_rob_entry = wr_ptr;
 
     reg [ROB_SIZE-1:0] rdyvect;
-    reg [$clog2(ARCHFILE_SIZE)-1:0] rob_arch_entries [ROB_SIZE-1:0];
-    reg [$clog2(PHYSFILE_SIZE)-1:0] rob_phys_entries [ROB_SIZE-1:0];
-    reg [$clog2(PHYSFILE_SIZE)-1:0] rob_oldphys_entries [ROB_SIZE-1:0];
+    reg [$clog2(ARCHFILE_SIZE)+(2*$clog2(PHYSFILE_SIZE))-1:0] rob_entries [ROB_SIZE-1:0];
 
     assign retire_uop = ~rob_empty && rdyvect[rd_ptr];
+    assign {uop_dest_arch_out, uop_dest_phys_out, uop_dest_oldphys_out} = rob_entries[rd_ptr];
 
     always@(posedge clk) begin
         if(uop_update) begin //TODO: should check if full first
             wr_ptr <= wr_ptr + 1;
             rdyvect[wr_ptr] <= 1'b0;
-            rob_arch_entries[wr_ptr] <= uop_dest_arch_in;
-            rob_phys_entries[wr_ptr] <= uop_dest_phys_in;
-            rob_oldphys_entries[wr_ptr] <= uop_dest_oldphys_in;
+            rob_entries[wr_ptr] <= {uop_dest_arch_in, uop_dest_phys_in, uop_dest_oldphys_in};
         end
         if(uop_finish) begin //TODO: should check if empty first
             rdyvect[uop_finish_rob_entry] <= 1'b1;
         end
         if(retire_uop) begin
-            uop_dest_arch_out <= rob_arch_entries[rd_ptr];
-            uop_dest_phys_out <= rob_phys_entries[rd_ptr];
-            uop_dest_oldphys_out <= rob_oldphys_entries[rd_ptr];
+            rd_ptr <= rd_ptr + 1;
         end
     end
 
     always@(negedge rst) begin
         rdyvect <= {ROB_SIZE{1'b0}};
         for(i = 0; i < ROB_SIZE; i = i + 1) begin
-            rob_arch_entries[i] <= {$clog2(ARCHFILE_SIZE){1'b0}};
-            rob_phys_entries[i] <= {$clog2(PHYSFILE_SIZE){1'b0}};
-            rob_oldphys_entries[i] <= {$clog2(PHYSFILE_SIZE){1'b0}};
+            rob_entries[i] <= {$clog2(ARCHFILE_SIZE)+(2*$clog2(PHYSFILE_SIZE)){1'b0}};
         end
     end
 
