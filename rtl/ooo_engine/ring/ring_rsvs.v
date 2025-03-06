@@ -1,4 +1,4 @@
-module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, RF_QUEUE=8, ROB_SIZE=256) (
+module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, ROB_SIZE=256) (
     input clk, rst, valid_in,
 
     input[2:0]                               functional_unit_num,
@@ -229,7 +229,7 @@ always @(posedge clk ) begin
         branch_rs2_reg             <= ring_branch_rs2_reg;
     end
 
-    if( ring_mul_div_functional_unit_num == 3'b101) begin
+    if( ring_mul_div_functional_unit_num == 3'b100) begin
         mul_div_rob_entry           <= ring_mul_div_rs1_reg;
         mul_div_rs1_reg             <= ring_mul_div_rob_entry;
         mul_div_rs1_received        <= ring_mul_div_rs1_received;
@@ -243,7 +243,7 @@ always @(posedge clk ) begin
         mul_div_rs2_reg             <= ring_mul_div_rs2_reg;
     end
 
-    if( ring_ld_st_functional_unit_num == 3'b100) begin
+    if( ring_ld_st_functional_unit_num == 3'b101) begin
         ld_st_rob_entry           <= ring_ld_st_rs1_reg;
         ld_st_rs1_reg             <= ring_ld_st_rob_entry;
         ld_st_rs1_received        <= ring_ld_st_rs1_received;
@@ -324,7 +324,6 @@ always @(posedge clk ) begin
     ring_ld_st_rs2_value              <= ring_mul_div_rs2_value;
     ring_ld_st_rs2_received           <= ring_mul_div_rs2_received;
     ring_ld_st_rs2_reg                <= ring_mul_div_rs2_reg;
-    
 
 end
 
