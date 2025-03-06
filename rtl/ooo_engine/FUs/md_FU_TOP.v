@@ -1,19 +1,22 @@
-module md_FU#(parameter XLEN=32)(
+module md_FU#(parameter XLEN=32, ROB_SIZE=256)(
     input clk, rst, valid_in,
     input[2:0] md_type,
     input[XLEN-1:0] rs1,
     input[XLEN-1:0] rs2,
     input[XLEN-1:0] pc,
     input[XLEN-1:0] offset,
+    input[$clog2(ROB_SIZE)-1:0] rob_entry_in,
 
     output reg[XLEN-1:0] result,
-    output reg       valid_out
+    output reg           valid_out,
+    output reg           rob_entry
 );
 
 
 reg [XLEN*2-1:0] whole_result;
 
     always @(posedge clk) begin
+        rob_entry <= rob_entry_in;
         if(md_type[2]) begin // Div
             if(rs2 == 0) valid_out <= 0;
             if(md_type[0]) result <= rs1 / rs2;
