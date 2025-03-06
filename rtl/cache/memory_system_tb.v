@@ -17,9 +17,13 @@ initial begin
 
     #20
     rst = 0;
+    @(posedge hit_even)
+    $finish ;
 
 
 end
+
+
 
 memory_system_top #(.CL_SIZE(128), .OOO_TAG_SIZE(10), .TAG_SIZE(18), .IDX_CNT(512)) 
      mem_sys_inst (

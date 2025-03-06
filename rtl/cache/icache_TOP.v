@@ -160,6 +160,7 @@ wire  [1:0] icache_src_in_ic_instr_q_odd;
 wire  [1:0] icache_dest_in_ic_instr_q_odd;
 
 wire [2:0]dealloc_even;
+
 data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) icache_data_q_even(
     //System     
     .clk(clk),
@@ -281,7 +282,7 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(3)) queue_arb_even(
 );
 wire[2:0] operation_out_even;
 assign is_write_even = !(operation_out_even == LD);
-cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE)) cache_bank_even (
+cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE), .BANK_NAME(1)) cache_bank_even (
     //Systen Input
     .clk(clk),
     .rst(rst),
@@ -453,7 +454,7 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(3)) queue_arb_odd(
 );
 wire[2:0] operation_out_odd;
 assign is_write_odd = !(operation_out_odd == LD);
-cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE)) cache_bank_odd (
+cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE), .BANK_NAME(2)) cache_bank_odd (
     //Systen Input
     .clk(clk),
     .rst(rst),
@@ -516,5 +517,8 @@ assign dest_out_ic_data_q_odd = operation_out_ic_data_q_odd == WR ? 3 : 2;
 assign is_flush_out_ic_instr_q_odd = 0;
 assign src_out_ic_instr_q_odd = 1;
 assign dest_out_ic_instr_q_odd = operation_out_ic_instr_q_odd == WR || operation_out_ic_instr_q_odd == RD ? 3 : 2;
+
+
+
 
 endmodule 
