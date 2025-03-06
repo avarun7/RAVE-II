@@ -103,17 +103,17 @@ reg                               ring_logical_rs2_received;
 reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_logical_rs2_reg;
 
 reg[2:0]                          ring_arithmetic_functional_unit_num;
-reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_arithmeric_rs1_reg;
-reg[$clog2(ROB_SIZE)-1:0]         ring_arithmeric_rob_entry;
-reg                               ring_arithmeric_rs1_received;
-reg[XLEN-1:0]                     ring_arithmeric_rs1_value;
-reg[XLEN-1:0]                     ring_arithmeric_pc;
-reg[4:0]                          ring_arithmeric_opcode;
-reg[2:0]                          ring_arithmeric_opcode_type;
-reg                               ring_arithmeric_additional_info;
-reg[XLEN-1:0]                     ring_arithmeric_rs2_value;
-reg                               ring_arithmeric_rs2_received;
-reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_arithmeric_rs2_reg;
+reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_arithmetic_rs1_reg;
+reg[$clog2(ROB_SIZE)-1:0]         ring_arithmetic_rob_entry;
+reg                               ring_arithmetic_rs1_received;
+reg[XLEN-1:0]                     ring_arithmetic_rs1_value;
+reg[XLEN-1:0]                     ring_arithmetic_pc;
+reg[4:0]                          ring_arithmetic_opcode;
+reg[2:0]                          ring_arithmetic_opcode_type;
+reg                               ring_arithmetic_additional_info;
+reg[XLEN-1:0]                     ring_arithmetic_rs2_value;
+reg                               ring_arithmetic_rs2_received;
+reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_arithmetic_rs2_reg;
 
 reg[2:0]                          ring_branch_functional_unit_num;
 reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_branch_rs1_reg;
@@ -202,17 +202,17 @@ always @(posedge clk ) begin
     end
 
     if( ring_arithmetic_functional_unit_num == 3'b010) begin
-        arithmetic_rob_entry           <= ring_arithmeric_rs1_reg;
-        arithmetic_rs1_reg             <= ring_arithmeric_rob_entry;
-        arithmetic_rs1_received        <= ring_arithmeric_rs1_received;
-        arithmetic_rs1_value           <= ring_arithmeric_rs1_value;
-        arithmetic_pc                  <= ring_arithmeric_pc;
-        arithmetic_opcode              <= ring_arithmeric_opcode;
-        arithmetic_opcode_type         <= ring_arithmeric_opcode_type;
-        arithmetic_additional_info     <= ring_arithmeric_additional_info;
-        arithmetic_rs2_value           <= ring_arithmeric_rs2_value;
-        arithmetic_rs2_received        <= ring_arithmeric_rs2_received;
-        arithmetic_rs2_reg             <= ring_arithmeric_rs2_reg;
+        arithmetic_rob_entry           <= ring_arithmetic_rs1_reg;
+        arithmetic_rs1_reg             <= ring_arithmetic_rob_entry;
+        arithmetic_rs1_received        <= ring_arithmetic_rs1_received;
+        arithmetic_rs1_value           <= ring_arithmetic_rs1_value;
+        arithmetic_pc                  <= ring_arithmetic_pc;
+        arithmetic_opcode              <= ring_arithmetic_opcode;
+        arithmetic_opcode_type         <= ring_arithmetic_opcode_type;
+        arithmetic_additional_info     <= ring_arithmetic_additional_info;
+        arithmetic_rs2_value           <= ring_arithmetic_rs2_value;
+        arithmetic_rs2_received        <= ring_arithmetic_rs2_received;
+        arithmetic_rs2_reg             <= ring_arithmetic_rs2_reg;
     end
 
     if( ring_branch_functional_unit_num == 3'b011) begin
@@ -260,69 +260,69 @@ always @(posedge clk ) begin
 
     // Finally progress ring
     //uop ->arithmetic->logical->branch->md->ld/st
-    ring_arithmetic_functional_unit_num    <= ring_uop_disperse_functional_unit_num;
-    ring_arithmetic_rs1_reg                <= ring_uop_disperse_rs1_reg;
-    ring_arithmetic_rob_ent                <= ring_uop_disperse_rob_entry;
-    ring_arithmetic_rs1_receive            <= ring_uop_disperse_rs1_received;
-    ring_arithmetic_rs1_val                <= ring_uop_disperse_rs1_value;
-    ring_arithmetic_pc                     <= ring_uop_disperse_pc_in;
-    ring_arithmetic_opcode                 <= ring_uop_disperse_opcode_in;
-    ring_arithmetic_opcode_type            <= ring_uop_disperse_opcode_type_in;
-    ring_arithmetic_additional_info        <= ring_uop_disperse_additional_info_in;
-    ring_arithmetic_rs2_val                <= ring_uop_disperse_rs2_value;
-    ring_arithmetic_rs2_receive            <= ring_uop_disperse_rs2_received;
-    ring_arithmetic_rs2_reg                <= ring_uop_disperse_rs2_reg;
+    ring_arithmetic_functional_unit_num     <= ring_uop_disperse_functional_unit_num;
+    ring_arithmetic_rs1_reg                 <= ring_uop_disperse_rs1_reg;
+    ring_arithmetic_rob_entry               <= ring_uop_disperse_rob_entry;
+    ring_arithmetic_rs1_received            <= ring_uop_disperse_rs1_received;
+    ring_arithmetic_rs1_value               <= ring_uop_disperse_rs1_value;
+    ring_arithmetic_pc                      <= ring_uop_disperse_pc;
+    ring_arithmetic_opcode                  <= ring_uop_disperse_opcode;
+    ring_arithmetic_opcode_type             <= ring_uop_disperse_opcode_type;
+    ring_arithmetic_additional_info         <= ring_uop_disperse_additional_info;
+    ring_arithmetic_rs2_value               <= ring_uop_disperse_rs2_value;
+    ring_arithmetic_rs2_received            <= ring_uop_disperse_rs2_received;
+    ring_arithmetic_rs2_reg                 <= ring_uop_disperse_rs2_reg;
 
     ring_logical_functional_unit_num    <= ring_arithmetic_functional_unit_num;
     ring_logical_rs1_reg                <= ring_arithmetic_rs1_reg;
-    ring_logical_rob_ent                <= ring_arithmetic_rob_entry;
-    ring_logical_rs1_receive            <= ring_arithmetic_rs1_received;
-    ring_logical_rs1_val                <= ring_arithmetic_rs1_value;
-    ring_logical_pc                     <= ring_arithmetic_pc_in;
-    ring_logical_opcode                 <= ring_arithmetic_opcode_in;
-    ring_logical_opcode_type            <= ring_arithmetic_opcode_type_in;
-    ring_logical_additional_info        <= ring_arithmetic_additional_info_in;
-    ring_logical_rs2_val                <= ring_arithmetic_rs2_value;
-    ring_logical_rs2_receive            <= ring_arithmetic_rs2_received;
+    ring_logical_rob_entry              <= ring_arithmetic_rob_entry;
+    ring_logical_rs1_received           <= ring_arithmetic_rs1_received;
+    ring_logical_rs1_value              <= ring_arithmetic_rs1_value;
+    ring_logical_pc                     <= ring_arithmetic_pc;
+    ring_logical_opcode                 <= ring_arithmetic_opcode;
+    ring_logical_opcode_type            <= ring_arithmetic_opcode_type;
+    ring_logical_additional_info        <= ring_arithmetic_additional_info;
+    ring_logical_rs2_value              <= ring_arithmetic_rs2_value;
+    ring_logical_rs2_received           <= ring_arithmetic_rs2_received;
     ring_logical_rs2_reg                <= ring_arithmetic_rs2_reg;
 
     ring_branch_functional_unit_num    <= ring_logical_functional_unit_num;
     ring_branch_rs1_reg                <= ring_logical_rs1_reg;
-    ring_branch_rob_ent                <= ring_logical_rob_entry;
-    ring_branch_rs1_receive            <= ring_logical_rs1_received;
-    ring_branch_rs1_val                <= ring_logical_rs1_value;
-    ring_branch_pc                     <= ring_logical_pc_in;
-    ring_branch_opcode                 <= ring_logical_opcode_in;
-    ring_branch_opcode_type            <= ring_logical_opcode_type_in;
-    ring_branch_additional_info        <= ring_logical_additional_info_in;
-    ring_branch_rs2_val                <= ring_logical_rs2_value;
-    ring_branch_rs2_receive            <= ring_logical_rs2_received;
+    ring_branch_rob_entry              <= ring_logical_rob_entry;
+    ring_branch_rs1_received           <= ring_logical_rs1_received;
+    ring_branch_rs1_value              <= ring_logical_rs1_value;
+    ring_branch_pc                     <= ring_logical_pc;
+    ring_branch_opcode                 <= ring_logical_opcode;
+    ring_branch_opcode_type            <= ring_logical_opcode_type;
+    ring_branch_additional_info        <= ring_logical_additional_info;
+    ring_branch_rs2_value              <= ring_logical_rs2_value;
+    ring_branch_rs2_received           <= ring_logical_rs2_received;
     ring_branch_rs2_reg                <= ring_logical_rs2_reg;
 
     ring_mul_div_functional_unit_num    <= ring_branch_functional_unit_num;
     ring_mul_div_rs1_reg                <= ring_branch_rs1_reg;
-    ring_mul_div_rob_ent                <= ring_branch_rob_entry;
-    ring_mul_div_rs1_receive            <= ring_branch_rs1_received;
-    ring_mul_div_rs1_val                <= ring_branch_rs1_value;
-    ring_mul_div_pc                     <= ring_branch_pc_in;
-    ring_mul_div_opcode                 <= ring_branch_opcode_in;
-    ring_mul_div_opcode_type            <= ring_branch_opcode_type_in;
-    ring_mul_div_additional_info        <= ring_branch_additional_info_in;
-    ring_mul_div_rs2_val                <= ring_branch_rs2_value;
-    ring_mul_div_rs2_receive            <= ring_branch_rs2_received;
+    ring_mul_div_rob_entry              <= ring_branch_rob_entry;
+    ring_mul_div_rs1_received           <= ring_branch_rs1_received;
+    ring_mul_div_rs1_value              <= ring_branch_rs1_value;
+    ring_mul_div_pc                     <= ring_branch_pc;
+    ring_mul_div_opcode                 <= ring_branch_opcode;
+    ring_mul_div_opcode_type            <= ring_branch_opcode_type;
+    ring_mul_div_additional_info        <= ring_branch_additional_info;
+    ring_mul_div_rs2_value              <= ring_branch_rs2_value;
+    ring_mul_div_rs2_received           <= ring_branch_rs2_received;
     ring_mul_div_rs2_reg                <= ring_branch_rs2_reg;
 
     ring_ld_st_functional_unit_num    <= ring_mul_div_functional_unit_num;
     ring_ld_st_rs1_reg                <= ring_mul_div_rs1_reg;
-    ring_ld_st_rob_ent                <= ring_mul_div_rob_entry;
-    ring_ld_st_rs1_receive            <= ring_mul_div_rs1_received;
-    ring_ld_st_rs1_val                <= ring_mul_div_rs1_value;
-    ring_ld_st_pc                     <= ring_mul_div_pc_in;
-    ring_ld_st_opcode                 <= ring_mul_div_opcode_in;
-    ring_ld_st_opcode_type            <= ring_mul_div_opcode_type_in;
-    ring_ld_st_additional_info        <= ring_mul_div_additional_info_in;
-    ring_ld_st_rs2_val                <= ring_mul_div_rs2_value;
-    ring_ld_st_rs2_receive            <= ring_mul_div_rs2_received;
+    ring_ld_st_rob_entry              <= ring_mul_div_rob_entry;
+    ring_ld_st_rs1_received           <= ring_mul_div_rs1_received;
+    ring_ld_st_rs1_value              <= ring_mul_div_rs1_value;
+    ring_ld_st_pc                     <= ring_mul_div_pc;
+    ring_ld_st_opcode                 <= ring_mul_div_opcode;
+    ring_ld_st_opcode_type            <= ring_mul_div_opcode_type;
+    ring_ld_st_additional_info        <= ring_mul_div_additional_info;
+    ring_ld_st_rs2_value              <= ring_mul_div_rs2_value;
+    ring_ld_st_rs2_received           <= ring_mul_div_rs2_received;
     ring_ld_st_rs2_reg                <= ring_mul_div_rs2_reg;
     
 
