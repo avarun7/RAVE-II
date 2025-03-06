@@ -6,8 +6,9 @@ module TOP;
 
     reg [WIDTH-1:0] a;
     wire [$clog2(WIDTH)-1:0] o;
+    wire                     none;
 
-    pencoder #(.WIDTH(WIDTH)) pe(.a(a), .o(o));
+    pencoder #(.WIDTH(WIDTH)) pe(.a(a), .o(o), .none(none));
 
     initial begin
         a = {WIDTH{1'b0}};

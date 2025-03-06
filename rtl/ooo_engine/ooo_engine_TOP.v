@@ -1,4 +1,4 @@
-module ooo_engine_TOP#(parameter XLEN=32)(
+module ooo_engine_TOP#(parameter XLEN=32, RSV_SIZE=16)(
     // .clk(clk), .rst(),
     //     .flush(),
         

@@ -25,7 +25,7 @@ multi_insertion_queue #(
     .DATA_WIDTH(DATA_WIDTH),
     .QUEUE_DEPTH(QUEUE_DEPTH),
     .MAX_INSERTS_PER_CYCLE(MAX_INSERTS_PER_CYCLE)
-) dut (
+) miq (
     .clk(clk),
     .rst_n(rst_n),
     .insert_valid(insert_valid),
