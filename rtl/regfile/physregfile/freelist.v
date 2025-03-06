@@ -22,9 +22,7 @@ module freelist #(parameter PHYSFILE_SIZE=256)(
         end
     end
 
-    assign none_free = (|freevect) ^ 1'b1;
-
-    pencoder #(.WIDTH(PHYSFILE_SIZE)) pe(.a(freevect), .o(next_free));
+    pencoder #(.WIDTH(PHYSFILE_SIZE)) pe(.a(freevect), .o(next_free), .none(none_free));
 
     always@(negedge rst) begin
         freevect <= -1;
