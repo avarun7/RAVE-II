@@ -46,7 +46,6 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
             cycle_cnt = 0;
             fullfile = $fopen("./out/rob_full.dump");
             sparsefile = $fopen("./out/rob_sparse.dump");
-            retirefile = $fopen("./out/uop_retire.dump");
         end
 
         always@(posedge clk) begin
