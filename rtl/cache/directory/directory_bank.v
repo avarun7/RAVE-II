@@ -218,7 +218,7 @@ initial begin
       $stop;
     end
     
-    $fdisplay(file, "Time,Cycle,Address_Buffer, Operation_Buffer,Data_Buffer, Index_buffer, Tag_Buffer, Offset_buffer, Tag_Old, Tag_New, Data_Old, Data_New"); // Write header
+    $fdisplay(file, "Time,Cycle,Address_Buffer, Operation_Buffer,Data_Buffer, Index_buffer, Tag_Buffer, Offset_buffer, Tag_Old, Tag_New, Data_Old, Data_New, mem_inst_q_alloc, mem_inst_q_op, mem_data_q_alloc, mem_data_q_op, ic_inst_q_alloc, ic_inst_q_op, ic_data_q_alloc, ic_data_q_op,dc_inst_q_alloc, dc_inst_q_op, dc_data_q_alloc, dc_data_q_op,"); // Write header
   end
   localparam META_SIZE = 8;
 //  MSHR_Alloc
@@ -229,14 +229,14 @@ initial begin
       count <= count + 1; // Increment count
       #1
       if(operation_buffer != 0 ) begin 
-        $fdisplay(file, "%t,%d,32'h%h ,%s,128'h%h ,9'h%h ,18'h%h ,4'h%h ,18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h ,18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h,4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h,4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h", 
+        $fdisplay(file, "%t,%d,32'h%h ,%s,128'h%h ,9'h%h ,18'h%h ,4'h%h ,18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h ,18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h,4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h,4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h,1'h%h, %s,1'h%h, %s,1'h%h, %s,1'h%h, %s,1'h%h, %s,1'h%h, %s, %s, %s, 32'h%h, 128'h%h", 
         $time, count, addr_buffer, dir_opcode_names[operation_buffer], data_buffer, 
         idx_buf, tag_buf, offset_buf, 
         tag_lines_old[TAG_SIZE*8-1:TAG_SIZE*7],tag_lines_old[TAG_SIZE*7-1:TAG_SIZE*6],tag_lines_old[TAG_SIZE*6-1:TAG_SIZE*5],tag_lines_old[TAG_SIZE*5-1:TAG_SIZE*4],tag_lines_old[TAG_SIZE*4-1:TAG_SIZE*3],tag_lines_old[TAG_SIZE*3-1:TAG_SIZE*2],tag_lines_old[TAG_SIZE*2-1:TAG_SIZE*1],tag_lines_old[TAG_SIZE*1-1:TAG_SIZE*0], 
         tag_lines_new[TAG_SIZE*8-1:TAG_SIZE*7],tag_lines_new[TAG_SIZE*7-1:TAG_SIZE*6],tag_lines_new[TAG_SIZE*6-1:TAG_SIZE*5],tag_lines_new[TAG_SIZE*5-1:TAG_SIZE*4],tag_lines_new[TAG_SIZE*4-1:TAG_SIZE*3],tag_lines_new[TAG_SIZE*3-1:TAG_SIZE*2],tag_lines_new[TAG_SIZE*2-1:TAG_SIZE*1],tag_lines_new[TAG_SIZE*1-1:TAG_SIZE*0], 
         data_lines_old[4*8-1:4*7],data_lines_old[4*7-1:4*6],data_lines_old[4*6-1:4*5],data_lines_old[4*5-1:4*4],data_lines_old[4*4-1:4*3],data_lines_old[4*3-1:4*2],data_lines_old[4*2-1:4*1],data_lines_old[4*1-1:4*0], 
         data_lines_new[4*8-1:4*7],data_lines_new[4*7-1:4*6],data_lines_new[4*6-1:4*5],data_lines_new[4*5-1:4*4],data_lines_new[4*4-1:4*3],data_lines_new[4*3-1:4*2],data_lines_new[4*2-1:4*1],data_lines_new[4*1-1:4*0], 
-        
+        mem_instr_q_operation, opcode_names[mem_instr_q_operation], mem_data_q_alloc, opcode_names[mem_data_q_operation], ic_inst_q_alloc, opcode_names[ic_inst_q_operation],ic_data_q_alloc, opcode_names[ic_data_q_operation],  dc_inst_q_alloc, opcode_names[dc_inst_q_operation],dc_data_q_alloc, opcode_names[dc_data_q_operation], src_names[src_out], src_names[dest_out], addr_out, data_out
         );
     end 
     end

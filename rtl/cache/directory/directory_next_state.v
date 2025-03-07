@@ -34,7 +34,6 @@ initial osn = 0;
 initial ssn = 0;
 
 assign next_state = src == 2 ? {ssn, osn} : src == 1 ? {osn, ssn } : current_state;
-reg [1:0] osn, ssn; //osn == other state next, ssn = source state next
 always @(*) begin
     if(rst) begin
         osn = 0;

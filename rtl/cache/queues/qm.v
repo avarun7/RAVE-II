@@ -47,7 +47,7 @@ onehot_2_bin oh2b(
 );
 integer j, p;
 assign empty = wr_ptr == rd_ptr;
-assign full = wr_ptr + 1 == rd_ptr;
+assign full = wr_ptr << 1 == rd_ptr || wr_ptr << 1 == rd_ptr-1;
 always @(posedge clk or rst) begin
     if(rst) begin
         wr_ptr <= 8'h1;
@@ -77,24 +77,4 @@ always @(posedge clk or rst) begin
     end
 end
 
-endmodule
-
-module mux_nm #(
-    parameter N = 8, 
-    parameter M = 4  
-) (
-    input  [N*M-1:0]    data_in,    
-    input  [M-1:0]      one_hot_sel,  
-    output reg [N-1:0]  data_out  
-);
-    integer i;
-
-    always @(*) begin
-        data_out = {N{1'b0}}; 
-        for (i = 0; i < M; i = i + 1) begin
-            if (one_hot_sel[i]) begin
-                data_out = data_in[i*N +: N]; 
-            end
-        end
-    end
 endmodule
