@@ -28,11 +28,11 @@ module c_TOP #(parameter XLEN=32) (
     //outputs
     output reg [25:0] clc, //cacheline counter 
     output reg  [25:0] nlpf //next-line prefetch
+
+    output reg [XLEN - 1:0] ras_data_out;
+    output reg ras_valid_out; //TODO: should these be regs or wires?
     // output reg [25:0] bppf  //branch-predictor prefetch
 );
-
-    reg [XLEN - 1:0] ras_data_out;
-    reg ras_valid_out; //TODO: should these be regs or wires?
 
     // instantiate RAS
     ras ras1 (
@@ -64,8 +64,6 @@ module c_TOP #(parameter XLEN=32) (
                 clc <= resteer_target_BR [31:6];
             end else if (ras_valid_out) begin
                 clc <= ras_data_out [31:6];
-            end else begin //next line
-                clc <= clc + 64; //TODO: we should not reach here, what to do if we do?
             end
         end else begin
             clc <= clc + 64;
