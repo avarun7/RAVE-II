@@ -1,4 +1,4 @@
-module directory_gen_request #(parameter CL_SIZE = 128) (
+module directory_gen_request #(parameter CL_SIZE = 128, NAME = 1) (
     input clk,
     input rst,
 
@@ -158,47 +158,5 @@ always @(*) begin
     endcase
 end
 
-reg [8*6:1] opcode_names [0:7]; // Each string is max 6 chars long
-reg [8*6:1] state_names[0:3];
-reg [8*6:1] src_names[0:3];
 
-integer file;
-  integer count = 0;
-initial begin
-    file = $fopen("dir_req_log.csv", "w");
-    opcode_names[0] = "NOOP";
-    opcode_names[1] = "?????"; // Unused index
-    opcode_names[2] = "REPLY";
-    opcode_names[3] = "RD";
-    opcode_names[4] = "WR";
-    opcode_names[5] = "INV";
-    opcode_names[6] = "UPD";
-    opcode_names[7] = "RWITM";
-    state_names[1] = "S";
-    state_names[2] = "M";
-    state_names[0] = "???";
-    state_names[3] = "???";
-    src_names[0] = "???";
-    src_names[1] = "I$";
-    src_names[2] = "D$";
-    src_names[3] = "MEM";
-
-    if (file == 0) begin
-      $display("Error: Unable to open file.");
-      $stop;
-    end
-    
-    $fdisplay(file, "Time,Cycle,I$State, D$State,Source,Destination,Operation In,MEM_INSTR_ALLOC,MEM_INSTR_OPER,MEM_DATA_ALLOC,MEM_DATA_OPER,IC_INSTR_ALLOC,IC_INSTR_OPER,IC_DATA_ALLOC,IC_DATA_OPER,DC_INSTR_ALLOC,DC_INSTR_OPER,DC_DATA_ALLOC,DC_DATA_OPER"); // Write header
-  end
-
-  always @(posedge clk) begin
-    if (rst) begin
-      count <= 0;  // Reset count on reset
-    end else begin
-      count <= count + 1; // Increment count
-      if(operation != 0) begin 
-        $fdisplay(file, "%t,%d,%s,%s, %s,%s,%s,%d,%s,%d,%s,%d,%s,%d,%s,%d,%s,%d,%s", $time, count, state_names[current_state[1:0]], state_names[current_state[3:2]], src_names[source], src_names[dest], opcode_names[operation], mem_instr_q_alloc, opcode_names[mem_instr_q_operation], mem_data_q_alloc, opcode_names[mem_data_q_operation], ic_inst_q_alloc, opcode_names[ic_inst_q_operation], ic_data_q_alloc, opcode_names[ic_data_q_operation], dc_inst_q_alloc, opcode_names[dc_inst_q_operation], dc_data_q_alloc, opcode_names[dc_data_q_operation]);
-    end 
-    end
-  end
 endmodule

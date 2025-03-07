@@ -31,12 +31,13 @@ always @(posedge clk) begin
     
     end
     else begin
-        if(operation != 0) begin
-            tag_lines_out <= st_fwd ? tag_in_wb : tag_store[idx];
-        end
         if(alloc) begin
-            tag_store[idx_in_wb] <= tag_in_wb;
+            tag_store[idx_in_wb] = tag_in_wb;
         end
+        if(operation != 0) begin
+            tag_lines_out =  tag_store[idx];
+        end
+        
     end
 end
 

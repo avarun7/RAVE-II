@@ -528,7 +528,7 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(6)) queue_arb_even(
     .dealloc(dealloc_even)
 );
 
-directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(18)) directory_bank_even(
+directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(18), .NAME(1)) directory_bank_even(
     .clk(clk),
     .rst(rst),
 
@@ -809,7 +809,7 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(6)) queue_arb_odd(
     .dealloc(dealloc_odd)
 );
 
-directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(18)) directory_bank_odd(
+directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(18), .NAME(2)) directory_bank_odd(
     .clk(clk),
     .rst(rst),
 
@@ -842,4 +842,6 @@ directory_bank #(.DATA_SIZE(DATA_SIZE), .CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .T
     .addr_out(addr_out_odd),
     .data_out(data_out_odd)
 );
+
+  
 endmodule
