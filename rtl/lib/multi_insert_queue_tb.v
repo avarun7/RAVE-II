@@ -6,7 +6,7 @@ parameter QUEUE_DEPTH = 8;
 parameter MAX_INSERTS_PER_CYCLE = 4;
 
 reg clk;
-reg rst_n;
+reg rst;
 
 reg [MAX_INSERTS_PER_CYCLE-1:0] insert_valid;
 reg [MAX_INSERTS_PER_CYCLE*DATA_WIDTH-1:0] insert_data;
@@ -27,15 +27,15 @@ multi_insertion_queue #(
     .MAX_INSERTS_PER_CYCLE(MAX_INSERTS_PER_CYCLE)
 ) miq (
     .clk(clk),
-    .rst_n(rst_n),
+    .rst(rst),
     .insert_valid(insert_valid),
     .insert_data(insert_data),
     .insert_ready(insert_ready),
     .remove_valid(remove_valid),
     .remove_data(remove_data),
     .remove_ready(remove_ready),
-    .full(full),
-    .empty(empty),
+    // .full(full),
+    // .empty(empty),
     .occupancy(occupancy)
 );
 
@@ -46,13 +46,13 @@ always #5 clk = ~clk;
 initial begin
     // Initialize
     clk = 0;
-    rst_n = 1;
+    rst = 1;
     insert_valid = 0;
     insert_data = 0;
     remove_valid = 0;
     
     // Reset
-    #10 rst_n = 0;
+    #10 rst = 0;
     
     // Insert single element
     #10;
@@ -100,7 +100,7 @@ end
 // Monitor
 initial begin
     $monitor("Time=%0t, Reset=%b, Occ=%0d, Full=%b, Empty=%b, InsValid=%b, InsReady=%b, RemReady=%b, RemData=%h",
-             $time, rst_n, occupancy, full, empty, insert_valid, insert_ready, remove_ready, remove_data);
+             $time, rst, occupancy, full, empty, insert_valid, insert_ready, remove_ready, remove_data);
 end
 
 endmodule
