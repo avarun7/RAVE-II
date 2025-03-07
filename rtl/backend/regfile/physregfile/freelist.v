@@ -16,8 +16,10 @@ module freelist #(parameter PHYSFILE_SIZE=256)(
 
     always@(posedge clk) begin
         for(i = 0; i < PHYSFILE_SIZE; i = i + 1) begin
-            if((phystag_rsv == i && phys_rsv) || (phystag_free == i && phys_free))begin
-                freevect[i] <= freevect[i] ^ 1'b1;
+            if(phystag_rsv == i && phys_rsv) begin
+                freevect[i] <= 1'b0;
+            end else if (phystag_free == i && phys_free)begin
+                freevect[i] <= 1'b1;
             end
         end
     end

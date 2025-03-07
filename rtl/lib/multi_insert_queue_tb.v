@@ -2,7 +2,7 @@
 // Testbench for the multi-insertion queue
 module multi_insertion_queue_tb;
 parameter DATA_WIDTH = 8;
-parameter QUEUE_DEPTH = 16;
+parameter QUEUE_DEPTH = 8;
 parameter MAX_INSERTS_PER_CYCLE = 4;
 
 reg clk;
@@ -46,13 +46,13 @@ always #5 clk = ~clk;
 initial begin
     // Initialize
     clk = 0;
-    rst_n = 0;
+    rst_n = 1;
     insert_valid = 0;
     insert_data = 0;
     remove_valid = 0;
     
     // Reset
-    #10 rst_n = 1;
+    #10 rst_n = 0;
     
     // Insert single element
     #10;
@@ -68,8 +68,11 @@ initial begin
     insert_data[15:8] = 8'hC3;
     insert_data[23:16] = 8'hD4;
     #10;
+    #10 // At 7
+    #10 // At 8
+
+    //Try to insert more than cap
     insert_valid = 0;
-    
     // Remove elements
     #10;
     remove_valid = 1;
@@ -87,10 +90,10 @@ initial begin
     remove_valid = 1;
     #10;
     insert_valid = 0;
-    remove_valid = 0;
+    remove_valid = 1;
     
     // Run a bit longer to observe results
-    #50;
+    #100;
     $finish;
 end
 
