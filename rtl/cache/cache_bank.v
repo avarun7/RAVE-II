@@ -104,13 +104,13 @@ initial OOO_TAG_buffer = 0;
 
 
 assign offset_in = addr_in[32-IDX_ROW-TAG_SIZE-1:0];
-assign parity_in = addr_in[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
-assign idx_in = addr_in[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE+2];
+assign parity_in = addr_in[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE-1];
+assign idx_in = addr_in[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE];
 assign tag_in = addr_in[31:32-TAG_SIZE];
 
 assign offset_buf = addr_buffer[32-IDX_ROW-TAG_SIZE-1:0];
-assign parity_buf = addr_buffer[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
-assign idx_buf = addr_buffer[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE+2];
+assign parity_buf = addr_buffer[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE-1];
+assign idx_buf = addr_buffer[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE];
 assign tag_buf = addr_buffer[31:32-TAG_SIZE];
 
 
@@ -396,7 +396,7 @@ initial begin
       $stop;
     end
     
-    $fdisplay(file, "Time,Cycle,Address_Buffer, Operation_Buffer, Size_Buffer,Data_Buffer,OOO_Tag_Buffer, Index_buffer, Tag_Buffer, Offset_buffer,Stall,Hit,MSHR_Alloc, Selected_Way, Tag_Old, Tag_New, Meta_Old, Meta_New, Data_Old, Data_New, Instr_Q_Alloc, Instr_Q_Operation, Data_Q_Alloc, Data_Q_Operation, Data_Q_Data"); // Write header
+    $fdisplay(file, "Time,Cycle,Address_Buffer, Operation_Buffer, Size_Buffer,Data_Buffer,OOO_Tag_Buffer, Index_buffer, Tag_Buffer, Offset_buffer,Stall,Hit,MSHR_Alloc, Selected_Way, Tag_Old, Tag_New, Tag_Alloc, Meta_Old, Meta_New,Meta_Alloc, Data_Old, Data_New,Data_Alloc, Instr_Q_Alloc, Instr_Q_Operation, Data_Q_Alloc, Data_Q_Operation, Data_Q_Data"); // Write header
   end
   localparam META_SIZE = 8;
 //  MSHR_Alloc
@@ -405,16 +405,20 @@ initial begin
       count <= 0;  // Reset count on reset
     end else begin
       count <= count + 1; // Increment count
-      if(operation != 0) begin 
-        $fdisplay(file, "%t,%d,0x%h,%s, %s,0x%h,0x%h,0x%h,0x%h,0x%h,0x%h,0x%h,0x%h,0x%h,0x%h_0x%h_0x%h_0x%h,0x%h_0x%h_0x%h_0x%h, 0x%h_0x%h_0x%h_0x%h,0x%h,%s,0x%h,%s, 0x%h", 
+      if(operation_buffer != 3'd0 ) begin 
+        #1
+        $fdisplay(file, "%t,%d,32'h%h ,%s, %s,128'h%h ,10'h%h ,9'h%h ,18'h%h ,4'h%h ,1'h%h ,1'h%h ,1'h%h ,4'h%h ,18'h%h_18'h%h_18'h%h_18'h%h ,18'h%h_18'h%h_18'h%h_18'h%h ,1'h%h, 8'h%h_8'h%h_8'h%h_8'h%h,8'h%h_8'h%h_8'h%h_8'h%h,1'h%h,128'h%h_128'h%h_128'h%h_128'h%h,128'h%h_128'h%h_128'h%h_128'h%h,1'h%h,1'h%h,%s,1'h%h,%s, 128'h%h", 
         $time, count, addr_buffer, opcode_names[operation_buffer], size_names[size_buffer], data_buffer, OOO_TAG_buffer, 
         idx_buf, tag_buf, offset_buf,stall_cache,hit,mshr_alloc && !stall_cache,selected_replacement_way, 
         tag_lines_old[TAG_SIZE*4-1:TAG_SIZE*3],tag_lines_old[TAG_SIZE*3-1:TAG_SIZE*2],tag_lines_old[TAG_SIZE*2-1:TAG_SIZE*1],tag_lines_old[TAG_SIZE*1-1:TAG_SIZE*0], 
         tag_lines_new[TAG_SIZE*4-1:TAG_SIZE*3],tag_lines_new[TAG_SIZE*3-1:TAG_SIZE*2],tag_lines_new[TAG_SIZE*2-1:TAG_SIZE*1],tag_lines_new[TAG_SIZE*1-1:TAG_SIZE*0], 
+        tag_store_alloc,
         meta_lines_old[META_SIZE*4-1:META_SIZE*3],meta_lines_old[META_SIZE*3-1:META_SIZE*2],meta_lines_old[META_SIZE*2-1:META_SIZE*1],meta_lines_old[META_SIZE*1-1:META_SIZE*0], 
         meta_lines_new[META_SIZE*4-1:META_SIZE*3],meta_lines_new[META_SIZE*3-1:META_SIZE*2],meta_lines_new[META_SIZE*2-1:META_SIZE*1],meta_lines_new[META_SIZE*1-1:META_SIZE*0], 
+        valid_operation_buf,
         data_lines_old[CL_SIZE*4-1:CL_SIZE*3],data_lines_old[CL_SIZE*3-1:CL_SIZE*2],data_lines_old[CL_SIZE*2-1:CL_SIZE*1],data_lines_old[CL_SIZE*1-1:CL_SIZE*0], 
         data_lines_new[CL_SIZE*4-1:CL_SIZE*3],data_lines_new[CL_SIZE*3-1:CL_SIZE*2],data_lines_new[CL_SIZE*2-1:CL_SIZE*1],data_lines_new[CL_SIZE*1-1:CL_SIZE*0], 
+        data_store_alloc,
         alloc_miss, dir_opcode_names[operation_miss], alloc_evic, dir_opcode_names[operation_evic], data_evic
         );
     end 
