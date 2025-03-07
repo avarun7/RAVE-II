@@ -37,8 +37,8 @@ module f2_TOP #(parameter XLEN=32) (
     input resteer,
     input [XLEN - 1:0] resteer_target_D1,
     input resteer_taken_D1,
-    input [XLEN - 1:0] resteer_target_BR,
-    input resteer_taken_BR,
+    output [XLEN - 1:0] resteer_target_BR,
+    output resteer_taken_BR,
     input [XLEN - 1:0] resteer_target_ROB,
     input resteer_taken_ROB,
     input [XLEN - 1:0] resteer_target_ras,
@@ -65,7 +65,7 @@ module f2_TOP #(parameter XLEN=32) (
     output [511:0] icache_l2_data_out
 
     //PC 
-    output [XLEN - 1:0] pc
+    output [XLEN - 1:0] pc_out
 
 );
 
@@ -94,13 +94,53 @@ assign prefetch_addr  = final_target_addr;
 
 //IBUFF instantiation
 
+
 IBuff #(.CACHE_LINE_SIZE(128)) ibuff(
-    .clk(),
-    .rst(),
+    .clk(clk),
+    .rst(rst || resteer),
     .load(),
     .data_in(), // Data inputs for each entry
     .data_out(), // Outputs for all 4 entries
     .valid_out()          // Valid bits for each entry
 );
 
+byte_rotator rotator (
+    .data_in(),
+    .shift(),
+    .data_out()
+);
+
+//PC instantiation
+reg [XLEN - 1:0] pc;
+
+always @(posedge clk) begin
+    if (rst) begin
+        pc <= 0;
+    end else if (stall_in) begin
+        pc <= pc;
+    end else if (resteer) begin
+        if (resteer_taken_ROB) begin
+            pc <= resteer_target_ROB;
+        end else if (resteer_taken_D1) begin
+            pc <= resteer_target_D1;
+        end else if () begin
+            pc <= ;
+        end else if (ras_valid_out) begin
+            pc <= ras_data_out;
+        end
+    end else begin
+        pc <= pc + 64;
+    end
+end
+
+endmodule
+
+module byte_rotator (
+    input wire [511:0] data_in, // 512-bit input (64 bytes)
+    input wire [5:0] shift,     // 6-bit shift amount (0-63)
+    output reg [511:0] data_out // 512-bit output
+);
+    always @(*) begin
+        data_out = (data_in << (shift * 8)) | (data_in >> ((64 - shift) * 8));
+    end
 endmodule
