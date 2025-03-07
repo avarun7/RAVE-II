@@ -30,4 +30,14 @@ module regread #(parameter NUM_UOPS=32,
         except_out <= except_in;
     end
 
+    always@(negedge rst) begin
+        uop_out <= {$clog2(NUM_UOPS){1'b0}};
+        eoi_out <= 1'b0;
+        dest_arch_out <= {$clog2(ARCHFILE_SIZE){1'b0}};
+        imm_out <= {XLEN{1'b0}};
+        use_imm_out <= 1'b0;
+        pc_out <= {32{1'b0}};
+        except_out <= 1'b0;
+    end
+
 endmodule

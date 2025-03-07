@@ -25,7 +25,7 @@ localparam RWITM = 7;
 localparam RINV = 2;
 wire [META_SIZE*4-1:0] meta_way_split [3:0];
 wire[3:0] lru_concat[3:0];
-wire[3:0] selected_way_miss;
+wire[3:0] selected_way_miss,selected_way_miss_temp;
 wire[3:0] pending;
 wire[3:0] pmsi_concat[3:0];
 assign miss = ~(|hits);
@@ -52,9 +52,11 @@ max4 way_select(
 .c(lru_concat[2]),
 .d(lru_concat[3]),
 .p({meta_way_split[0][3], meta_way_split[1][3], meta_way_split[2][3], meta_way_split[3][3]}),
-.max_out(selected_way_miss),
+.max_out(selected_way_miss_temp),
 .max_valid(pending_stall_temp)
 );
+
+assign  selected_way_miss = pmsi_concat[3][3:0] == 1 ? 4'd8 : pmsi_concat[2][3:0] == 1 ? 4'd4 : pmsi_concat[1][3:0] == 1 ? 4'd2 : pmsi_concat[0][3:0]==1 ? 4'd1 : selected_way_miss_temp;
 assign pending_stall = pending_stall_temp && miss && valid;
 // assign is_evict = pmsi_concat[0] != 1 && pmsi_concat[1] != 1  && pmsi_concat[2] != 1 && pmsi_concat[3] != 1;
 wire [3:0] new_state;

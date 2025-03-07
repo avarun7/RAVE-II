@@ -1,6 +1,6 @@
 module memory_system_tb ();
 
-reg clk, rst;
+reg clk, rst, tmp;
 reg [31:0] addr_even, addr_odd;
 wire[31:0]addr_out_even, addr_out_odd;
 wire[127:0] cl_odd, cl_even;
@@ -17,10 +17,23 @@ initial begin
 
     #20
     rst = 0;
-    @(posedge hit_even)
-    $finish ;
+    #20
+    @(posedge hit_even);
+    #20
+           #1
+    addr_even = 32'hFF00_0020;
+    addr_odd = 32'hFF00_0030;
+   #20
+    @(posedge hit_even);
+    #20
+        #1
+     addr_even = 32'b100_0000;
+     addr_odd = 32'b101_0000;
+     
+    tmp = 1;
+    #600
 
-
+    $finish;
 end
 
 

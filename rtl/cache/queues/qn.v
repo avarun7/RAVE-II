@@ -39,7 +39,11 @@ initial begin
     wr_ptr = 1;
     rd_ptr = 1;
 end
-
+wire[2:0] index;
+onehot_2_bin oh2b(
+    .a(wr_ptr),
+    .b(index)
+);
 integer j, p;
 assign empty = wr_ptr == rd_ptr;
 assign full = wr_ptr + 1 == rd_ptr;
@@ -55,7 +59,7 @@ always @(posedge clk or rst) begin
     else begin
         if(!full) begin
             if(wr) begin
-                queue[wr_ptr-1] = {n_din};
+                queue[index] = {n_din};
                 wr_ptr = wr_ptr[Q_LENGTH-1] == 1 ? 1 :  wr_ptr << 1;
             end
         end  
