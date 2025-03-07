@@ -1,28 +1,28 @@
-module arithmetic_FU#(parameter XLEN=32, ROB_SIZE=256, PHYS_REG_SIZE=256)(
+module arithmetic_FU#(parameter XLEN=32, ROB_SIZE=256, PHYS_REG_SIZE=256, UOP_SIZE=16)(
     input clk, rst, valid_in,
-    input                               additional_info,
-    input[2:0]                          arithmetic_type,
+    input[$clog2(UOP_SIZE)-1:0]         uop,
     input[$clog2(ROB_SIZE)-1:0]         rob_entry_in,
-    input[$clog2(PHYS_REG_SIZE)-1:0]    dest_tag_in,
+    input[$clog2(PHYS_REG_SIZE)-1:0]    dest_reg_in,
     input[XLEN-1:0]                     rs1,
     input[XLEN-1:0]                     rs2,
+    input[XLEN-1:0]                     pc,
 
     output reg[XLEN-1:0]                    result,
     output reg                              valid_out,
     output wire[$clog2(ROB_SIZE)-1:0]       rob_entry,
-    output wire[$clog2(PHYS_REG_SIZE)-1:0]  dest_tag
+    output wire[$clog2(PHYS_REG_SIZE)-1:0]  dest_reg
 );
 
 assign rob_entry = rob_entry_in;
-assign dest_tag = dest_tag_in;
+assign dest_reg = dest_reg_in;
 
 always @(posedge clk) begin
     if(rst)
         result <= 1'b0;
     else begin
-        case (arithmetic_type)
+        case (uop)
             3'b000: // Add/Sub
-                if(additional_info)
+                if(uop[0])
                     result <= $signed(rs1) - $signed(rs2);
                 else 
                     result <= $signed(rs1) + $signed(rs2);

@@ -16,9 +16,7 @@ module rsv_tb;
   reg                               rs1_received;
   reg[XLEN-1:0]                     rs1_value;
   reg[XLEN-1:0]                     pc_in;
-  reg[4:0]                          opcode_in;
-  reg[2:0]                          opcode_type_in;
-  reg                               additional_info_in;
+  reg[$clog2(UOP_NUM)-1:0]          uop_encoding_in;
   reg[XLEN-1:0]                     rs2_value;
   reg                               rs2_received;
   reg[$clog2(PHYS_REG_SIZE)-1:0]    rs2_reg;
@@ -32,9 +30,7 @@ module rsv_tb;
   wire[XLEN-1:0]                rs1;
   wire[XLEN-1:0]                rs2;
   wire[XLEN-1:0]                pc;
-  wire[4:0]                     opcode;
-  wire[2:0]                     opcode_type;
-  wire                          additional_info;
+  wire[$clog2(UOP_NUM)-1:0]     uop_encoding;
   wire                          valid_out;
   
   // Instantiate the TLB
