@@ -3,6 +3,19 @@ import asyncio
 from pyuvm import *
 from env import ProcessorEnv
 from sequences import InstructionSequence
+import cocotb
+from cocotb.regression import TestFactory
+
+# Define your test using Cocotb's test
+@cocotb.test()
+async def run_processor_test1(dut):
+    """Cocotb entry point to run the PyUVM test."""
+    uvm_root().run_test("ProcessorTest")  # PyUVM test execution
+
+@cocotb.test()
+async def run_processor_test2(dut):
+    """Cocotb entry point to run the PyUVM test."""
+    uvm_root().run_test("ProcessorTest")  # PyUVM test execution
 
 class ProcessorTest(uvm_test):
     def build_phase(self):

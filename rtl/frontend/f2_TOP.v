@@ -1,6 +1,8 @@
 module f2_TOP #(parameter XLEN=32) (
     input clk, rst,
 
+    input stall_in
+
     //inputs
     input [XLEN - 1:0] clc_paddr, //TODO
     input [XLEN - 1:0] clc_vaddr, //TODO
@@ -25,6 +27,25 @@ module f2_TOP #(parameter XLEN=32) (
     input [XLEN - 1:0] l2_icache_addr,
     input [511:0] l2_icache_data_in,
 
+    // Branch resolution inputs
+    input update_btb,                    // Signal to update BTB (from branch resolution)
+    input [XLEN-1:0] resolved_pc,        // Address of resolved branch
+    input [XLEN-1:0] resolved_target,    // Actual target of the branch
+    input resolved_taken,                // Branch taken/not-taken decision
+
+    //resteers
+    input resteer,
+    input [XLEN - 1:0] resteer_target_D1,
+    input resteer_taken_D1,
+    input [XLEN - 1:0] resteer_target_BR,
+    input resteer_taken_BR,
+    input [XLEN - 1:0] resteer_target_ROB,
+    input resteer_taken_ROB,
+    input [XLEN - 1:0] resteer_target_ras,
+    input resteer_taken_ras,
+
+
+
     //outputs
     output exceptions_out,
 
@@ -42,6 +63,44 @@ module f2_TOP #(parameter XLEN=32) (
     output [2:0] icache_l2_state,
     output [XLEN - 1:0] icache_l2_addr,
     output [511:0] icache_l2_data_out
+
+    //PC 
+    output [XLEN - 1:0] pc
+
+);
+
+//BP instantiation
+// Branch Prediction Wires
+wire final_predict_taken;
+wire [XLEN-1:0] final_target_addr;
+
+// Instantiate Branch Predictor
+predictor_btb_wrapper btb_inst (
+    .clk(clk),
+    .reset(rst),
+    .branch_addr(clc_paddr),         // Instruction address from fetch stage
+    .branch_outcome(resolved_taken), // Outcome from branch resolution
+    .update(update_btb),             // Update BTB when a branch is resolved
+    .update_addr(resolved_pc),       // Address of resolved branch
+    .actual_target(resolved_target), // Actual branch target
+    .branch_taken(resolved_taken),   // Branch taken/not-taken decision
+    .final_predict_taken(final_predict_taken), // Prediction output
+    .final_target_addr(final_target_addr)      // Predicted target address
+);
+
+// Use the prediction results
+assign prefetch_valid = final_predict_taken;
+assign prefetch_addr  = final_target_addr;
+
+//IBUFF instantiation
+
+IBuff #(.CACHE_LINE_SIZE(128)) ibuff(
+    .clk(),
+    .rst(),
+    .load(),
+    .data_in(), // Data inputs for each entry
+    .data_out(), // Outputs for all 4 entries
+    .valid_out()          // Valid bits for each entry
 );
 
 endmodule
