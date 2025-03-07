@@ -47,7 +47,7 @@ onehot_2_bin oh2b(
 );
 integer j, p;
 assign empty = wr_ptr == rd_ptr;
-assign full = wr_ptr + 1 == rd_ptr;
+assign full = wr_ptr << 1 == rd_ptr || wr_ptr << 1 == rd_ptr-1;
 always @(posedge clk or rst) begin
     if(rst) begin
         wr_ptr <= 8'h1;
