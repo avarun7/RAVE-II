@@ -80,6 +80,26 @@ wire[$clog2(PHYS_REG_SIZE)-1:0]    ring_to_ld_st_rs2_reg;
 wire                               ring_to_ld_st_valid;  
 wire[$clog2(PHYS_REG_SIZE)-1:0]    ring_to_ld_st_dest_reg;
 
+wire                              update_logical_valid;
+wire[$clog2(PHYS_REG_SIZE)-1:0]   update_logical_update_reg;
+wire[XLEN-1:0]                    update_logical_update_val;
+
+wire                              update_arithmetic_valid;
+wire[$clog2(PHYS_REG_SIZE)-1:0]   update_arithmetic_update_reg;
+wire[XLEN-1:0]                    update_arithmetic_update_val; 
+
+wire                              update_branch_valid;
+wire[$clog2(PHYS_REG_SIZE)-1:0]   update_branch_update_reg;
+wire[XLEN-1:0]                    update_branch_update_val;
+
+wire                              update_ld_st_valid;
+wire[$clog2(PHYS_REG_SIZE)-1:0]   update_ld_st_update_reg;
+wire[XLEN-1:0]                    update_ld_st_update_val;
+
+wire                              update_mul_div_valid;
+wire[$clog2(PHYS_REG_SIZE)-1:0]   update_mul_div_update_reg;
+wire[XLEN-1:0]                    update_mul_div_update_val;
+
 ring_rsvs #(.XLEN(XLEN), .PHYS_REG_SIZE(PHYS_REG_SIZE), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE)) ring_mapper_to_rsvs(
     .clk(clk), .rst(rst), .valid_in(valid_in),
 
@@ -387,26 +407,6 @@ ldst_FU #(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE)) ld_st_fu(
 );
 
 parameter RF_QUEUE = 8;
-
-wire                              update_logical_valid;
-wire[$clog2(PHYS_REG_SIZE)-1:0]   update_logical_update_reg;
-wire[XLEN-1:0]                    update_logical_update_val;
-
-wire                              update_arithmetic_valid;
-wire[$clog2(PHYS_REG_SIZE)-1:0]   update_arithmetic_update_reg;
-wire[XLEN-1:0]                    update_arithmetic_update_val; 
-
-wire                              update_branch_valid;
-wire[$clog2(PHYS_REG_SIZE)-1:0]   update_branch_update_reg;
-wire[XLEN-1:0]                    update_branch_update_val;
-
-wire                              update_ld_st_valid;
-wire[$clog2(PHYS_REG_SIZE)-1:0]   update_ld_st_update_reg;
-wire[XLEN-1:0]                    update_ld_st_update_val;
-
-wire                              update_mul_div_valid;
-wire[$clog2(PHYS_REG_SIZE)-1:0]   update_mul_div_update_reg;
-wire[XLEN-1:0]                    update_mul_div_update_val;
 
 //TODO: Need actual branches
 

@@ -58,7 +58,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
     output [$clog2(PHYSFILE_SIZE)-1:0] op1_tag_out, op2_tag_out,
     output [XLEN-1:0] op1_val_out, op2_val_out,
     output [$clog2(PHYSFILE_SIZE)-1:0] dest_tag_out,
-    output pc_out,
+    output [31:0] pc_out,
     output [$clog2(ROB_SIZE)-1:0] rob_entry_out,
 
     output alloc_rob,

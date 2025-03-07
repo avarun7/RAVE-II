@@ -3,6 +3,7 @@ module backend_TOP #(parameter NUM_UOPS=32,
                      parameter ARCHFILE_SIZE=32,
                      parameter PHYSFILE_SIZE=256,
                      parameter REG_SIZE=32,
+                     parameter RSV_SIZE=16,
                      parameter ROB_SIZE=128)(
     input clk, rst,
 
@@ -33,7 +34,7 @@ module backend_TOP #(parameter NUM_UOPS=32,
     wire [$clog2(PHYSFILE_SIZE)-1:0] op1_tag_map_ooo, op2_tag_map_ooo;
     wire [XLEN-1:0] op1_val_map_ooo, op2_val_map_ooo;
     wire [$clog2(PHYSFILE_SIZE)-1:0] dest_tag_map_ooo;
-    wire pc_map_ooo;
+    wire [31:0] pc_map_ooo;
     wire [$clog2(ROB_SIZE)-1:0] rob_entry_map_ooo;
         //map --> ROB
     wire alloc_rob;
@@ -93,23 +94,39 @@ module backend_TOP #(parameter NUM_UOPS=32,
                .arch_rd1(src1_arch), .arch_rd2(src2_arch),
                .arch_wr(dest_arch),
                     //ring inputs
-               .ring_update(ring_update_ooo_rf),
+               .ring_update(uop_finish_ooo_rob/*ring_update_ooo_rf*/),
                .phys_ring(phys_ring_ooo_rf), .phys_ring_val(phys_ring_val_ooo_rf),
                     //ROB inputs
                .rob_update(rob_update_rob_rf),
                .arch_rob_update(arch_rob_update_rob_rf), .arch_rob_nonspec_phys(arch_rob_nonspec_phys_rob_rf),
-               .phys_rob_free(),
+               .phys_rob_free(phys_rob_free_rob_rf),
                .rollback(),
                     //mapper outputs
                .phys_rd1_rdy(src1_rdy_rf_map), .phys_rd2_rdy(src2_rdy_rf_map),
-               .phys_rd1_tag(src1_tag_rf_map), .phys_rd2_tag(src2_tag_rf_map),
+               .phys_rd1(src1_tag_rf_map), .phys_rd2(src2_tag_rf_map),
                .phys_rd1_val(src1_val_rf_map), .phys_rd2_val(src2_val_rf_map),
                .phys_wr(dest_tag_rf_map), .oldphys_wr(dest_oldtag_rf_map),
                .none_free());
 
-    ooo_engine_TOP #(.XLEN(XLEN))
-            ooo(.clk(clk), .rst(rst)
-                /*TODO: update with real OOOengine io*/);
+    ooo_engine_TOP #(.XLEN(XLEN), .PHYS_REG_SIZE(PHYSFILE_SIZE), .ROB_SIZE(ROB_SIZE),
+                     .UOP_SIZE(NUM_UOPS/8), .RSV_SIZE(RSV_SIZE))
+            ooo(.clk(clk), .rst(~rst), //TODO: get consistent rst schemes
+                .valid_in(alloc_rob),
+                .mapper_to_ring_functional_unit_num(uop_map_ooo[$clog2(NUM_UOPS)-1:$clog2(NUM_UOPS)-3]),
+                .mapper_to_ring_rob_entry(rob_entry_map_ooo),
+                .mapper_to_ring_uop_rs1_reg(op1_tag_map_ooo),
+                .mapper_to_ring_uop_rs1_received(op1_rdy_map_ooo),
+                .mapper_to_ring_uop_rs1_value(op1_val_map_ooo),
+                .mapper_to_ring_uop_pc_in(pc_map_ooo),
+                .mapper_to_ring_uop_uop_encoding(uop_map_ooo[$clog2(NUM_UOPS)-4:0]),
+                .mapper_to_ring_uop_rs2_value(op2_val_map_ooo),
+                .mapper_to_ring_uop_rs2_received(op2_rdy_map_ooo),
+                .mapper_to_ring_uop_rs2_reg(op2_tag_map_ooo),
+                .mapper_to_ring_dest_reg(dest_tag_map_ooo),
+                .out_rob_valid(uop_finish_ooo_rob),
+                .out_rob_update_reg(phys_ring_ooo_rf),
+                .out_rob_update_val(phys_ring_val_ooo_rf),
+                .out_rob_rob_entry(uop_finish_rob_entry_ooo_rob));
 
     rob_TOP #(.ARCHFILE_SIZE(ARCHFILE_SIZE), .PHYSFILE_SIZE(PHYSFILE_SIZE), .ROB_SIZE(ROB_SIZE))
             rob(.clk(clk), .rst(rst),
@@ -119,7 +136,7 @@ module backend_TOP #(parameter NUM_UOPS=32,
                 .uop_dest_oldphys_in(dest_oldphys_map_rob),
                 .except(except_map_rob),
                     //ring inputs
-                .uop_finish(), .uop_finish_rob_entry(),
+                .uop_finish(uop_finish_ooo_rob), .uop_finish_rob_entry(uop_finish_rob_entry_ooo_rob),
                     //RF outputs
                 .retire_uop(rob_update_rob_rf),
                 .uop_dest_arch_out(arch_rob_update_rob_rf), .uop_dest_phys_out(arch_rob_nonspec_phys_rob_rf),
@@ -127,5 +144,23 @@ module backend_TOP #(parameter NUM_UOPS=32,
                     //mapper outputs
                 .next_rob_entry(next_rob_entry_rob_map),
                 .rob_full(rob_full_rob_map));
+    
+
+
+    /*`ifdef DEBUG
+        integer cycle_cnt;
+        integer file;
+
+        initial begin
+            cycle_cnt = 0;
+            fullfile = $fopen("./out/backend.dump");
+        end
+
+        always@(posedge clk) begin
+            if(rob_update_rob_rf) begin
+
+            end
+        end
+    `endif*/
 
 endmodule

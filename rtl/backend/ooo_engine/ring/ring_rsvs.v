@@ -11,7 +11,7 @@ module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, ROB_SIZE=256, UOP_SIZE=1
     input[XLEN-1:0]                          uop_rs2_value,
     input                                    uop_rs2_received,
     input[$clog2(PHYS_REG_SIZE)-1:0]         uop_rs2_reg,
-    output reg[$clog2(PHYS_REG_SIZE)-1:0]    uop_dest_reg,
+    input[$clog2(PHYS_REG_SIZE)-1:0]    uop_dest_reg,
 
     output reg[$clog2(PHYS_REG_SIZE)-1:0]    logical_rs1_reg,
     output reg[$clog2(ROB_SIZE)-1:0]         logical_rob_entry,
