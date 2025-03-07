@@ -27,7 +27,7 @@ module dispatch #(parameter NUM_UOPS=32,
     output reg [$clog2(PHYSFILE_SIZE)-1:0] op1_tag_out, op2_tag_out,
     output reg [XLEN-1:0] op1_val_out, op2_val_out,
     output reg [$clog2(PHYSFILE_SIZE)-1:0] dest_tag_out,
-    output reg pc_out,
+    output reg [31:0] pc_out,
     output reg [$clog2(ROB_SIZE)-1:0] rob_entry_out,
 
     output reg alloc_rob,

@@ -32,9 +32,9 @@ module rsv #(parameter XLEN=32, SIZE=16, PHYS_REG_SIZE=256, ROB_SIZE=265, UOP_SI
 );
 
 reg[SIZE-1:0]                     free_list;
-reg[SIZE-1:0]                     available;
-reg[SIZE-1:0]                     rs1_update;
-reg[SIZE-1:0]                     rs2_update;
+wire[SIZE-1:0]                     available;
+wire[SIZE-1:0]                     rs1_update;
+wire[SIZE-1:0]                     rs2_update;
 wire[$clog2(SIZE)-1:0]            dispatch;
 wire[$clog2(SIZE)-1:0]            allocate;
 wire                              none_dispatch;
@@ -57,7 +57,6 @@ pencoder #(.WIDTH(SIZE)) in(.a(free_list), .o(allocate), .none(none_allocate));
 
 initial begin
     free_list = {SIZE{1'b1}};
-    available = {SIZE{1'b0}};
     for(i = 0; i < SIZE; i = i + 1) begin
         rs1_received_queue[i] <= 1'b0;
         rs2_received_queue[i] <= 1'b0;
@@ -65,27 +64,17 @@ initial begin
 end
 
 integer unsigned i;
-always @(*) begin
-    for(i = 0; i < SIZE; i = i + 1) begin
-        available[i] <= rs2_received_queue[i] & rs1_received_queue[i];
-    end
-end
 
-always @(*) begin
-    for(i = 0; i < SIZE; i = i + 1) begin
-        if((update_reg == rs1_reg_queue[i]) & !rs1_received_queue[i])
-            rs1_update[i] <= 1;
-        else rs1_update[i] <= 0;
-    end
-end
+genvar k;
+generate
+    for(k = 0; k < SIZE; k = k + 1) begin
+        assign available[k] = rs2_received_queue[k] & rs1_received_queue[k];
 
-always @(*) begin
-    for(i = 0; i < SIZE; i = i + 1) begin
-        if((update_reg == rs2_reg_queue[i]) & !rs2_received_queue[i])
-            rs2_update[i] <= 1;
-        else rs2_update[i] <= 0;
+        assign rs1_update[k] = (update_reg == rs1_reg_queue[k]) & !rs1_received_queue[k];
+
+        assign rs2_update[k] = (update_reg == rs2_reg_queue[k]) & !rs2_received_queue[k];
     end
-end
+endgenerate
 
 always @(posedge clk or posedge rst) begin
     
