@@ -9,10 +9,10 @@ module tag_next_state #(parameter TAG_SIZE = 20) (
     always @(*) begin
         if(is_alloc) begin
             case(selected_way)
-            1:tag_next_state <= {tag_cur_state[15:12], tag_cur_state[11:8], tag_cur_state[7:4], tag_in};
-            2:tag_next_state <= {tag_cur_state[15:12], tag_cur_state[11:8], tag_in, tag_cur_state[3:0]};
-            4:tag_next_state <= {tag_cur_state[15:12], tag_in, tag_cur_state[7:4], tag_cur_state[3:0]};
-            8:tag_next_state <= {tag_in, tag_cur_state[11:8], tag_cur_state[7:4], tag_cur_state[3:0]};
+            1:tag_next_state <= {tag_cur_state[TAG_SIZE*4-1:TAG_SIZE*3], tag_cur_state[TAG_SIZE*3-1:TAG_SIZE*2], tag_cur_state[TAG_SIZE*2-1:TAG_SIZE*1], tag_in};
+            2:tag_next_state <= {tag_cur_state[TAG_SIZE*4-1:TAG_SIZE*3], tag_cur_state[TAG_SIZE*3-1:TAG_SIZE*2], tag_in, tag_cur_state[TAG_SIZE*1-1:TAG_SIZE*0]};
+            4:tag_next_state <= {tag_cur_state[TAG_SIZE*4-1:TAG_SIZE*3], tag_in, tag_cur_state[TAG_SIZE*2-1:TAG_SIZE*1], tag_cur_state[TAG_SIZE*1-1:TAG_SIZE*0]};
+            8:tag_next_state <= {tag_in, tag_cur_state[TAG_SIZE*3-1:TAG_SIZE*2], tag_cur_state[TAG_SIZE*2-1:TAG_SIZE*1], tag_cur_state[TAG_SIZE*1-1:TAG_SIZE*0]};
             default tag_next_state <= tag_cur_state;
             endcase
         end

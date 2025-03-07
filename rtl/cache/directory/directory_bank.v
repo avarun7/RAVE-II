@@ -1,4 +1,4 @@
-module directory_bank #(parameter DATA_SIZE = 4, CL_SIZE = 128, IDX_CNT = 512, TAG_SIZE = 18) (
+module directory_bank #(parameter DATA_SIZE = 4, CL_SIZE = 128, IDX_CNT = 512, TAG_SIZE = 18, NAME = 1) (
     input clk,
     input rst,
 
@@ -50,13 +50,13 @@ assign addr_out = addr_buffer;
 assign data_out = data_buffer;
 
 assign offset_in = addr_in[32-IDX_ROW-TAG_SIZE-1:0];
-assign parity_in = addr_in[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
-assign idx_in = addr_in[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE+2];
+assign parity_in = addr_in[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE-1];
+assign idx_in = addr_in[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE];
 assign tag_in = addr_in[31:32-TAG_SIZE];
 
 assign offset_buf = addr_buffer[32-IDX_ROW-TAG_SIZE-1:0];
-assign parity_buf = addr_buffer[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE];
-assign idx_buf = addr_buffer[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE+2];
+assign parity_buf = addr_buffer[32-IDX_ROW-TAG_SIZE+1:32-IDX_ROW-TAG_SIZE - 1];
+assign idx_buf = addr_buffer[32-1-TAG_SIZE:32-IDX_ROW-TAG_SIZE];
 assign tag_buf = addr_buffer[31:32-TAG_SIZE];
 
 assign valid_operation_buffer = |operation_buffer;
@@ -140,7 +140,7 @@ directory_select_way #(.CL_SIZE(DATA_SIZE), .TAG_SIZE(TAG_SIZE)) dsw(
     .current_state(current_state)
 );
 
-directory_gen_request #( .CL_SIZE(CL_SIZE)) dgr(
+directory_gen_request #( .CL_SIZE(CL_SIZE), .NAME(NAME)) dgr(
     .clk(clk),
     .rst(rst),
 
@@ -167,5 +167,79 @@ directory_gen_request #( .CL_SIZE(CL_SIZE)) dgr(
     .dc_data_q_alloc(dc_data_q_alloc),
     .dc_data_q_operation(dc_data_q_operation)
 );
+
+reg [8*6:1] opcode_names [0:7]; // Each string is max 6 chars long
+reg [8*6:1] dir_opcode_names [0:7]; // Each string is max 6 chars long
+reg [8*6:1] state_names[0:3];
+reg [8*6:1] src_names[0:3];
+reg [8*6:1] size_names[0:3];
+integer file;
+  integer count = 0;
+initial begin
+    if(NAME == 1) begin
+        file = $fopen("DIR_BANK_EVEN.csv", "w");
+    end
+    if(NAME == 2) begin
+        file = $fopen("DIR_BANK_ODD.csv", "w");
+    end
+
+    opcode_names[0] = "NOOP";
+    opcode_names[1] = "LD"; // Unused index
+    opcode_names[2] = "ST";
+    opcode_names[3] = "RD";
+    opcode_names[4] = "WR";
+    opcode_names[5] = "INV";
+    opcode_names[6] = "UPD";
+    opcode_names[7] = "RINV";
+    state_names[1] = "S";
+    state_names[2] = "M";
+    state_names[0] = "???";
+    state_names[3] = "???";
+    src_names[0] = "???";
+    src_names[1] = "I$";
+    src_names[2] = "D$";
+    src_names[3] = "MEM";
+    size_names[0] = "1B";
+    size_names[1] = "2B";
+    size_names[2] = "4B";
+    size_names[3] = "???";
+
+    dir_opcode_names[0] = "NOOP";
+    dir_opcode_names[1] = "???"; // Unused index
+    dir_opcode_names[2] = "REPLY";
+    dir_opcode_names[3] = "RD";
+    dir_opcode_names[4] = "WR";
+    dir_opcode_names[5] = "INV";
+    dir_opcode_names[6] = "UPD";
+    dir_opcode_names[7] = "RWITM";
+
+    if (file == 0) begin
+      $display("Error: Unable to open file.");
+      $stop;
+    end
+    
+    $fdisplay(file, "Time,Cycle,Address_Buffer, Operation_Buffer,Data_Buffer, Index_buffer, Tag_Buffer, Offset_buffer, Tag_Old, Tag_New, Data_Old, Data_New"); // Write header
+  end
+  localparam META_SIZE = 8;
+//  MSHR_Alloc
+  always @(posedge clk) begin
+    if (rst) begin
+      count <= 0;  // Reset count on reset
+    end else begin
+      count <= count + 1; // Increment count
+      #1
+      if(operation_buffer != 0 ) begin 
+        $fdisplay(file, "%t,%d,32'h%h ,%s,128'h%h ,9'h%h ,18'h%h ,4'h%h ,18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h ,18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h_18'h%h,4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h,4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h_4'h%h", 
+        $time, count, addr_buffer, dir_opcode_names[operation_buffer], data_buffer, 
+        idx_buf, tag_buf, offset_buf, 
+        tag_lines_old[TAG_SIZE*8-1:TAG_SIZE*7],tag_lines_old[TAG_SIZE*7-1:TAG_SIZE*6],tag_lines_old[TAG_SIZE*6-1:TAG_SIZE*5],tag_lines_old[TAG_SIZE*5-1:TAG_SIZE*4],tag_lines_old[TAG_SIZE*4-1:TAG_SIZE*3],tag_lines_old[TAG_SIZE*3-1:TAG_SIZE*2],tag_lines_old[TAG_SIZE*2-1:TAG_SIZE*1],tag_lines_old[TAG_SIZE*1-1:TAG_SIZE*0], 
+        tag_lines_new[TAG_SIZE*8-1:TAG_SIZE*7],tag_lines_new[TAG_SIZE*7-1:TAG_SIZE*6],tag_lines_new[TAG_SIZE*6-1:TAG_SIZE*5],tag_lines_new[TAG_SIZE*5-1:TAG_SIZE*4],tag_lines_new[TAG_SIZE*4-1:TAG_SIZE*3],tag_lines_new[TAG_SIZE*3-1:TAG_SIZE*2],tag_lines_new[TAG_SIZE*2-1:TAG_SIZE*1],tag_lines_new[TAG_SIZE*1-1:TAG_SIZE*0], 
+        data_lines_old[4*8-1:4*7],data_lines_old[4*7-1:4*6],data_lines_old[4*6-1:4*5],data_lines_old[4*5-1:4*4],data_lines_old[4*4-1:4*3],data_lines_old[4*3-1:4*2],data_lines_old[4*2-1:4*1],data_lines_old[4*1-1:4*0], 
+        data_lines_new[4*8-1:4*7],data_lines_new[4*7-1:4*6],data_lines_new[4*6-1:4*5],data_lines_new[4*5-1:4*4],data_lines_new[4*4-1:4*3],data_lines_new[4*3-1:4*2],data_lines_new[4*2-1:4*1],data_lines_new[4*1-1:4*0], 
+        
+        );
+    end 
+    end
+  end
 
 endmodule
