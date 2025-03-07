@@ -73,7 +73,7 @@ module backend_TOP #(parameter NUM_UOPS=32,
                 .rob_full(rob_full_rob_map),
                 .rob_entry_in(next_rob_entry_rob_map),
                     //RSV outputs
-                .uop_out(uop_map_ooo),
+                .uop_out(uop_map_ooo), .eoi_out(),
                 .op1_rdy_out(op1_rdy_map_ooo), .op2_rdy_out(op2_rdy_map_ooo),
                 .op1_tag_out(op1_tag_map_ooo), .op2_tag_out(op2_tag_map_ooo),
                 .op1_val_out(op1_val_map_ooo), .op2_val_out(op2_val_map_ooo),

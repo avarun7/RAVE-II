@@ -35,7 +35,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
     input [$clog2(NUM_UOPS)-1:0] uop_in,
     input eoi_in,
     //input [$clog2(ARCHFILE_SIZE)-1:0] src1_arch_in, src2_arch_in, //TODO: maybe should go through here before RF
-    //input [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_in, //TODO: maybe should go through here before RF
+    input [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_in,
     input [XLEN-1:0] imm_in,
     input use_imm_in,
     input [31:0] pc_in,
@@ -52,18 +52,19 @@ module mapper_TOP #(parameter NUM_UOPS=32,
     //output reg [$clog2(ARCHFILE_SIZE)-1:0] src1_arch_out, src2_arch_out, //TODO: maybe should go through here before RF
     //output reg [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_out, //TODO: maybe should go through here before RF
 
-    output reg [$clog2(NUM_UOPS)-1:0] uop_out,
-    output reg op1_rdy_out, op2_rdy_out,
-    output reg [$clog2(PHYSFILE_SIZE)-1:0] op1_tag_out, op2_tag_out,
-    output reg [XLEN-1:0] op1_val_out, op2_val_out,
-    output reg [$clog2(PHYSFILE_SIZE)-1:0] dest_tag_out,
-    output reg pc_out,
-    output reg [$clog2(ROB_SIZE)-1:0] rob_entry_out,
+    output [$clog2(NUM_UOPS)-1:0] uop_out,
+    output eoi_out,
+    output op1_rdy_out, op2_rdy_out,
+    output [$clog2(PHYSFILE_SIZE)-1:0] op1_tag_out, op2_tag_out,
+    output [XLEN-1:0] op1_val_out, op2_val_out,
+    output [$clog2(PHYSFILE_SIZE)-1:0] dest_tag_out,
+    output pc_out,
+    output [$clog2(ROB_SIZE)-1:0] rob_entry_out,
 
-    output reg alloc_rob,
-    output reg [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_out,
-    output reg [$clog2(PHYSFILE_SIZE)-1:0] dest_phys_out, dest_oldphys_out, //TODO: is redundant with dest_tag_out
-    output reg except_out
+    output alloc_rob,
+    output [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_out,
+    output [$clog2(PHYSFILE_SIZE)-1:0] dest_phys_out, dest_oldphys_out, //TODO: is redundant with dest_tag_out
+    output except_out
 );
 
     wire [$clog2(NUM_UOPS)-1:0] uop_arr_prr, uop_prr_disp;
@@ -118,10 +119,10 @@ module mapper_TOP #(parameter NUM_UOPS=32,
                  //ROB inputs
                  .rob_full(rob_full), .rob_entry_in(rob_entry_in),
                  //RSV outputs
-                 .uop_out(uop_out),
+                 .uop_out(uop_out), .eoi_out(eoi_out),
                  .op1_rdy_out(op1_rdy_out), .op2_rdy_out(op2_rdy_out),
                  .op1_tag_out(op1_tag_out), .op2_tag_out(op2_tag_out),
-                 .op1_val_out(op1_val_out), .op2_val_out(op1_val_out),
+                 .op1_val_out(op1_val_out), .op2_val_out(op2_val_out),
                  .dest_tag_out(dest_tag_out),
                  .pc_out(pc_out),
                  .rob_entry_out(rob_entry_out),
@@ -130,5 +131,62 @@ module mapper_TOP #(parameter NUM_UOPS=32,
                  .dest_arch_out(dest_arch_out), .dest_phys_out(dest_phys_out), 
                  .dest_oldphys_out(dest_oldphys_out),                
                  .except_out(except_out));
+
+
+
+    `ifdef DEBUG
+        integer cycle_cnt;
+        integer fullfile, sparsefile;
+
+        initial begin
+            cycle_cnt = 0;
+            fullfile = $fopen("./out/mapper_full.dump");
+            sparsefile = $fopen("./out/mapper_sparse.dump");
+        end
+
+        always@(posedge clk) begin
+            $fdisplay(fullfile, "cycle number: %d", cycle_cnt);
+            $fdisplay(fullfile, "[====ARCHREGREAD====]");
+            $fdisplay(fullfile, "uop: 0x%h, eoi: %b", uop_arr_prr, eoi_arr_prr);
+            $fdisplay(fullfile, "dest_arch: archR%0d", dest_arch_arr_prr);
+            $fdisplay(fullfile, "use_imm: %b, imm: 0x%h", use_imm_arr_prr, imm_arr_prr);
+            $fdisplay(fullfile, "PC: 0x%h", pc_arr_prr);
+            $fdisplay(fullfile, "exception: %b", except_arr_prr);
+            $fdisplay(fullfile, "[====PHYSREGREAD====]");
+            $fdisplay(fullfile, "uop: 0x%h, eoi: %b", uop_prr_disp, eoi_prr_disp);
+            $fdisplay(fullfile, "dest_arch: archR%0d", dest_arch_prr_disp);
+            $fdisplay(fullfile, "use_imm: %b, imm: 0x%h", use_imm_prr_disp, imm_prr_disp);
+            $fdisplay(fullfile, "PC: 0x%h", pc_prr_disp);
+            $fdisplay(fullfile, "exception: %b", except_prr_disp);
+            $fdisplay(fullfile, "[====DISPATCH-TO-RSV====]");
+            $fdisplay(fullfile, "uop: 0x%h, eoi: %b", uop_out, eoi_out);
+            $fdisplay(fullfile, "op1: rdy=%b, tag=physR%0d, val=0x%h", op1_rdy_out, op1_tag_out, op1_val_out);
+            $fdisplay(fullfile, "op2: rdy=%b, tag=physR%0d, val=0x%h", op2_rdy_out, op2_tag_out, op2_val_out);
+            $fdisplay(fullfile, "dest: tag=physR%0d", dest_tag_out);
+            $fdisplay(fullfile, "PC: 0x%h", pc_out);
+            $fdisplay(fullfile, "rob_entry: ROB%0d", rob_entry_out);
+            $fdisplay(fullfile, "[====DISPATCH-TO-ROB====]");
+            $fdisplay(fullfile, "alloc([(spec(archR%0d)<-physR%0d), free(physR%0d)])", dest_arch_out, dest_phys_out, dest_oldphys_out);
+            $fdisplay(fullfile, "exception: %b", except_out);
+            $fdisplay(fullfile, "\n\n");
+
+            if(alloc_rob) begin
+                $fdisplay(sparsefile, "cycle number: %d", cycle_cnt);
+                $fdisplay(sparsefile, "[====DISPATCH-TO-RSV====]");
+                $fdisplay(sparsefile, "uop: 0x%h, eoi: %b", uop_out, eoi_out);
+                $fdisplay(sparsefile, "op1: rdy=%b, tag=physR%0d, val=0x%h", op1_rdy_out, op1_tag_out, op1_val_out);
+                $fdisplay(sparsefile, "op2: rdy=%b, tag=physR%0d, val=0x%h", op2_rdy_out, op2_tag_out, op2_val_out);
+                $fdisplay(sparsefile, "dest: tag=physR%0d", dest_tag_out);
+                $fdisplay(sparsefile, "PC: 0x%h", pc_out);
+                $fdisplay(sparsefile, "rob_entry: ROB%0d", rob_entry_out);
+                $fdisplay(sparsefile, "[====DISPATCH-TO-ROB====]");
+                $fdisplay(sparsefile, "alloc([(spec(archR%0d)<-physR%0d), free(physR%0d)])", dest_arch_out, dest_phys_out, dest_oldphys_out);
+                $fdisplay(sparsefile, "exception: %b", except_out);
+                $fdisplay(sparsefile, "\n\n");
+            end
+
+            cycle_cnt = cycle_cnt + 1;
+        end
+    `endif
 
 endmodule
