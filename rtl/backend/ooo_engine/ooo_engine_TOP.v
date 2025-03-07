@@ -218,7 +218,7 @@ wire[$clog2(ROB_SIZE)-1:0]      logical_fu_to_ring_rob_entry;
 wire[$clog2(PHYS_REG_SIZE)-1:0] logical_fu_to_ring_dest_reg;
 
 
-logical_FU#(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE)) log_fu(
+logical_FU#(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE), .PHYS_REG_SIZE(PHYS_REG_SIZE)) log_fu(
     .clk(clk), .rst(rst), .valid_in(logical_rsv_to_fu_valid_out),
     
     .rob_entry_in(logical_rsv_to_fu_rob_entry),
@@ -275,7 +275,7 @@ wire                            arithmetic_fu_to_ring_valid_out;
 wire[$clog2(ROB_SIZE)-1:0]      arithmetic_fu_to_ring_rob_entry;
 wire[$clog2(PHYS_REG_SIZE)-1:0] arithmetic_fu_to_ring_dest_reg;
 
-arithmetic_FU #(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE)) arithmetic_fu(
+arithmetic_FU #(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE), .PHYS_REG_SIZE(PHYS_REG_SIZE)) arithmetic_fu(
     .clk(clk), .rst(rst), .valid_in(arithmetic_rsv_to_fu_valid_out),
     
     .rob_entry_in(arithmetic_rsv_to_fu_rob_entry),
@@ -332,7 +332,7 @@ wire                            mul_div_fu_to_ring_valid_out;
 wire[$clog2(ROB_SIZE)-1:0]      mul_div_fu_to_ring_rob_entry;
 wire[$clog2(PHYS_REG_SIZE)-1:0] mul_div_fu_to_ring_dest_reg;
 
-md_FU#(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE)) mul_div_fu(
+md_FU#(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE), .PHYS_REG_SIZE(PHYS_REG_SIZE)) mul_div_fu(
     .clk(clk), .rst(rst), .valid_in(mul_div_rsv_to_fu_valid_out),
     
     .rob_entry_in(mul_div_rsv_to_fu_rob_entry),
@@ -389,7 +389,7 @@ wire                            ld_st_fu_to_ring_valid_out;
 wire[$clog2(ROB_SIZE)-1:0]      ld_st_fu_to_ring_rob_entry;
 wire[$clog2(PHYS_REG_SIZE)-1:0] ld_st_fu_to_ring_dest_reg;
 
-ldst_FU #(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE)) ld_st_fu(
+ldst_FU #(.XLEN(XLEN), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE), .PHYS_REG_SIZE(PHYS_REG_SIZE)) ld_st_fu(
     .clk(clk), .rst(rst), .valid_in(mul_div_rsv_to_fu_valid_out),
     
     .rob_entry_in(ld_st_rsv_to_fu_rob_entry),
