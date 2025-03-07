@@ -20,13 +20,18 @@ initial begin
     #20
     @(posedge hit_even);
     #20
-    // addr_even = 32'b010_0000;
-    // addr_odd = 32'b011_0000;
+           #1
     addr_even = 32'hFF00_0020;
     addr_odd = 32'hFF00_0030;
-    #1
+   #20
+    @(posedge hit_even);
+    #20
+        #1
+     addr_even = 32'b100_0000;
+     addr_odd = 32'b101_0000;
+     
     tmp = 1;
-    #400
+    #600
 
     $finish;
 end
