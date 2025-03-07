@@ -8,5 +8,5 @@ class InstructionSequence(uvm_sequence):
             instr_tx = ProcessorTransaction()
             instr_tx.randomize()
             await self.start_item(instr_tx)
-            print(f"Generated instruction: {instr_tx}")
+            self.logger.info(f"Generated instruction: {instr_tx}")
             await self.finish_item(instr_tx)
