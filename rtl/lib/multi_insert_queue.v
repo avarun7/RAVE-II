@@ -4,7 +4,7 @@ module multi_insertion_queue #(
     parameter MAX_INSERTS_PER_CYCLE = 4   // Maximum number of inserts per clock cycle
 )(
     input wire clk,                       // Clock signal
-    input wire rst_n,                     // Active-low reset
+    input wire rst,                     // Active-high reset
     
     // Insertion interface
     input wire [MAX_INSERTS_PER_CYCLE-1:0] insert_valid,                            // Valid signal for each potential insert
@@ -14,14 +14,16 @@ module multi_insertion_queue #(
     // Removal interface
     input wire remove_valid,                                                        // Request to remove an element
     output wire [DATA_WIDTH-1:0] remove_data,                                       // Data of removed element
-    output wire remove_ready,                                                       // Queue has data to remove
+    output wire remove_ready                                                       // Queue has data to remove
     
-    // Status signals
-    output wire full,                                                               // Queue is full
-    output wire empty,                                                              // Queue is empty
-    output wire [$clog2(QUEUE_DEPTH+1)-1:0] occupancy                               // Current number of elements
+    // Status signals //TODO: Place outside
+    // output wire full,                                                               // Queue is full
+    // output wire empty,                                                              // Queue is empty
+    // output wire [$clog2(QUEUE_DEPTH+1)-1:0] occupancy                               // Current number of elements
 );
 
+    output wire full;
+    output wire empty;
     // Internal storage
     reg [DATA_WIDTH-1:0] queue_mem [0:QUEUE_DEPTH-1];
     reg [$clog2(QUEUE_DEPTH+1)-1:0] head;
@@ -66,8 +68,8 @@ module multi_insertion_queue #(
     assign remove_data = queue_mem[head];
     
     // Queue update logic
-    always @(posedge clk or posedge rst_n) begin
-        if (rst_n) begin
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
             head <= 0;
             tail <= 0;
             count <= 0;
