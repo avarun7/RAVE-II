@@ -31,6 +31,14 @@ module d1_TOP #(parameter XLEN=32) (
 
 );
 
-    
+endmodule
 
+module byte_rotator (
+    input wire [511:0] data_in, // 512-bit input (64 bytes)
+    input wire [5:0] shift,     // 6-bit shift amount (0-63)
+    output reg [511:0] data_out // 512-bit output
+);
+    always @(*) begin
+        data_out = (data_in << (shift * 8)) | (data_in >> ((64 - shift) * 8));
+    end
 endmodule

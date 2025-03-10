@@ -44,8 +44,6 @@ module f2_TOP #(parameter XLEN=32) (
     input [XLEN - 1:0] resteer_target_ras,
     input resteer_taken_ras,
 
-
-
     //outputs
     output exceptions_out,
 
@@ -94,7 +92,6 @@ assign prefetch_addr  = final_target_addr;
 
 //IBUFF instantiation
 
-
 IBuff #(.CACHE_LINE_SIZE(128)) ibuff(
     .clk(clk),
     .rst(rst || resteer),
@@ -133,14 +130,4 @@ always @(posedge clk) begin
     end
 end
 
-endmodule
-
-module byte_rotator (
-    input wire [511:0] data_in, // 512-bit input (64 bytes)
-    input wire [5:0] shift,     // 6-bit shift amount (0-63)
-    output reg [511:0] data_out // 512-bit output
-);
-    always @(*) begin
-        data_out = (data_in << (shift * 8)) | (data_in >> ((64 - shift) * 8));
-    end
 endmodule
