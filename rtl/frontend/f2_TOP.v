@@ -6,7 +6,8 @@ module f2_TOP #(parameter XLEN=32, CL_SIZE = 128) (
     //inputs
     input [XLEN - 1:0] clc_paddr, //TODO
     input [XLEN - 1:0] clc_vaddr, //TODO
-
+    input clc_valid,
+    
     input [CL_SIZE - 1:0] clc_data_in_even,
     input [CL_SIZE - 1:0] clc_data_in_odd,
 
@@ -125,8 +126,8 @@ always @(posedge clk) begin
             pc <= resteer_target_D1;
         // end else if () begin
         //     pc <= ;
-        end else if (ras_valid_out) begin
-            pc <= ras_data_out;
+        // end else if (ras_valid_out) begin
+        //     pc <= ras_data_out;
         end
     end else begin
         pc <= pc + 64;

@@ -14,11 +14,13 @@ module IBuff #(
     logic [CACHE_LINE_SIZE-1:0] buffer [3:0];
     logic [3:0] valid_bits;
 
-    always_ff @(posedge clk or posedge rst) begin
+    integer i;
+
+    always @(posedge clk or posedge rst) begin
         if (rst) begin
             valid_bits <= 4'b0000; // Reset valid bits
         end else begin
-            for (int i = 0; i < 4; i++) begin
+            for (i = 0; i < 4; i++) begin
                 if (load[i] && !valid_bits[i]) begin
                     buffer[i] <= data_in[i]; // Load data into buffer
                     valid_bits[i] <= 1'b1;   // Set valid bit
@@ -31,7 +33,11 @@ module IBuff #(
     end
 
     // Assign outputs
-    assign data_out = buffer;
-    assign valid_out = valid_bits;
+    always @(*) begin
+        for (i = 0; i < 4; i++) begin
+            data_out[i] = buffer[i];
+        end
+        valid_out = valid_bits;
+    end
 
 endmodule

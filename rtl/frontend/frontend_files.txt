@@ -11,6 +11,8 @@ ras/ras.v
 tlb/simple_tlb_TOP.v 
 iBuff.v
 bp/prediction_unit.v
+bp/BP.v
+bp/BTB.v
 
 ../cache/queues/data_q.v
 ../cache/queues/instr_q.v
