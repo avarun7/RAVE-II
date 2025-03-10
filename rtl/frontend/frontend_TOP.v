@@ -3,6 +3,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128) (
 
     //inputs
         input resteer,
+        input stall_in,
         input [XLEN - 1:0] resteer_target_BR, //32b - mispredict
         input [XLEN - 1:0] resteer_target_ROB, //32b - exception
 
@@ -10,7 +11,6 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128) (
         input bp_update_taken, //1b
         input [XLEN - 1:0] bp_update_target, //32b
         input [9:0] pcbp_update_bhr,
-        input [9:0] clbp_update_bhr,
 
         input [XLEN - 1:0] prefetch_addr,
         input prefetch_valid,
@@ -34,7 +34,6 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128) (
         output [XLEN - 1:0] pc,
         output exception, //vector with types, flagged as NOP for OOO engine
         output [9:0] pcbp_bhr,  // bhr from pc branch predictor
-        output [9:0] clbp_bhr,  // bhr from cache line branch predictor
         output [2:0] icache_l2_op, // (R, W, RWITM, flush, update)
         output [XLEN - 1:0] icache_l2_addr, 
         output [511:0] icache_l2_data_out, 
@@ -47,7 +46,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128) (
             .clk(clk), .rst(rst),
 
             //inputs
-            .stall_in(1'b0),
+            .stall_in(stall_in),
             .resteer(resteer),
             
             .bp_update_D1(1'b0), //1b
@@ -76,6 +75,8 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128) (
         );
 
         wire [XLEN - 1:0] f1_addr_even, f1_addr_odd;
+        wire [XLEN - 1:0] f1_clc_paddr, f1_clc_vaddr;
+        wire f1_clc_valid, f1_pcd, f1_hit, f1_exceptions;
 
         f1_TOP #(.XLEN(XLEN)) fetch_1(
             .clk(clk), .rst(rst),
@@ -88,8 +89,8 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128) (
             .hit(),
             .exceptions(),
 
-            .clc_paddr(),
-            .clc_valid(),
+            .clc_paddr(f1_clc_paddr),
+            .clc_valid(f1_clc_valid),
 
             .nlpf_paddr(),
             .nlpf_valid(),
@@ -124,81 +125,87 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128) (
             .exception()        
         );
 
-        // f2_TOP #(.XLEN(XLEN)) fetch_2( 
-        //     .clk(clk),  .rst(),
-        //     //inputs
-        //     .clc_paddr(),
-        //     .clc_vaddr(),
-        //     .pcd(),         //don't cache MMIO
-        //     .hit(),
-        //     .way(),
-        //     .exceptions(),
+        f2_TOP #(.XLEN(XLEN)) fetch_2( 
+            .clk(clk),  .rst(rst),
+            //inputs
+            .stall_in(stall_in),
+            .clc_paddr(f1_clc_paddr),
+            .clc_vaddr(),
+            .clc_valid(),
 
-        //     .bppf_paddr(),
-        //     .bppf_valid(),
+            .clc_data_in_even(cl_even),
+            .clc_data_in_odd(cl_odd),
 
-        //     .nlpf_paddr(),
-        //     .nlpf_valid(),
+            .pcd(),         //don't cache MMIO
+            .hit(),
+            .way(),
+            .exceptions(),
 
-        //     //TAG_STORE
-        //     .tag_evict(),
+            .bppf_paddr(),
+            .bppf_valid(),
 
-        //     //DATASTORE
-        //     .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_in(), .l2_icache_state(),
+            .nlpf_paddr(),
+            .nlpf_valid(),
+
+            //TAG_STORE
+            .tag_evict(),
+
+            //DATASTORE
+            .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_in(), .l2_icache_state(),
             
 
 
-        //     //outputs
-        //     .exceptions_out(),
-        //     //Tag Store Overwrite
-        //     .tag_ovrw(),
-        //     .way_ovrw(),
+            //outputs
+            .exceptions_out(),
+            //Tag Store Overwrite
+            .tag_ovrw(),
+            .way_ovrw(),
 
-        //     .IBuff_out(),
+            .IBuff_out(),
 
 
-        //     //Prefetch
-        //     .prefetch_valid(),
-        //     .prefetch_addr(),
+            //Prefetch
+            .prefetch_valid(),
+            .prefetch_addr(),
 
-        //     //Datastore
-        //     .icache_l2_op(), .icache_l2_addr(), .icache_l2_data_out(), .icache_l2_state()
+            //Datastore
+            .icache_l2_op(), .icache_l2_addr(), .icache_l2_data_out(), .icache_l2_state()
 
             
-        // );
+        );
 
-        // d1_TOP #(.XLEN(XLEN)) opcode_decode(
-        //     .clk(clk), .rst(),
-        //     // inputs
-        //     .exception_in(),
-        //     .IBuff_in(),
-        //     .resteer(), //onehot, 2b, ROB or WB/BR
-        //     .resteer_target_BR(), //32b - mispredict
-        //     .resteer_target_ROB(), //32b - exception
+        d1_TOP #(.XLEN(XLEN)) opcode_decode(
+            .clk(clk), .rst(),
+            // inputs
+            .exception_in(),
+            .IBuff_in(),
+            .resteer(), //onehot, 2b, ROB or WB/BR
+            .resteer_target_BR(), //32b - mispredict
+            .resteer_target_ROB(), //32b - exception
     
-        //     .bp_update(), //1b
-        //     .bp_update_taken(), //1b
-        //     .bp_update_target(), //32b
-        //     .pcbp_update_bhr(),
+            .bp_update(), //1b
+            .bp_update_taken(), //1b
+            .bp_update_target(), //32b
+            .pcbp_update_bhr(),
             
-        //     // outputs
-        //     .pc(),
+            // outputs
+            .pc(),
 
-        //     .exception_out(),
-        //     .opcode_format(), //format of the instruction - compressed or not
-        //     .instruction_out(), //expanded instruction
+            .exception_out(),
+            .opcode_format(), //format of the instruction - compressed or not
+            .instruction_out(), //expanded instruction
 
-        //     .resteer_D1(),
-        //     .resteer_target_D1(),
-        //     .resteer_taken(),
-        //     .clbp_update_bhr_D1(), // bhr to update in cache line branch predictor
+            .resteer_D1(),
+            .resteer_target_D1(),
+            .resteer_taken(),
+            .clbp_update_bhr_D1(), // bhr to update in cache line branch predictor
 
-        //     .ras_push(),
-        //     .ras_pop(),
-        //     .ras_ret_addr()
+            .ras_push(),
+            .ras_pop(),
+            .ras_ret_addr()
 
 
-        // );
+        );
 
         // d2_TOP #(.XLEN(XLEN)) decode(
         //     .clk(clk), .rst(),

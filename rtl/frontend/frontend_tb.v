@@ -1,6 +1,6 @@
 module frontend_tb();
 
-reg clk, rst, tmp;
+reg clk, rst, stall_in;
 reg [31:0] addr_even, addr_odd;
 wire[31:0]addr_out_even, addr_out_odd;
 wire[127:0] cl_odd, cl_even;
@@ -14,10 +14,24 @@ initial begin
     clk = 0;
     rst = 1;
 
+    addr_even = 32'b0;
+    addr_odd = 32'b0;
+    stall_in = 0;
+
     #20
     rst = 0;
 
-    #600
+    #20
+    addr_even = 32'b010_0000;
+    addr_odd = 32'b011_0000;
+
+    #60
+    stall_in = 1;
+
+    #400
+    stall_in = 0;
+
+    #500
 
     $finish;
 end
@@ -30,12 +44,12 @@ initial begin
     // Add specific signals to wave window with hierarchy
   end
 
-
 frontend_TOP frontend (
     .clk(clk), .rst(rst),
 
     //inputs
     .resteer(1'b0),
+    .stall_in(stall_in),
     .resteer_target_BR(32'b0), //32b - mispredict
     .resteer_target_ROB(32'b0), //32b - exception
 
@@ -43,7 +57,6 @@ frontend_TOP frontend (
     .bp_update_taken(1'b0), //1b
     .bp_update_target(32'b0), //32b
     .pcbp_update_bhr(10'b0), // bhr to update in pc branch predictor
-    .clbp_update_bhr(10'b0), // bhr to update in cache line branch predictor
 
     .prefetch_addr(32'b0), //32b
     .prefetch_valid(1'b0),
@@ -63,7 +76,6 @@ frontend_TOP frontend (
     .pc(),
     .exception(),
     .pcbp_bhr(),
-    .clbp_bhr(),
 
     .icache_l2_op(),
     .icache_l2_addr(),

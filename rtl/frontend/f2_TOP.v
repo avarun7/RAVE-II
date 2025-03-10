@@ -1,4 +1,4 @@
-module f2_TOP #(parameter XLEN=32) (
+module f2_TOP #(parameter XLEN=32, CL_SIZE = 128) (
     input clk, rst,
 
     input stall_in,
@@ -6,6 +6,9 @@ module f2_TOP #(parameter XLEN=32) (
     //inputs
     input [XLEN - 1:0] clc_paddr, //TODO
     input [XLEN - 1:0] clc_vaddr, //TODO
+
+    input [CL_SIZE - 1:0] clc_data_in_even,
+    input [CL_SIZE - 1:0] clc_data_in_odd,
 
     input pcd,         //don't cache MMIO
     input hit,
@@ -120,8 +123,8 @@ always @(posedge clk) begin
             pc <= resteer_target_ROB;
         end else if (resteer_taken_D1) begin
             pc <= resteer_target_D1;
-        end else if () begin
-            pc <= ;
+        // end else if () begin
+        //     pc <= ;
         end else if (ras_valid_out) begin
             pc <= ras_data_out;
         end
