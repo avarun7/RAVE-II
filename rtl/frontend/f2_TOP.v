@@ -1,7 +1,7 @@
 module f2_TOP #(parameter XLEN=32) (
     input clk, rst,
 
-    input stall_in
+    input stall_in,
 
     //inputs
     input [XLEN - 1:0] clc_paddr, //TODO
@@ -62,7 +62,7 @@ module f2_TOP #(parameter XLEN=32) (
     output [2:0] icache_l2_op,
     output [2:0] icache_l2_state,
     output [XLEN - 1:0] icache_l2_addr,
-    output [511:0] icache_l2_data_out
+    output [511:0] icache_l2_data_out,
 
     //PC 
     output [XLEN - 1:0] pc_out

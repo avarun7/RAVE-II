@@ -47,7 +47,7 @@ end
 genvar j;
 for( j = 0; j < 8; j = j + 1) begin
     always @(*) begin
-        tag_next_state[j*TAG_SIZE+TAG_SIZE-1:j*TAG_SIZE] = !(|hits) && replacement_way[i] ? tag_in : tag_cur_state[j*TAG_SIZE+TAG_SIZE-1:j*TAG_SIZE];
+        tag_next_state[j*TAG_SIZE+TAG_SIZE-1:j*TAG_SIZE] = !(|hits) && replacement_way[j] ? tag_in : tag_cur_state[j*TAG_SIZE+TAG_SIZE-1:j*TAG_SIZE];
     end
 end
 

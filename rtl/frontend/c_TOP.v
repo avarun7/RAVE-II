@@ -1,4 +1,4 @@
-module c_TOP #(parameter XLEN=32) (
+module c_TOP #(parameter XLEN=32, CLC_WIDTH = 26) (
     input clk, rst,
 
     //inputs
@@ -26,13 +26,13 @@ module c_TOP #(parameter XLEN=32) (
     input ras_valid_in,
     
     //outputs
-    output reg [25:0] clc, //cacheline counter 
-    output reg  [25:0] nlpf //next-line prefetch
-
-    output reg [XLEN - 1:0] ras_data_out;
-    output reg ras_valid_out; //TODO: should these be regs or wires?
+    output reg [CLC_WIDTH - 1 : 0] clc, //cacheline counter 
+    output reg  [CLC_WIDTH - 1 : 0] nlpf //next-line prefetch
     // output reg [25:0] bppf  //branch-predictor prefetch
 );
+
+    wire [XLEN - 1:0] ras_data_out;
+    wire ras_valid_out;
 
     // instantiate RAS
     ras ras1 (
@@ -46,7 +46,7 @@ module c_TOP #(parameter XLEN=32) (
         .result(ras_data_out),
         .empty(),
         .full(),
-        .valid_out(ras_valid_out),
+        .valid_out(ras_valid_out)
     );
 
     // logic to update the cacheline counter
@@ -69,6 +69,5 @@ module c_TOP #(parameter XLEN=32) (
             clc <= clc + 64;
         end
     end
-
 
 endmodule

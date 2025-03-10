@@ -1,4 +1,4 @@
-module tlb_TOP #(parameter XLEN = 32, CLC_WIDTH = 26)(
+module simple_tlb #(parameter XLEN = 32, CLC_WIDTH = 26)(
     input clk, rst,
     input [XLEN - 1 : 0] pc,
     input [CLC_WIDTH - 1 : 0] clc0_in,

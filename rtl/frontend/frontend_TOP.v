@@ -1,8 +1,8 @@
-module frontend_TOP #(parameter XLEN=32) (    
+module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128) (    
         input clk, rst,
 
     //inputs
-        input resteer, //onehot, 2b, ROB or WB/BR
+        input resteer,
         input [XLEN - 1:0] resteer_target_BR, //32b - mispredict
         input [XLEN - 1:0] resteer_target_ROB, //32b - exception
 
@@ -12,16 +12,16 @@ module frontend_TOP #(parameter XLEN=32) (
         input [9:0] pcbp_update_bhr,
         input [9:0] clbp_update_bhr,
 
-        input [XLEN - 1:0] prefetch_addr, 
+        input [XLEN - 1:0] prefetch_addr,
         input prefetch_valid,
 
         //TODO: potentially a interrupt/exception target vector signal
         
         input [2:0] l2_icache_op, // (R, W, RWITM, flush, update)
         input [XLEN - 1:0] l2_icache_addr, 
-        input [511:0] l2_icache_data,  
-        input [2:0] l2_icache_state, 
-               
+        input [511:0] l2_icache_data, 
+        input [2:0] l2_icache_state,
+
         //outputs
         output valid_out,
         output uop, //micro-op //TODO: decide uops
@@ -39,166 +39,185 @@ module frontend_TOP #(parameter XLEN=32) (
         output [XLEN - 1:0] icache_l2_addr, 
         output [511:0] icache_l2_data_out, 
         output [2:0] icache_l2_state
-        );
+    );
+
+        wire [XLEN - 1:0] c1_clc_out;
 
         c_TOP #(.XLEN(XLEN)) control(
-            .clk(clk), .rst(),
+            .clk(clk), .rst(rst),
 
             //inputs
-            .stall_in(),
-            .resteer(),
+            .stall_in(1'b0),
+            .resteer(resteer),
             
-            .bp_update_D1(), //1b
-            .resteer_target_D1(),
-            .resteer_taken_D1(),
-            .clbp_update_bhr_D1(),  
+            .bp_update_D1(1'b0), //1b
+            .resteer_target_D1(32'b0),
+            .resteer_taken_D1(1'b0),
+            .clbp_update_bhr_D1(1'b0), 
 
+            .bp_update_BR(1'b0), //1b
+            .resteer_target_BR(resteer_target_BR),
+            .resteer_taken_BR(1'b0),
+            .clbp_update_bhr_BR(1'b0),
 
-            .bp_update_BR(), //1b
-            .resteer_target_BR(),
-            .resteer_taken_BR(),
-            .clbp_update_bhr_BR(),  
+            .bp_update_ROB(1'b0), //1b
+            .resteer_target_ROB(resteer_target_ROB),
+            .resteer_taken_ROB(1'b0),
+            .clbp_update_bhr_ROB(1'b0),  
 
-            .bp_update_ROB(), //1b
-            .resteer_target_ROB(),
-            .resteer_taken_ROB(),
-            .clbp_update_bhr_ROB(),  
-
-            .ras_push(),
-            .ras_pop(),
-            .ras_ret_addr(),
+            .ras_push(1'b0),
+            .ras_pop(1'b0),
+            .ras_ret_addr(32'b0),
+            .ras_valid_in(1'b0),
             
             //outputs
-            .clc(), //cache line counter
-            .nlpf(), //next-line prefetch
-            .bppf() //branch-predictor prefetch
-
+            .clc(c1_clc_out), //cache line counter
+            .nlpf() //next-line prefetch
         );
 
-        f1_TOP #(.XLEN(XLEN)) fetch_1( //TLB + TAGSTORE
-            .clk(clk), .rst(),
-            //inputs
-            .clc_in(),
-            .bppf(),
-            .nlpf(),
-            
-            //TAG_STORE
-            .tag_in(),
-            .way_in(),
-            .evict_in(),
+        wire [XLEN - 1:0] f1_addr_even, f1_addr_odd;
 
+        f1_TOP #(.XLEN(XLEN)) fetch_1(
+            .clk(clk), .rst(rst),
+            //inputs
+            .clc_in(c1_clc_out),
+            .nlpf(26'b0),
+            
             //outputs
-            .clc_paddr(),
-            .clc_vaddr(),
             .pcd(),         //don't cache MMIO
             .hit(),
-            .way(),
             .exceptions(),
 
-            .bppf_paddr(),
-            .bppf_valid(),
+            .clc_paddr(),
+            .clc_valid(),
 
             .nlpf_paddr(),
             .nlpf_valid(),
 
-            //TAG_STORE
-            .tag_out()
+            .addr_even(f1_addr_even),
+            .addr_odd(f1_addr_odd)
         );
 
-        f2_TOP #(.XLEN(XLEN)) fetch_2( 
-            .clk(clk),  .rst(),
-            //inputs
-            .clc_paddr(),
-            .clc_vaddr(),
-            .pcd(),         //don't cache MMIO
-            .hit(),
-            .way(),
-            .exceptions(),
+        wire mem_hit_even, mem_hit_odd;
+        wire [CL_SIZE-1:0] cl_even, cl_odd;
+        wire [XLEN-1:0] addr_out_even, addr_out_odd;
+        wire is_write_even, is_write_odd;
+        wire mem_sys_stall;
 
-            .bppf_paddr(),
-            .bppf_valid(),
-
-            .nlpf_paddr(),
-            .nlpf_valid(),
-
-            //TAG_STORE
-            .tag_evict(),
-
-            //DATASTORE
-            .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_in(), .l2_icache_state(),
-            
-
-
-            //outputs
-            .exceptions_out(),
-            //Tag Store Overwrite
-            .tag_ovrw(),
-            .way_ovrw(),
-
-            .IBuff_out(),
-
-
-            //Prefetch
-            .prefetch_valid(),
-            .prefetch_addr(),
-
-            //Datastore
-            .icache_l2_op(), .icache_l2_addr(), .icache_l2_data_out(), .icache_l2_state()
-
-            
-        );
-
-        d1_TOP #(.XLEN(XLEN)) opcode_decode(
-            .clk(clk), .rst(),
-            // inputs
-            .exception_in(),
-            .IBuff_in(),
-            .resteer(), //onehot, 2b, ROB or WB/BR
-            .resteer_target_BR(), //32b - mispredict
-            .resteer_target_ROB(), //32b - exception
+        memory_system_top icache (
+            .clk(clk), 
+            .rst(rst),
+            .addr_even(f1_addr_even),
+            .addr_odd(f1_addr_odd),
     
-            .bp_update(), //1b
-            .bp_update_taken(), //1b
-            .bp_update_target(), //32b
-            .pcbp_update_bhr(),
-            
-            // outputs
-            .pc(),
-
-            .exception_out(),
-            .opcode_format(), //format of the instruction - compressed or not
-            .instruction_out(), //expanded instruction
-
-            .resteer_D1(),
-            .resteer_target_D1(),
-            .resteer_taken(),
-            .clbp_update_bhr_D1(), // bhr to update in cache line branch predictor
-
-            .ras_push(),
-            .ras_pop(),
-            .ras_ret_addr()
-
-
+            //outputs
+            .hit_even(mem_hit_even),
+            .hit_odd(mem_hit_odd),
+            .cl_even(cl_even),
+            .cl_odd(cl_odd),
+    
+            .addr_out_even(addr_out_even),
+            .addr_out_odd(addr_out_odd),
+            .is_write_even(is_write_even),
+            .is_write_odd(is_write_odd),
+            .stall(mem_sys_stall),
+            .exception()        
         );
 
-        d2_TOP #(.XLEN(XLEN)) decode(
-            .clk(clk), .rst(),
-            // Inputs
-            .pc_in(),
+        // f2_TOP #(.XLEN(XLEN)) fetch_2( 
+        //     .clk(clk),  .rst(),
+        //     //inputs
+        //     .clc_paddr(),
+        //     .clc_vaddr(),
+        //     .pcd(),         //don't cache MMIO
+        //     .hit(),
+        //     .way(),
+        //     .exceptions(),
+
+        //     .bppf_paddr(),
+        //     .bppf_valid(),
+
+        //     .nlpf_paddr(),
+        //     .nlpf_valid(),
+
+        //     //TAG_STORE
+        //     .tag_evict(),
+
+        //     //DATASTORE
+        //     .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_in(), .l2_icache_state(),
             
-            .exception_in(),
-            .uop_count(),
-            .opcode_format(),
-            .instruction_in(),
+
+
+        //     //outputs
+        //     .exceptions_out(),
+        //     //Tag Store Overwrite
+        //     .tag_ovrw(),
+        //     .way_ovrw(),
+
+        //     .IBuff_out(),
+
+
+        //     //Prefetch
+        //     .prefetch_valid(),
+        //     .prefetch_addr(),
+
+        //     //Datastore
+        //     .icache_l2_op(), .icache_l2_addr(), .icache_l2_data_out(), .icache_l2_state()
+
             
-            // Outputs
-            .uop(),
-            .eoi(),
-            .dr(), .sr1(), .sr2(), .imm(),
-            .use_imm(),
-            .pc_out(),
-            .exception_out()
-        );
+        // );
+
+        // d1_TOP #(.XLEN(XLEN)) opcode_decode(
+        //     .clk(clk), .rst(),
+        //     // inputs
+        //     .exception_in(),
+        //     .IBuff_in(),
+        //     .resteer(), //onehot, 2b, ROB or WB/BR
+        //     .resteer_target_BR(), //32b - mispredict
+        //     .resteer_target_ROB(), //32b - exception
+    
+        //     .bp_update(), //1b
+        //     .bp_update_taken(), //1b
+        //     .bp_update_target(), //32b
+        //     .pcbp_update_bhr(),
+            
+        //     // outputs
+        //     .pc(),
+
+        //     .exception_out(),
+        //     .opcode_format(), //format of the instruction - compressed or not
+        //     .instruction_out(), //expanded instruction
+
+        //     .resteer_D1(),
+        //     .resteer_target_D1(),
+        //     .resteer_taken(),
+        //     .clbp_update_bhr_D1(), // bhr to update in cache line branch predictor
+
+        //     .ras_push(),
+        //     .ras_pop(),
+        //     .ras_ret_addr()
+
+
+        // );
+
+        // d2_TOP #(.XLEN(XLEN)) decode(
+        //     .clk(clk), .rst(),
+        //     // Inputs
+        //     .pc_in(),
+            
+        //     .exception_in(),
+        //     .uop_count(),
+        //     .opcode_format(),
+        //     .instruction_in(),
+            
+        //     // Outputs
+        //     .uop(),
+        //     .eoi(),
+        //     .dr(), .sr1(), .sr2(), .imm(),
+        //     .use_imm(),
+        //     .pc_out(),
+        //     .exception_out()
+        // );
         
 
 endmodule

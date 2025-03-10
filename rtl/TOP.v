@@ -51,6 +51,26 @@ module TOP();
         //TODO: add more outputs
     );
 
+    memory_system_top icache (
+        .clk(clk), 
+        .rst(rst),
+        .addr_even(),
+        .addr_odd(),
+
+        //outputs
+        .hit_even(),
+        .hit_odd(),
+        .cl_even(),
+        .cl_odd(),
+
+        .addr_out_even(),
+        .addr_out_odd(),
+        .is_write_even(),
+        .is_write_odd(),
+        .stall(),
+        .exception()        
+    );
+
     mapper_TOP mapper(
         .clk(clk), .rst(),
         .flush(),
