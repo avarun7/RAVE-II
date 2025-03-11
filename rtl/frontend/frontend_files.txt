@@ -2,14 +2,14 @@ frontend_tb.v
 frontend_TOP.v
 c_TOP.v 
 f1_TOP.v
-f2_TOP.v
+//f2_TOP.v
 d1_TOP.v
 
 ../cache/memory_system_top.v 
 
 ras/ras.v 
 tlb/simple_tlb_TOP.v 
-iBuff.v
+//iBuff.v
 bp/prediction_unit.v
 bp/BP.v
 bp/BTB.v

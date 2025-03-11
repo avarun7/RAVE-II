@@ -1,7 +1,10 @@
+`timescale 1ns / 1ps
+
 module frontend_tb();
 
-reg clk, rst, stall_in;
-reg [31:0] addr_even, addr_odd;
+reg clk, rst, stall_in, resteer;
+reg mispredict_BR, exception_ROB;
+reg [31:0] addr_BR, addr_ROB;
 wire[31:0]addr_out_even, addr_out_odd;
 wire[127:0] cl_odd, cl_even;
 
@@ -11,27 +14,61 @@ always begin
 end
 
 initial begin
+
+    //init
     clk = 0;
     rst = 1;
+    resteer = 0;
+    mispredict_BR = 0;
+    exception_ROB = 0;
 
-    addr_even = 32'b0;
-    addr_odd = 32'b0;
+    addr_BR = 32'b0;
+    addr_ROB = 32'b0;
     stall_in = 0;
 
     #20
     rst = 0;
 
-    #20
-    addr_even = 32'b010_0000;
-    addr_odd = 32'b011_0000;
+    // from memory system tb, addresses are:
+    //even: 32'h20
+    //odd: 32'h30
 
-    #60
+    #20
+    //resteer from BR, clc should be 0x8
+    resteer = 1;
+    mispredict_BR = 1;
+    addr_BR = 32'h800; //26'h20
+    addr_ROB = 32'h200; 
+
+    #300
+    resteer = 0;
+    mispredict_BR = 0;
+    addr_BR = 32'b0;
+    addr_ROB = 32'b0;
+
+    #20
     stall_in = 1;
 
-    #400
+    #20
     stall_in = 0;
 
-    #500
+    #20
+    resteer = 1;
+    exception_ROB = 1;
+
+    addr_BR = 32'h200;
+    addr_ROB = 32'hC00; //26'h30
+
+    #20
+
+    resteer = 0;
+    exception_ROB = 0;
+    addr_BR = 32'b0;
+    addr_ROB = 32'b0;
+
+    #300
+
+    
 
     $finish;
 end
@@ -48,10 +85,13 @@ frontend_TOP frontend (
     .clk(clk), .rst(rst),
 
     //inputs
-    .resteer(1'b0),
+    .resteer(resteer),
     .stall_in(stall_in),
-    .resteer_target_BR(32'b0), //32b - mispredict
-    .resteer_target_ROB(32'b0), //32b - exception
+    .resteer_target_BR(addr_BR), //32b - mispredict
+    .resteer_target_ROB(addr_ROB), //32b - exception
+
+    .mispredict_BR(mispredict_BR),
+    .exception_ROB(exception_ROB),
 
     .bp_update(1'b0), //1b
     .bp_update_taken(1'b0), //1b
