@@ -8,7 +8,7 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 26) (
     input bp_update_D1, //1b
     input [XLEN - 1:0] resteer_target_D1,
     input resteer_taken_D1,
-    input [9:0] clbp_update_bhr_D1,  
+    input [9:0] clbp_update_bhr_D1,
 
     input bp_update_BR, //1b
     input [XLEN - 1:0] resteer_target_BR,
@@ -26,13 +26,14 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 26) (
     input ras_valid_in,
     
     //outputs
-    output reg [CLC_WIDTH - 1 : 0] clc, //cacheline counter 
-    output reg  [CLC_WIDTH - 1 : 0] nlpf //next-line prefetch
-    // output reg [25:0] bppf  //branch-predictor prefetch
+    output reg [CLC_WIDTH - 1 : 0] clc_even, //cacheline counter 
+    output reg  [CLC_WIDTH - 1 : 0] clc_odd //next-line prefetch
 );
 
     wire [XLEN - 1:0] ras_data_out;
     wire ras_valid_out;
+
+    reg [CLC_WIDTH - 1 : 0] clc;
 
     // instantiate RAS
     ras ras1 (
@@ -66,7 +67,19 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 26) (
                 clc <= ras_data_out [31:6];
             end
         end else begin
-            clc <= clc + 64;
+            clc <= clc + 1;
+        end
+    end
+
+    // logic to check if the address is even or odd, and 
+    // generate the even and odd addresses
+    always @(*) begin
+        if (clc[0] == 1'b0) begin
+            clc_even <= clc;
+            clc_odd <= clc + 1;
+        end else begin
+            clc_even <= clc + 1;
+            clc_odd <= clc;
         end
     end
 

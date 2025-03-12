@@ -29,6 +29,8 @@ initial begin
     #20
     rst = 0;
 
+    #60
+
     // from memory system tb, addresses are:
     //even: 32'h20
     //odd: 32'h30
@@ -37,8 +39,8 @@ initial begin
     //resteer from BR, clc should be 0x8
     resteer = 1;
     mispredict_BR = 1;
-    addr_BR = 32'h800; //26'h20
-    addr_ROB = 32'h200; 
+    addr_BR = 32'h20; //26'h20
+    addr_ROB = 32'h30; 
 
     #300
     resteer = 0;
@@ -47,17 +49,11 @@ initial begin
     addr_ROB = 32'b0;
 
     #20
-    stall_in = 1;
-
-    #20
-    stall_in = 0;
-
-    #20
     resteer = 1;
     exception_ROB = 1;
 
-    addr_BR = 32'h200;
-    addr_ROB = 32'hC00; //26'h30
+    addr_BR = 32'h20;
+    addr_ROB = 32'h30; //26'h30
 
     #20
 
@@ -66,7 +62,7 @@ initial begin
     addr_BR = 32'b0;
     addr_ROB = 32'b0;
 
-    #300
+    #20
 
     
 

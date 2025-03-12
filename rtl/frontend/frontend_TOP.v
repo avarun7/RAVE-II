@@ -44,8 +44,8 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=26) (
         output [2:0] icache_l2_state
     );
 
-        wire [CLC_WIDTH - 1:0] c1_clc_out;
-
+        wire [CLC_WIDTH - 1:0] clc_even, clc_odd;
+    
         c_TOP #(.XLEN(XLEN), .CLC_WIDTH(CLC_WIDTH)) control(
             .clk(clk), .rst(rst),
 
@@ -74,30 +74,26 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=26) (
             .ras_valid_in(1'b0),
             
             //outputs
-            .clc(c1_clc_out), //cache line counter
-            .nlpf() //next-line prefetch
+            .clc_even(clc_even),
+            .clc_odd(clc_odd)
         );
 
         wire [XLEN - 1:0] f1_addr_even, f1_addr_odd;
-        wire [XLEN - 1:0] f1_clc_paddr, f1_clc_vaddr;
-        wire f1_clc_valid, f1_pcd, f1_hit, f1_exceptions;
+        wire f1_clc_even_valid, f1_clc_odd_valid, f1_pcd, f1_hit, f1_exceptions;
 
         f1_TOP #(.XLEN(XLEN), .CLC_WIDTH(CLC_WIDTH)) fetch_1(
             .clk(clk), .rst(rst),
             //inputs
-            .clc_in(c1_clc_out),
-            .nlpf(26'b0),
+            .clc_even_in(clc_even),
+            .clc_odd_in(clc_odd),
             
             //outputs
             .pcd(),         //don't cache MMIO
             .hit(),
             .exceptions(),
 
-            .clc_paddr(f1_clc_paddr),
-            .clc_valid(f1_clc_valid),
-
-            .nlpf_paddr(),
-            .nlpf_valid(),
+            .addr_even_valid(f1_clc_even_valid),
+            .addr_odd_valid(f1_clc_odd_valid),
 
             .addr_even(f1_addr_even),
             .addr_odd(f1_addr_odd)
