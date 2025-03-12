@@ -4,12 +4,13 @@ module f2_TOP #(parameter XLEN=32, CL_SIZE = 128) (
     input stall_in,
 
     //inputs
-    input [XLEN - 1:0] clc_paddr, //TODO
-    input [XLEN - 1:0] clc_vaddr, //TODO
+    input [CLC_WIDTH - 1:0] clc,
     input clc_valid,
     
     input [CL_SIZE - 1:0] clc_data_in_even,
     input [CL_SIZE - 1:0] clc_data_in_odd,
+    input clc_data_even_valid,
+    input clc_data_odd_valid,
 
     input pcd,         //don't cache MMIO
     input hit,

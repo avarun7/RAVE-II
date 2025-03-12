@@ -5,17 +5,17 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
     input stall_in,
     input resteer,
     
-    input bp_update_D1, //1b
+    input bp_update_D1,
     input [XLEN - 1:0] resteer_target_D1,
     input resteer_taken_D1,
     input [9:0] clbp_update_bhr_D1,
 
-    input bp_update_BR, //1b
+    input bp_update_BR,
     input [XLEN - 1:0] resteer_target_BR,
     input resteer_taken_BR,
     input [9:0] clbp_update_bhr_BR,  
 
-    input bp_update_ROB, //1b
+    input bp_update_ROB,
     input [XLEN - 1:0] resteer_target_ROB,
     input resteer_taken_ROB,
     input [9:0] clbp_update_bhr_ROB,
@@ -26,8 +26,8 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
     input ras_valid_in,
     
     //outputs
-    output reg [CLC_WIDTH - 1 : 0] clc_even, //cacheline counter 
-    output reg  [CLC_WIDTH - 1 : 0] clc_odd //next-line prefetch
+    output reg [CLC_WIDTH - 1 : 0] clc_even,
+    output reg  [CLC_WIDTH - 1 : 0] clc_odd
 );
 
     wire [XLEN - 1:0] ras_data_out;
@@ -58,7 +58,7 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
             clc <= clc;
         end else if (resteer) begin
             if (resteer_taken_ROB) begin
-                clc <= resteer_target_ROB [31:4];
+                clc <= resteer_target_ROB [31:4]; //since clc is 28 bits
             end else if (resteer_taken_D1) begin
                 clc <= resteer_target_D1 [31:4];
             end else if (resteer_taken_BR) begin

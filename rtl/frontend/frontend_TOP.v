@@ -87,6 +87,8 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .clc_even_in(clc_even),
             .clc_odd_in(clc_odd),
             
+            .stall_in(mem_sys_stall),
+            
             //outputs
             .pcd(),         //don't cache MMIO
             .hit(),
