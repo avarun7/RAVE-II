@@ -94,44 +94,50 @@ predictor_btb_wrapper btb_inst (
 assign prefetch_valid = final_predict_taken;
 assign prefetch_addr  = final_target_addr;
 
-//IBUFF instantiation
+//PC instantiation
+reg [XLEN - 1:0] pc;
+reg [XLEN - 1:0] pc_last;
 
+always @(posedge clk) begin
+    if (rst) begin
+        pc <= 0;
+        pc_last <= 0;
+    end else if (stall_in) begin
+        pc <= pc;
+        pc_last <= pc_last;
+    end else if (resteer) begin
+        if (resteer_taken_ROB) begin
+            pc <= resteer_target_ROB;
+            pc_last <= resteer_target_ROB;
+        end else if (resteer_taken_D1) begin
+            pc <= resteer_target_D1;
+            pc_last <= resteer_target_D1;
+        end else if (resteer_taken_BR) begin
+            pc <= resteer_target_BR;
+            pc_last <= resteer_target_BR;
+        end else if (ras_valid_out) begin
+            pc <= ras_data_out;
+            pc_last <= ras_data_out;
+        end
+    end else begin
+        pc_last <= pc;
+        pc <= pc + 32;
+    end
+end
+
+
+
+
+//IBUFF instantiation
 IBuff #(.CACHE_LINE_SIZE(128)) ibuff(
     .clk(clk),
     .rst(rst || resteer),
     .load(),
+    .invalidate(),
     .data_in(), // Data inputs for each entry
     .data_out(), // Outputs for all 4 entries
     .valid_out()          // Valid bits for each entry
 );
 
-byte_rotator rotator (
-    .data_in(),
-    .shift(),
-    .data_out()
-);
-
-//PC instantiation
-reg [XLEN - 1:0] pc;
-
-always @(posedge clk) begin
-    if (rst) begin
-        pc <= 0;
-    end else if (stall_in) begin
-        pc <= pc;
-    end else if (resteer) begin
-        if (resteer_taken_ROB) begin
-            pc <= resteer_target_ROB;
-        end else if (resteer_taken_D1) begin
-            pc <= resteer_target_D1;
-        // end else if () begin
-        //     pc <= ;
-        // end else if (ras_valid_out) begin
-        //     pc <= ras_data_out;
-        end
-    end else begin
-        pc <= pc + 64;
-    end
-end
 
 endmodule

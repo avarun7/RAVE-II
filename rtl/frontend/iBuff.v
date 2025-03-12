@@ -21,7 +21,7 @@ module IBuff #(
             valid_bits <= 4'b0000; // Reset valid bits
         end else begin
             for (i = 0; i < 4; i++) begin
-                if (load[i] && !valid_bits[i]) begin
+                if (load[i] && !valid_bits[i] && !invalidate[i]) begin
                     buffer[i] <= data_in[i]; // Load data into buffer
                     valid_bits[i] <= 1'b1;   // Set valid bit
                 end

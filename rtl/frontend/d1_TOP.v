@@ -3,7 +3,8 @@ module d1_TOP #(parameter XLEN=32) (
 
     //inputs
     input exception_in,
-    input [XLEN - 1:0] IBuff_in,
+    input [511:0] IBuff_in,
+    input [31:0] pc_in,
     input resteer,
     input [XLEN - 1:0] resteer_target_BR,
     input [XLEN - 1:0] resteer_target_ROB,
@@ -31,14 +32,20 @@ module d1_TOP #(parameter XLEN=32) (
 
 );
 
+byte_rotator rotator (
+    .data_in(IBuff_in),
+    .shift(pc_in[5:0]),
+    .data_out(instruction_out)
+);
+
 endmodule
 
 module byte_rotator (
     input wire [511:0] data_in, // 512-bit input (64 bytes)
     input wire [5:0] shift,     // 6-bit shift amount (0-63)
-    output reg [511:0] data_out // 512-bit output
+    output wire [XLEN - 1:0] data_out // 512-bit output
 );
     always @(*) begin
-        data_out = (data_in << (shift * 8)) | (data_in >> ((64 - shift) * 8));
+        data_out = ((data_in << (shift * 8)) | (data_in >> ((64 - shift) * 8)))[511 : 511 - XLEN + 1];
     end
 endmodule
