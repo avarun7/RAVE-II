@@ -1,4 +1,4 @@
-module simple_tlb #(parameter XLEN = 32, CLC_WIDTH = 26)(
+module simple_tlb #(parameter XLEN = 32, CLC_WIDTH = 28)(
     input clk, rst,
     input [XLEN - 1 : 0] pc,
     input [CLC_WIDTH - 1 : 0] clc0_in,
@@ -20,8 +20,8 @@ module simple_tlb #(parameter XLEN = 32, CLC_WIDTH = 26)(
     // for a direct mapped TLB with only machine mode permissions
 
     always @(*) begin
-        clc0_paddr <= {clc0_in, 6'b0};
-        clc1_paddr <= {clc1_in, 6'b0};
+        clc0_paddr <= {clc0_in, 4'b0};
+        clc1_paddr <= {clc1_in, 4'b0};
         clc0_paddr_valid <= valid_in;
         clc1_paddr_valid <= valid_in;
 

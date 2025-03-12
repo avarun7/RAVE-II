@@ -1,4 +1,4 @@
-module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=26) (    
+module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (    
         input clk, rst,
 
     //inputs

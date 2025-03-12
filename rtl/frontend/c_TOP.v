@@ -1,4 +1,4 @@
-module c_TOP #(parameter XLEN=32, CLC_WIDTH = 26) (
+module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
     input clk, rst,
 
     //inputs
@@ -58,13 +58,13 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 26) (
             clc <= clc;
         end else if (resteer) begin
             if (resteer_taken_ROB) begin
-                clc <= resteer_target_ROB [31:6];
+                clc <= resteer_target_ROB [31:4];
             end else if (resteer_taken_D1) begin
-                clc <= resteer_target_D1 [31:6];
+                clc <= resteer_target_D1 [31:4];
             end else if (resteer_taken_BR) begin
-                clc <= resteer_target_BR [31:6];
+                clc <= resteer_target_BR [31:4];
             end else if (ras_valid_out) begin
-                clc <= ras_data_out [31:6];
+                clc <= ras_data_out [31:4];
             end
         end else begin
             clc <= clc + 1;

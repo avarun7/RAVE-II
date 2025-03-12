@@ -1,4 +1,4 @@
-module f1_TOP #(parameter XLEN=32, CLC_WIDTH=26) (
+module f1_TOP #(parameter XLEN=32, CLC_WIDTH=28) (
     input clk, rst,
     //inputs
     input [CLC_WIDTH - 1:0] clc_even_in,
@@ -15,7 +15,7 @@ module f1_TOP #(parameter XLEN=32, CLC_WIDTH=26) (
     output wire [XLEN - 1:0] addr_odd
 );
 
-    simple_tlb #(.XLEN(XLEN), .CLC_WIDTH(26)) tlb (
+    simple_tlb #(.XLEN(XLEN), .CLC_WIDTH(CLC_WIDTH)) tlb (
         .clk(clk), .rst(rst),
         .pc(),
         .clc0_in(clc_even_in),
