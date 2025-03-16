@@ -23,7 +23,7 @@ module archregfile_TOP #(parameter ARCHFILE_SIZE=32,
                     .arch_wr(arch_wr), .arch_wr_phys(arch_wr_phys),
                     .rollback(rollback),
                     .arch_rd1_phys(arch_rd1_phys), .arch_rd2_phys(arch_rd2_phys),
-                    .arch_wr_oldphys());
+                    .arch_wr_oldphys(arch_wr_oldphys));
 
     archfile #(.ARCHFILE_SIZE(ARCHFILE_SIZE), .PHYSFILE_SIZE(PHYSFILE_SIZE))
             nonspec_af(.clk(clk), .rst(rst),
