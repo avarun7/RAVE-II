@@ -1,31 +1,26 @@
 module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (    
         input clk, rst,
 
-    //inputs
+        //inputs
         input resteer,
         input stall_in,
+        
+        input mispredict_BR,
         input [XLEN - 1:0] resteer_target_BR, //32b - mispredict
-        input [XLEN - 1:0] resteer_target_ROB, //32b - exception
+        input [9:0] bhr_update_BR,
         
         //from backend
-        input mispredict_BR,
         input exception_ROB, //exception
+        input [XLEN - 1:0] resteer_target_ROB, //32b - exception
+        input [9:0] bhr_update_ROB,
 
         input bp_update, //1b
-        input bp_update_taken, //1b
-        input [XLEN - 1:0] bp_update_target, //32b
-        input [9:0] pcbp_update_bhr,
-
-        input [XLEN - 1:0] prefetch_addr,
-        input prefetch_valid,
-
+        input bp_update_taken,                  // Branch taken/not-taken decision 
+        input [XLEN - 1:0] br_resolved_pc,      // Address of resolved branch
+        input [XLEN - 1:0] br_resolved_target,  // Branch taken/not-taken decision
+        
         //TODO: potentially a interrupt/exception target vector signal
         
-        input [2:0] l2_icache_op, // (R, W, RWITM, flush, update)
-        input [XLEN - 1:0] l2_icache_addr, 
-        input [511:0] l2_icache_data, 
-        input [2:0] l2_icache_state,
-
         //outputs
         output valid_out,
         output uop, //micro-op //TODO: decide uops
@@ -37,15 +32,14 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
         output use_imm,
         output [XLEN - 1:0] pc,
         output exception, //vector with types, flagged as NOP for OOO engine
-        output [9:0] pcbp_bhr,  // bhr from pc branch predictor
-        output [2:0] icache_l2_op, // (R, W, RWITM, flush, update)
-        output [XLEN - 1:0] icache_l2_addr, 
-        output [511:0] icache_l2_data_out, 
-        output [2:0] icache_l2_state
+        output [9:0] bp_bhr  // bhr from pc branch predictor
+
     );
 
         wire [CLC_WIDTH - 1:0] clc_even, clc_odd;
-    
+        wire [XLEN - 1:0] c1_ras_target; 
+        wire c1_ras_valid;
+
         c_TOP #(.XLEN(XLEN), .CLC_WIDTH(CLC_WIDTH)) control(
             .clk(clk), .rst(rst),
 
@@ -53,29 +47,25 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .stall_in(stall_in),
             .resteer(resteer),
             
-            .bp_update_D1(1'b0), //1b
             .resteer_target_D1(32'b0),
             .resteer_taken_D1(1'b0),
-            .clbp_update_bhr_D1(10'b0), 
 
-            .bp_update_BR(1'b0), //1b
             .resteer_target_BR(resteer_target_BR),
             .resteer_taken_BR(mispredict_BR),
-            .clbp_update_bhr_BR(10'b0),
 
-            .bp_update_ROB(1'b0), //1b
             .resteer_target_ROB(resteer_target_ROB),
             .resteer_taken_ROB(exception_ROB),
-            .clbp_update_bhr_ROB(10'b0),  
 
             .ras_push(1'b0),
             .ras_pop(1'b0),
             .ras_ret_addr(32'b0),
             .ras_valid_in(1'b0),
-            
+
             //outputs
             .clc_even(clc_even),
-            .clc_odd(clc_odd)
+            .clc_odd(clc_odd),
+            .ras_data_out(c1_ras_target),
+            .ras_valid_out(c1_ras_valid)
         );
 
         wire [XLEN - 1:0] f1_addr_even, f1_addr_odd;
@@ -127,54 +117,49 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .exception()        
         );
 
-        // f2_TOP #(.XLEN(XLEN)) fetch_2( 
-        //     .clk(clk),  .rst(rst),
-        //     //inputs
-        //     .stall_in(stall_in),
-        //     .clc_paddr(f1_clc_paddr),
-        //     .clc_vaddr(),
-        //     .clc_valid(),
+        f2_TOP #(.XLEN(XLEN)) fetch_2( 
+            .clk(clk),  .rst(rst),
+            //inputs
+            .stall_in(stall_in),
 
-        //     .clc_data_in_even(cl_even),
-        //     .clc_data_in_odd(cl_odd),
+            .clc_data_in_even(cl_even),
+            .clc_data_in_odd(cl_odd),
+            .clc_data_even_hit(mem_hit_even),
+            .clc_data_odd_hit(mem_hit_odd),
 
-        //     .pcd(),         //don't cache MMIO
-        //     .hit(),
-        //     .way(),
-        //     .exceptions(),
+            .pcd(),         //don't cache MMIO
+            .hit(),
+            .way(),
+            .exceptions(),
 
-        //     .bppf_paddr(),
-        //     .bppf_valid(),
+            // Branch resolution inputs
+            .update_btb(bp_update),
+            .resolved_pc(br_resolved_pc),
+            .resolved_target(br_resolved_target),
+            .resolved_taken(bp_update_taken),
 
-        //     .nlpf_paddr(),
-        //     .nlpf_valid(),
+            .resteer(),
 
-        //     //TAG_STORE
-        //     .tag_evict(),
+            .resteer_target_D1(32'b0),
+            .resteer_taken_D1(1'b0),
 
-        //     //DATASTORE
-        //     .l2_icache_op(), .l2_icache_addr(), .l2_icache_data_in(), .l2_icache_state(),
+            .resteer_target_BR(resteer_target_BR),
+            .resteer_taken_BR(mispredict_BR),
+            .bp_update_bhr_BR(bhr_update_BR),
+
+            .resteer_target_ROB(resteer_target_ROB),
+            .resteer_taken_ROB(exception_ROB),
+            .bp_update_bhr_ROB(bhr_update_ROB),
+
+            .resteer_target_ras(c1_ras_target),
+            .resteer_taken_ras(ras_valid_out),
+
+            //outputs
+            .exceptions_out(),
+            .IBuff_out(),
+            .pc_out()
             
-
-
-        //     //outputs
-        //     .exceptions_out(),
-        //     //Tag Store Overwrite
-        //     .tag_ovrw(),
-        //     .way_ovrw(),
-
-        //     .IBuff_out(),
-
-
-        //     //Prefetch
-        //     .prefetch_valid(),
-        //     .prefetch_addr(),
-
-        //     //Datastore
-        //     .icache_l2_op(), .icache_l2_addr(), .icache_l2_data_out(), .icache_l2_state()
-
-            
-        // );
+        );
 
         // d1_TOP #(.XLEN(XLEN)) opcode_decode(
         //     .clk(clk), .rst(),

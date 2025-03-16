@@ -5,20 +5,14 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
     input stall_in,
     input resteer,
     
-    input bp_update_D1,
     input [XLEN - 1:0] resteer_target_D1,
     input resteer_taken_D1,
-    input [9:0] clbp_update_bhr_D1,
 
-    input bp_update_BR,
     input [XLEN - 1:0] resteer_target_BR,
     input resteer_taken_BR,
-    input [9:0] clbp_update_bhr_BR,  
 
-    input bp_update_ROB,
     input [XLEN - 1:0] resteer_target_ROB,
     input resteer_taken_ROB,
-    input [9:0] clbp_update_bhr_ROB,
 
     input ras_push,
     input ras_pop,
@@ -27,11 +21,11 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
     
     //outputs
     output reg [CLC_WIDTH - 1 : 0] clc_even,
-    output reg  [CLC_WIDTH - 1 : 0] clc_odd
+    output reg [CLC_WIDTH - 1 : 0] clc_odd,
+    output reg [XLEN - 1:0] ras_data_out,
+    output reg ras_valid_out
 );
 
-    wire [XLEN - 1:0] ras_data_out;
-    wire ras_valid_out;
 
     reg [CLC_WIDTH - 1 : 0] clc;
 

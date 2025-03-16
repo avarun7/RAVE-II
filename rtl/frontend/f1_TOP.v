@@ -3,6 +3,7 @@ module f1_TOP #(parameter XLEN=32, CLC_WIDTH=28) (
     //inputs
     input [CLC_WIDTH - 1:0] clc_even_in,
     input [CLC_WIDTH - 1:0] clc_odd_in,
+    input stall_in,
     
     //outputs
     output pcd,         //don't cache MMIO
