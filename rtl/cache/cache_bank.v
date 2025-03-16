@@ -80,10 +80,11 @@ localparam  WR= 4;
 localparam  INV = 5;
 localparam  UPD= 6;
 localparam WR_LD = 7;
+localparam RINV = 7;
 
 
 localparam RWITM = 7;
-localparam RINV = 7;
+
 localparam REPLY = 2;
 wire[TAG_SIZE-1:0] tag_in, tag_buf;
 wire[IDX_ROW-1:0] idx_in, idx_buf;
