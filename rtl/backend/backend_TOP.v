@@ -62,6 +62,7 @@ module backend_TOP #(parameter NUM_UOPS=32,
             map(.clk(clk), .rst(rst),
                     //uopQ inputs
                 .uop_ready(uop_ready), .uop_in(uop), .eoi_in(eoi),
+                .dest_arch_in(dest_arch),
                 .imm_in(imm), .use_imm_in(use_imm),
                 .pc_in(pc),
                 .except_in(except),

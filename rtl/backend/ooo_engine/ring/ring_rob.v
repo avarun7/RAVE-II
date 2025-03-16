@@ -26,10 +26,10 @@ module ring_rob#(parameter XLEN=32, PHYS_REG_SIZE=256, RF_QUEUE=8, UOP_SIZE=16, 
     input[XLEN-1:0]                         mul_div_update_val,
     input[$clog2(ROB_ENTRY)-1:0]            mul_div_rob_entry,
 
-    output wire                              out_rob_valid,
-    output wire[$clog2(PHYS_REG_SIZE)-1:0]   out_rob_update_reg,
-    output wire[XLEN-1:0]                    out_rob_update_val,
-    output wire[$clog2(ROB_ENTRY)-1:0]       out_rob_rob_entry,
+    output reg                              out_rob_valid,
+    output reg[$clog2(PHYS_REG_SIZE)-1:0]   out_rob_update_reg,
+    output reg[XLEN-1:0]                    out_rob_update_val,
+    output reg[$clog2(ROB_ENTRY)-1:0]       out_rob_rob_entry,
 
     output reg                              out_logical_valid,
     output reg[$clog2(PHYS_REG_SIZE)-1:0]   out_logical_update_reg,
@@ -119,6 +119,15 @@ integer i;
 always @(posedge clk ) begin
     // if(logical_ring[0] & logical_update);
         //stall the FU
+    if(ring_update[0]) begin
+        out_rob_valid         <= ring_update[0];
+        out_rob_update_reg    <= ring_update_reg[0];
+        out_rob_update_val    <= ring_update_val[0];
+        out_rob_rob_entry     <= ring_rob_entry[0];
+    end
+
+    // if(logical_ring[0] & logical_update);
+        //stall the FU
     if(ring_update[1]) begin
         out_logical_valid         <= ring_update[1];
         out_logical_update_reg    <= ring_update_reg[1];
@@ -143,7 +152,7 @@ always @(posedge clk ) begin
 
     // if(ld_st_ring[0] & ld_st_update);
         //stall the FU
-    else if(ring_update[4]) begin
+    else if(ring_update[4]) begin //TODO: make ld_st
         out_logical_valid         <= ring_update[4];
         out_logical_update_reg    <= ring_update_reg[4];
         out_logical_update_val    <= ring_update_val[4];
