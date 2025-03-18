@@ -67,6 +67,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
     output except_out
 );
 
+    wire valid_arr_prr, valid_prr_disp;
     wire [$clog2(NUM_UOPS)-1:0] uop_arr_prr, uop_prr_disp;
     wire eoi_arr_prr, eoi_prr_disp;
     wire [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_arr_prr, dest_arch_prr_disp;
@@ -77,11 +78,13 @@ module mapper_TOP #(parameter NUM_UOPS=32,
 
     regread #(.NUM_UOPS(NUM_UOPS), .XLEN(XLEN), .ARCHFILE_SIZE(ARCHFILE_SIZE))
             archrr(.clk(clk), .rst(rst),
+                   .valid_in(uop_ready),
                    .uop_in(uop_in), .eoi_in(eoi_in),
                    .dest_arch_in(dest_arch_in),
                    .imm_in(imm_in), .use_imm_in(use_imm_in),
                    .pc_in(pc_in),
                    .except_in(except_in),
+                   .valid_out(valid_arr_prr),
                    .uop_out(uop_arr_prr), .eoi_out(eoi_arr_prr),
                    .dest_arch_out(dest_arch_arr_prr),
                    .imm_out(imm_arr_prr), .use_imm_out(use_imm_arr_prr),
@@ -91,11 +94,13 @@ module mapper_TOP #(parameter NUM_UOPS=32,
     
     regread #(.NUM_UOPS(NUM_UOPS), .XLEN(XLEN), .ARCHFILE_SIZE(ARCHFILE_SIZE))
             physrr(.clk(clk), .rst(rst),
+                   .valid_in(valid_arr_prr),
                    .uop_in(uop_arr_prr), .eoi_in(eoi_arr_prr),
                    .dest_arch_in(dest_arch_arr_prr),
                    .imm_in(imm_arr_prr), .use_imm_in(use_imm_arr_prr),
                    .pc_in(pc_arr_prr),
                    .except_in(except_arr_prr),
+                   .valid_out(valid_prr_disp),
                    .uop_out(uop_prr_disp), .eoi_out(eoi_prr_disp),
                    .dest_arch_out(dest_arch_prr_disp),
                    .imm_out(imm_prr_disp), .use_imm_out(use_imm_prr_disp),
@@ -106,6 +111,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
                .PHYSFILE_SIZE(PHYSFILE_SIZE), .ROB_SIZE(ROB_SIZE))
             disp(.clk(clk), .rst(rst),
                  //RR inputs
+                 .valid_in(valid_prr_disp),
                  .uop_in(uop_prr_disp), .eoi_in(eoi_prr_disp),
                  .dest_arch_in(dest_arch_prr_disp),
                  .imm_in(imm_prr_disp), .use_imm_in(use_imm_prr_disp),
@@ -159,6 +165,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
             $fdisplay(fullfile, "PC: 0x%h", pc_prr_disp);
             $fdisplay(fullfile, "exception: %b", except_prr_disp);
             $fdisplay(fullfile, "[====DISPATCH-TO-RSV====]");
+            $fdisplay(fullfile, "dispatch: %b", alloc_rob);
             $fdisplay(fullfile, "uop: 0x%h, eoi: %b", uop_out, eoi_out);
             $fdisplay(fullfile, "op1: rdy=%b, tag=physR%0d, val=0x%h", op1_rdy_out, op1_tag_out, op1_val_out);
             $fdisplay(fullfile, "op2: rdy=%b, tag=physR%0d, val=0x%h", op2_rdy_out, op2_tag_out, op2_val_out);
@@ -166,6 +173,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
             $fdisplay(fullfile, "PC: 0x%h", pc_out);
             $fdisplay(fullfile, "rob_entry: ROB%0d", rob_entry_out);
             $fdisplay(fullfile, "[====DISPATCH-TO-ROB====]");
+            $fdisplay(fullfile, "dispatch: %b", alloc_rob);
             $fdisplay(fullfile, "alloc([(spec(archR%0d)<-physR%0d), free(physR%0d)])", dest_arch_out, dest_phys_out, dest_oldphys_out);
             $fdisplay(fullfile, "exception: %b", except_out);
             $fdisplay(fullfile, "\n\n");

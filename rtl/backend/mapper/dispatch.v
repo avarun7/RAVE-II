@@ -5,6 +5,8 @@ module dispatch #(parameter NUM_UOPS=32,
                   parameter ROB_SIZE=128)(
     input clk, rst,
 
+    input valid_in,
+
     input [$clog2(NUM_UOPS)-1:0] uop_in,
     input eoi_in,
     input [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_in,
@@ -49,7 +51,7 @@ always@(posedge clk) begin
     pc_out <= pc_in;
     rob_entry_out <= rob_entry_in;
 
-    alloc_rob <= ~rob_full;
+    alloc_rob <= ~rob_full & valid_in;
     dest_arch_out <= dest_arch_in;
     dest_phys_out <= dest_tag_in;
     dest_oldphys_out <= dest_oldtag_in;
