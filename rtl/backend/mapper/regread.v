@@ -3,6 +3,8 @@ module regread #(parameter NUM_UOPS=32,
                  parameter ARCHFILE_SIZE=32)(
     input clk, rst,
 
+    input valid_in,
+
     input [$clog2(NUM_UOPS)-1:0] uop_in,
     input eoi_in,
     input [$clog2(ARCHFILE_SIZE)-1:0] dest_arch_in,
@@ -10,6 +12,8 @@ module regread #(parameter NUM_UOPS=32,
     input use_imm_in,
     input [31:0] pc_in,
     input except_in,
+
+    output reg valid_out,
 
     output reg [$clog2(NUM_UOPS)-1:0] uop_out,
     output reg eoi_out,
@@ -21,6 +25,7 @@ module regread #(parameter NUM_UOPS=32,
 );
 
     always@(posedge clk) begin
+        valid_out <= valid_in;
         uop_out <= uop_in;
         eoi_out <= eoi_in;
         dest_arch_out <= dest_arch_in;
@@ -31,6 +36,7 @@ module regread #(parameter NUM_UOPS=32,
     end
 
     always@(negedge rst) begin
+        valid_out <= 1'b0;
         uop_out <= {$clog2(NUM_UOPS){1'b0}};
         eoi_out <= 1'b0;
         dest_arch_out <= {$clog2(ARCHFILE_SIZE){1'b0}};
