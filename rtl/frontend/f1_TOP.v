@@ -16,6 +16,16 @@ module f1_TOP #(parameter XLEN=32, CLC_WIDTH=28) (
     output wire [XLEN - 1:0] addr_odd
 );
 
+integer file;
+integer cycle_number = 0;
+initial begin
+    file = $fopen("f1.log", "w");
+    if (file == 0) begin
+        $display("Error: Failed to open file");
+        $finish;
+    end
+end
+
     simple_tlb #(.XLEN(XLEN), .CLC_WIDTH(CLC_WIDTH)) tlb (
         .clk(clk), .rst(rst),
         .pc(),
@@ -34,6 +44,21 @@ module f1_TOP #(parameter XLEN=32, CLC_WIDTH=28) (
         .clc0_paddr_valid(addr_even_valid),
         .clc1_paddr_valid(addr_odd_valid)
     );
+
+    always @(posedge clk) begin
+        cycle_number = cycle_number + 1;
+        $fwrite(file, "Cycle number: %d\n", cycle_number);
+        $fwrite(file, "addr_even_valid: %b\n", addr_even_valid);
+        $fwrite(file, "addr_odd_valid: %b\n", addr_odd_valid);
+        $fwrite(file, "addr_even: %h\n", addr_even);
+        $fwrite(file, "addr_odd: %h\n", addr_odd);
+
+        $fwrite(file, "\n");
+    end
+
+    final begin
+        $fclose(file);
+    end
 
 
 endmodule

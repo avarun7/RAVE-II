@@ -26,6 +26,15 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
     output reg ras_valid_out
 );
 
+    integer file;
+    integer cycle_number = 0;
+    initial begin
+        file = $fopen("control.log", "w");
+        if (file == 0) begin
+            $display("Error: Failed to open file");
+            $finish;
+        end
+    end
 
     reg [CLC_WIDTH - 1 : 0] clc;
 
@@ -75,6 +84,20 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
             clc_even <= clc + 1;
             clc_odd <= clc;
         end
+    end
+
+    always @(posedge clk) begin
+        cycle_number = cycle_number + 1;
+        $fwrite(file, "Cycle number: %d\n", cycle_number);
+        $fwrite(file, "clc_even: 0x%h\n", clc_even);
+        $fwrite(file, "clc_odd: 0x%h\n", clc_odd);
+        $fwrite(file, "ras_data_out: 0x%h\n", ras_data_out);
+        $fwrite(file, "ras_valid_out: %d\n", ras_valid_out);
+        $fwrite(file, "\n");
+    end
+
+    final begin
+        $fclose(file);
     end
 
 endmodule

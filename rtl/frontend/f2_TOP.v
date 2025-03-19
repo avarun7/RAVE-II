@@ -47,6 +47,16 @@ module f2_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
 
 );
 
+integer file;
+integer cycle_number = 0;
+initial begin
+    file = $fopen("f2.log", "w");
+    if (file == 0) begin
+        $display("Error: Failed to open file");
+        $finish;
+    end
+end
+
 //BP instantiation
 // Branch Prediction Wires
 wire final_predict_taken;
@@ -110,6 +120,18 @@ IBuff #(.CACHE_LINE_SIZE(128)) ibuff(
     .valid_out()          // Valid bits for each entry
 );
 
+always @(posedge clk) begin
+    cycle_number = cycle_number + 1;
+    $fwrite(file, "Cycle number: %d\n", cycle_number);
+    $fwrite(file, "IBuff_out: 0x%h\n", IBuff_out);
+    $fwrite(file, "pc_out: 0x%h\n", pc_out);
+    
+    $fwrite(file, "\n");
+end
+
+final begin
+    $fclose(file);
+end
 
 
 //logic to determine which ibuff output packet to send to decode
