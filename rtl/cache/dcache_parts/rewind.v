@@ -2,7 +2,8 @@ module rewind #(parameter OOO_TAG_SIZE= 10) (
     //Global
     input clk, 
     input rst,
-
+    input stall,
+    
     //From ROB
     input [OOO_TAG_SIZE-1:0] rob_ret_tag_in,
     input rob_valid,
