@@ -3,6 +3,7 @@ input clk,
 input rst,
 
 input size_in,
+input sext_in,
 
 input [31:0] addr_in_e,
 input [CL_SIZE-1:0] data_in_e,
@@ -87,6 +88,7 @@ assign data_full = {data_1, data_0};
 assign data_shift = data_full >>> (addr_0[3:0]* 8);
 
 always @(*) begin
+    if(sext_in) begin
     case(size_in) 
         0: data_out = {data_shift[7:0], 24'd0} >>> 24;
         1: data_out = {data_shift[15:0], 16'd0} >>> 16;
@@ -94,6 +96,16 @@ always @(*) begin
         3: data_out = data_shift[31:0];
         default: data_out = 0;
     endcase
+    end
+    else begin
+        case(size_in) 
+        0: data_out = {data_shift[7:0], 24'd0} >> 24;
+        1: data_out = {data_shift[15:0], 16'd0} >> 16;
+       
+        3: data_out = data_shift[31:0];
+        default: data_out = 0;
+        endcase
+    end
 end
 
 // always @(*) begin

@@ -1,4 +1,4 @@
-module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6) (
+module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6, OOO_ROB_BITS = 6) (
     input clk,
     input rst,
 
@@ -9,6 +9,7 @@ module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6) (
     input [31:0] addr_in,
     input [31:0] data_in,
     input [OOO_TAG_BITS-1:0] ooo_tag_in,
+    input [OOO_ROB_BITS-1:0] ooo_rob_in,
     input [1:0] size_in,
     
     //From MSHR  x
@@ -31,9 +32,9 @@ wire[(3+1)*Q_LENGTH-1:0] new_m_vector;
 wire[Q_LENGTH-1:0] modify_vector;
 wire [(3+1)*Q_LENGTH-1:0] old_m_vector;
 
-qnm #(.N_WIDTH(32+32+3+3+2), .M_WIDTH(1+OOO_TAG_BITS), .Q_LENGTH(8)) q1(
+qnm #(.N_WIDTH(32+32+3+3+2+OOO_ROB_BITS), .M_WIDTH(1+OOO_TAG_BITS), .Q_LENGTH(8)) q1(
     .m_din({mshr_wr_idx, mshr_fin && mshr_fin_idx == mshr_wr_idx}),
-    .n_din({size_in,operation, addr_in, data_in, ooo_tag_in}),
+    .n_din({ooo_rob_in, size_in,operation, addr_in, data_in, ooo_tag_in}),
     .new_m_vector(new_m_vector),
     .wr(wr), 
     .rd(rd),
@@ -43,7 +44,7 @@ qnm #(.N_WIDTH(32+32+3+3+2), .M_WIDTH(1+OOO_TAG_BITS), .Q_LENGTH(8)) q1(
     .full(lsq_full), 
     .empty(),
     .old_m_vector(old_m_vector),
-    .dout({size_out, opeartion, addr_out, data_out, ooo_tag_out, mshr_wr_idx_out, valid_out})
+    .dout({ooo_rob_out, size_out, opeartion, addr_out, data_out, ooo_tag_out, mshr_wr_idx_out, valid_out})
 );
 
 genvar i;
