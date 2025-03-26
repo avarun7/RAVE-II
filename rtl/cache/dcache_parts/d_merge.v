@@ -5,6 +5,10 @@ input rst,
 input size_in,
 input sext_in,
 
+input [31:0] even_rwnd_data,
+input [31:0] odd_rwnd_data,
+
+
 input [31:0] addr_in_e,
 input [CL_SIZE-1:0] data_in_e,
 input [1:0] size_in_e,
@@ -29,7 +33,9 @@ output reg [31:0] data_out, //done
 output [1:0] size_out, //done
 output [2:0] operation_out, //done
 output [OOO_TAG_SIZE-1:0] ooo_tag_out, //done
-output valid_out //done
+output valid_out, //done
+
+output [31:0] rwnd_data
 );
 localparam  NOOP= 0;
 localparam LD = 1;
@@ -59,6 +65,8 @@ wire [1:0] size_1; //done
 wire  [2:0] operation_1; //done
 wire [OOO_TAG_SIZE-1:0] ooo_tag_1; //done
 wire wake_1;
+wire [31:0]rwnd_data_0, rwnd_data_1;
+assign rwnd_data_0 = use_e_as_0 ? even_rwnd_data : odd_rwnd_data;
 assign hit_0 = use_e_as_0 ? hit_e : hit_o;
 assign addr_0 = use_e_as_0 ? addr_in_e : addr_in_o;
 assign data_0 = use_e_as_0 ? data_in_e : data_in_o;
@@ -66,6 +74,7 @@ assign size_0 = use_e_as_0 ? size_in_e : size_in_o;
 assign operation_0 = use_e_as_0 ? operation_in_e : operation_in_o;
 assign ooo_tag_0 = use_e_as_0 ? ooo_tag_in_e : ooo_tag_in_o;
 
+assign rwnd_data_1 = !use_e_as_0 ? even_rwnd_data : odd_rwnd_data;
 assign hit_1 = !use_e_as_0 ? hit_e : hit_o;
 assign addr_1 = !use_e_as_0 ? addr_in_e : addr_in_o;
 assign data_1 = !use_e_as_0 ? data_in_e : data_in_o;
@@ -107,7 +116,11 @@ always @(*) begin
         endcase
     end
 end
-
+wire[63:0] rwnd_concat;
+wire [31:0] shift_amt;
+assign shift_amt = size_0 << 3;
+assign rwnd_concat = {rwnd_data_1,rwnd_data_0};
+assign rwnd_data = need_p1 ? (rwnd_concat >> shift_amt): rwnd_data_0;
 // always @(*) begin
 //     case(size_1) 
 //         0: data_1_concat = {data_1[7:0], 24'd0};
