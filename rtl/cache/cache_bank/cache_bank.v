@@ -47,7 +47,7 @@ tag update
     output mshr_full, //
     //Cache
     output lsq_alloc,
-    output lsq_data, 
+    output [31:0] lsq_data, 
 
     //Outputs to RWND Q
     output rwnd_alloc, 
@@ -128,7 +128,7 @@ assign data_out = data_evict;
 assign data_evic = data_evict;
 assign st_fwd = !stall_cache && addr_in[31:5] == addr_buffer[31:5] && valid_operation_in; 
 assign rwnd_alloc = operation_buffer == ST;
-assign lsq_data = data_buffer;
+assign lsq_data = data_buffer[31:0];
 
 //TODO: adjust mshr_alloc to be mshr_alloc_pre_stall
 assign stall_cache = pending_stall  || mshr_alloc && mshr_full || rwnd_full && rwnd_alloc || lsq_full && lsq_alloc;
