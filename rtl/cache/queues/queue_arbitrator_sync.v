@@ -1,4 +1,4 @@
-module queue_arbitrator #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
+module queue_arbitrator_sync #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
     input[32*Q_WIDTH-1:0]   addr_in,
     input[Q_WIDTH * CL_SIZE-1:0] data_in,
     input[3*Q_WIDTH-1:0]    operation_in, 

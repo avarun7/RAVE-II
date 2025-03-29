@@ -12,7 +12,7 @@ tag update
 
 */
 
- module cache_bank #(parameter CL_SIZE = 128, IDX_CNT = 512, TAG_SIZE = 18, OOO_TAG_SIZE = 10, BANK_NAME = 1) (
+ module cache_bank #(parameter CL_SIZE = 128, IDX_CNT = 512, TAG_SIZE = 18, OOO_TAG_SIZE = 10, BANK_NAME = 1, OOO_ROB_SIZE = 10) (
     //Systen Input
     input clk,
     input rst,
@@ -65,7 +65,23 @@ tag update
     output reg[31:0]  addr_miss,
     output alloc_miss,
 
-    output stall_cache
+    output stall_cache,
+
+    input [2:0] operation_in_orig,
+    input [31:0] addr_in_orig,
+    input [31:0] data_in_orig,
+    input [OOO_TAG_BITS-1:0] ooo_tag_in_orig,
+    input [OOO_ROB_BITS-1:0] ooo_rob_in_orig,
+    input [1:0] size_in_orig,
+    input sext_in_orig,
+
+    output [2:0] operation_out_orig,
+    output [31:0] addr_out_orig,
+    output [31:0] data_out_orig,
+    output [OOO_TAG_BITS-1:0] ooo_tag_out_orig,
+    output [OOO_ROB_BITS-1:0] ooo_rob_out_orig,
+    output [1:0] size_out_orig,
+    output sext_out_orig
 
 );
 //TODO: REBUILD ADDR
@@ -90,6 +106,14 @@ wire[TAG_SIZE-1:0] tag_in, tag_buf;
 wire[IDX_ROW-1:0] idx_in, idx_buf;
 wire[32-IDX_ROW-TAG_SIZE-2:0] offset_in, offset_buf;
 wire parity_in, parity_buf;
+
+   reg  [2:0]               operation_buff_orig;
+   reg  [31:0]              addr_buff_orig;
+   reg  [31:0]              data_buff_orig;
+   reg  [OOO_TAG_BITS-1:0]  ooo_tag_buff_orig;
+   reg  [OOO_ROB_BITS-1:0]  ooo_rob_buff_orig;
+   reg  [1:0]               size_buff_orig;
+   reg                      sext_buff_orig;
 
 reg [31:0] addr_buffer;
 reg [CL_SIZE-1:0] data_buffer;
@@ -142,6 +166,15 @@ always @(posedge clk) begin
         OOO_TAG_buffer  = 0;
         addr_miss = addr_buffer;
         addr_evic = addr_buffer;
+        
+        operation_buff_orig=0;
+        addr_buff_orig=0;
+        data_buff_orig=0;
+        ooo_tag_buff_orig=0;
+        ooo_rob_buff_orig=0;
+        size_buff_orig=0;
+        sext_buff_orig=0;
+        
     end
     else if (!stall_cache && valid_operation_in) begin
         addr_buffer = addr_in;
@@ -151,6 +184,14 @@ always @(posedge clk) begin
         OOO_TAG_buffer = ooo_tag_in;
         addr_miss = addr_buffer;
         addr_evic = addr_buffer;
+       
+        operation_buff_orig =  operation_in_orig;
+        addr_buff_orig =  addr_in_orig;
+        data_buff_orig =  data_in_orig;
+        ooo_tag_buff_orig =  ooo_tag_in_orig;
+        ooo_rob_buff_orig =  ooo_rob_in_orig;
+        size_buff_orig =  size_in_orig;
+        sext_buff_orig =  sext_in_orig;
     end
     else if(stall_cache && valid_operation_in) begin 
         addr_buffer = addr_buffer;
@@ -160,10 +201,20 @@ always @(posedge clk) begin
         OOO_TAG_buffer = OOO_TAG_buffer;
         addr_miss = addr_buffer;
         addr_evic = addr_buffer;
+
+        operation_buff_orig =  operation_buff_orig;
+        addr_buff_orig      =  addr_buff_orig     ;
+        data_buff_orig      =  data_buff_orig     ;
+        ooo_tag_buff_orig   =  ooo_tag_buff_orig  ;
+        ooo_rob_buff_orig   =  ooo_rob_buff_orig  ;
+        size_buff_orig      =  size_buff_orig     ;
+        sext_buff_orig      =  sext_buff_orig     ;
     end
     else begin operation_buffer = 0;
         addr_miss = addr_buffer;
         addr_evic = addr_buffer;
+        data_buffer = data_in;
+        operation_buff_orig = 0;
     end
 end
 
