@@ -9,6 +9,22 @@ class ProcessorDriver(uvm_driver):
         self.dut = None
 
     async def run_phase(self):
+        # Reset sequence at the beginning
+        self.dut.valid_in.value = 0
+        self.dut.rs1.value = 0
+        self.dut.rs2.value = 0
+        # Set other signals to safe values
+        if hasattr(self.dut, "logical_type"):
+            self.dut.logical_type.value = 0
+        if hasattr(self.dut, "opcode"):
+            self.dut.opcode.value = 0
+        if hasattr(self.dut, "additional_info"):
+            self.dut.additional_info.value = 0
+        
+        # Wait for a few clock cycles to stabilize
+        for _ in range(5):
+            await RisingEdge(self.dut.clk)
+            
         while True:
             transaction = await self.seq_item_port.get_next_item()
             self.logger.info(f"Driving transaction: {transaction}")
@@ -17,8 +33,11 @@ class ProcessorDriver(uvm_driver):
             self.last_transaction = transaction
 
             # Apply common signals to DUT
-            self.dut.rs1.value = transaction.rs1
-            self.dut.rs2.value = transaction.rs2
+            # self.dut.rs1.value = transaction.rs1
+            # self.dut.rs2.value = transaction.rs2
+            # self.dut.valid_in.value = 1
+            self.dut.rs1.value = transaction.rs1 & 0xFFFFFFFF  # Ensure 32-bit
+            self.dut.rs2.value = transaction.rs2 & 0xFFFFFFFF  # Ensure 32-bit
             self.dut.valid_in.value = 1
 
             # Handle different DUT types
@@ -47,7 +66,7 @@ class ProcessorDriver(uvm_driver):
                     self.dut.logical_type.value = transaction.logical_type
 
             # Wait for one clock cycle
-            await RisingEdge(self.dut.clk)
+            # await RisingEdge(self.dut.clk)
             # # Keep valid_in high for a cycle
             # await RisingEdge(self.dut.clk)
             
@@ -56,7 +75,7 @@ class ProcessorDriver(uvm_driver):
 
             # Wait for valid_out to be asserted (with timeout)
             try:
-                await with_timeout(RisingEdge(self.dut.valid_out), 200, "ns")
+                await with_timeout(RisingEdge(self.dut.valid_out), 300, "ns")
                 self.logger.info(f"Valid output received. Result: {self.dut.result.value}")
                 # Now it's safe to clear valid_in after seeing valid_out
                 self.dut.valid_in.value = 0

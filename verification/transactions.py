@@ -30,8 +30,10 @@ class ProcessorTransaction(uvm_sequence_item):
         else:  # Logical operations
             self.logical_type = random.choice([0b100, 0b110, 0b111, 0b001, 0b101])  # XOR, OR, AND, LSHIFT, RSHIFT
 
-        self.rs1 = random.randint(0, (1 << 32) - 1)  # Random 32-bit value
-        self.rs2 = random.randint(0, (1 << 32) - 1)  # Random 32-bit value
+        # Ensure signed 32-bit numbers for rs1 and rs2
+        self.rs1 = random.randint(-(1 << 31), (1 << 31) - 1)
+        self.rs2 = random.randint(-(1 << 31), (1 << 31) - 1)
+        
         self.valid_in = 1  # Always valid input
 
     def __str__(self):

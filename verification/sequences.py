@@ -22,13 +22,12 @@ class LogicalSequence(BaseProcessorSequence):
             txn = ProcessorTransaction("logical")
             txn.opcode = 0b00000  # Logical opcode
             txn.logical_type = random.choice([0b100, 0b110, 0b111, 0b001, 0b101])
-            txn.rs1 = random.randint(0, (1 << 32) - 1)
-            txn.rs2 = random.randint(0, (1 << 32) - 1)
+            txn.rs1 = random.randint(-(1 << 31), (1 << 31) - 1)
+            txn.rs2 = random.randint(-(1 << 31), (1 << 31) - 1)
             txn.additional_info = random.randint(0, 1)
             txn.valid_in = 1
 
             if txn is not None:
-                print(f"txn: {txn}")
                 await self.start_item(txn)
                 print(f"txn: {txn}")
 

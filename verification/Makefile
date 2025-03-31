@@ -6,15 +6,15 @@ TOPLEVEL_LANG ?= verilog
 PYTHON = /mnt/c/Users/megan/RAVE-II/verification/.venv/bin/python3
 COCTB_CONFIG = /mnt/c/Users/megan/RAVE-II/verification/.venv/bin/cocotb-config
 
-# TEST LOGICAL FU
-VERILOG_SOURCES += $(PWD)/logical_FU.v
-TESTCASE = run_logical_test
-export TOPLEVEL = logical_FU
+# # TEST LOGICAL FU
+# VERILOG_SOURCES += $(PWD)/logical_FU.v
+# TESTCASE = run_logical_test
+# export TOPLEVEL = logical_FU
 
-# # TEST ARITHMETIC FU
-# VERILOG_SOURCES += $(PWD)/arithmetic_FU.v
-# TESTCASE = run_arithmetic_test
-# export TOPLEVEL = arithmetic_FU
+# TEST ARITHMETIC FU
+VERILOG_SOURCES += $(PWD)/arithmetic_FU.v
+TESTCASE = run_arithmetic_test
+export TOPLEVEL = arithmetic_FU
 
 # Python test file (without .py extension)
 MODULE = testbench
