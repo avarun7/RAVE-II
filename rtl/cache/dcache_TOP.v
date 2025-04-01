@@ -342,11 +342,11 @@ d_split #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .OOO_TAG_SIZE(OOO_TAG_SIZE), .TA
     .operation_out_o(lsq_operation_in_dc_data_q_odd),
     .ooo_tag_out_o(lsq_ooo_tag_in_dc_data_q_odd),
 
-     .wake_e(         pipe_wake_even),
-     .wake_o(         pipe_wake_odd),
-     .out_q_alloc(    pipe_alloc_q),
-     .use_e_as_0(     pipe_e_as_0),
-     .need_p1(        pipe_need_p1)
+     .wake_e(         lsq_wake_even),
+     .wake_o(         lsq_wake_odd),
+     .out_q_alloc(    lsq_alloc_q),
+     .use_e_as_0(     lsq_e_as_0),
+     .need_p1(        lsq_need_p1)
 );
 
 d_split #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .OOO_TAG_SIZE(OOO_TAG_SIZE), .TAG_SIZE(TAG_SIZE)) split_pipe(
@@ -677,7 +677,7 @@ assign size_in_orig =
 assign sext_in_orig =   dealloc_even[1] ? lsq_sext_in_dc_data_q : pipe_sext_in_dc_data_q;
     
    
-cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE), .BANK_NAME(1)) cache_bank_even (
+cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE), .BANK_NAME(3)) cache_bank_even (
     //Systen Input
     .clk(clk),
     .rst(rst),
@@ -912,7 +912,7 @@ queue_arbitrator_sync #(.CL_SIZE(CL_SIZE), .Q_WIDTH(5)) queue_arb_odd(
     
     .stall_in(stall_cache_odd),
 
-    .partner_dealloc(dealloc_odd),
+    .partner_dealloc(dealloc_even),
 
 
     .addr_out(      dcache_addr_in_odd),
@@ -956,7 +956,7 @@ wire[31:0] rwnd_data_odd;
 
 
    
-cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE), .BANK_NAME(1)) cache_bank_odd (
+cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE), .BANK_NAME(4)) cache_bank_odd (
     //Systen Input
     .clk(clk),
     .rst(rst),
@@ -1038,4 +1038,82 @@ assign src_out_dc_instr_q_odd = 1;
 assign dest_out_dc_instr_q_odd = operation_out_dc_instr_q_odd == WR || operation_out_dc_instr_q_odd == RD ? 3 : 2;
 
 
+wire [31:0] doutq_addr_in;
+wire  [32-1:0] doutq_data_in;
+wire  [2:0] doutq_operation_in;
+wire  doutq_is_flush_in;
+wire  doutq_valid_in;
+wire  [1:0] doutq_src_in;
+wire  [1:0] doutq_dest_in;
+wire [1:0] doutq_size_in;
+wire [OOO_TAG_SIZE-1:0] doutq_ooo_tag_in;
+wire [OOO_ROB_SIZE-1:0] doutq_ooo_rob_in;
+wire doutq_sext_in;
+
+
+d_merge #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .OOO_TAG_SIZE(OOO_TAG_SIZE), .TAG_SIZE(TAG_SIZE)) d_merge (
+.clk(clk),
+.rst(rst),
+
+.size_in(size_out_orig),
+.sext_in(sext_out_orig),
+
+.even_rwnd_data(rwnd_data_even),
+.odd_rwnd_data(rwnd_data_odd),
+
+.addr_in_e(addr_out_bank_even),
+.data_in_e(data_out_bank_even),
+.size_in_e(size_out_bank_even),
+.operation_in_e(operation_out_bank_even),
+.ooo_tag_in_e(ooo_tag_out_bank_even),
+
+.addr_in_o(addr_out_bank_odd),
+.data_in_o(data_out_bank_odd),
+.size_in_o(size_out_bank_odd),
+.operation_in_o(operation_out_bank_odd),
+.ooo_tag_in_o(ooo_tag_out_bank_odd),
+
+.wake_e(),
+.wake_o(),
+.hit_e(hit_bank_even),
+.hit_o(hit_bank_odd),
+
+
+.addr_out(doutq_addr_in),
+.data_out(doutq_data_in),
+.size_out(doutq_size_in),
+.operation_out(doutq_operation_in),
+.ooo_tag_out(doutq_ooo_tag_in),
+.valid_out(alloc_doutq),
+
+.rwnd_data() //dont need 
+);
+doutq #(.Q_LENGTH(8), .DATA_SIZE(32), .OOO_TAG_SIZE(OOO_TAG_SIZE), .OOO_ROB_SIZE(OOO_ROB_SIZE)) dout_q (
+    .clk(clk), 
+    .rst(rst),
+
+    .addr_in(doutq_addr_in),
+    .data_in(doutq_data_in),
+    .operation_in(doutq_operation_in),
+    .is_flush_in(1'b0),
+    .tag_in(ooo_tag_out_orig),
+    .rob_line_in(ooo_rob_out_orig),
+    .alloc(alloc_doutq),
+
+    //From ROB
+    .dealloc(rob_valid && rob_ret_tag_in == tag_out),
+    .resteer(rob_resteer),
+
+    //TO CACHE
+    .full(),
+
+    //TO ROB
+    .addr_out(addr_out),
+    .data_out(data_out),
+    .is_st_out(is_st_out),
+    .is_flush_out(is_flush_out),
+    .tag_out(tag_out),
+    .rob_line_out(rob_line_out),
+    .valid_out(valid_out)
+);
 endmodule

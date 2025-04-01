@@ -25,8 +25,6 @@ input wake_e,
 input wake_o,
 input hit_e,
 input hit_o,
-input use_e_as_0,
-input need_p1,
 
 output addr_out, //done
 output reg [31:0] data_out, //done
@@ -37,6 +35,10 @@ output valid_out, //done
 
 output [31:0] rwnd_data
 );
+assign use_e_as_0 = addr_in_e < addr_in_o;
+wire [31:0] temp_addr;
+assign temp_addr = addr_0 + (size_in << 3);
+assign need_p1 =  temp_addr[4] != addr_0[4];
 localparam  NOOP= 0;
 localparam LD = 1;
 localparam ST = 2;
