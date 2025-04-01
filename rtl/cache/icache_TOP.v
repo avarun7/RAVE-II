@@ -336,7 +336,23 @@ cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG
     .addr_miss(addr_out_ic_instr_q_even),
     .alloc_miss(alloc_out_ic_instr_q_even),
 
-    .stall_cache(stall_cache_even)
+    .stall_cache(stall_cache_even),
+
+    .operation_in_orig(3'd0),
+    .addr_in_orig(32'd0),
+    .data_in_orig(32'd0),
+    .ooo_tag_in_orig(10'd0),
+    .ooo_rob_in_orig(10'd0),
+    .size_in_orig(2'd0),
+    .sext_in_orig(1'd0),
+
+    .operation_out_orig(),
+    .addr_out_orig(),
+    .data_out_orig(),
+    .ooo_tag_out_orig(),
+    .ooo_rob_out_orig(),
+    .size_out_orig(),
+    .sext_out_orig()
 );
 assign is_flush_out_ic_data_q_even = 0;
 assign  src_out_ic_data_q_even = 1;
@@ -508,7 +524,23 @@ cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG
     .addr_miss(addr_out_ic_instr_q_odd),
     .alloc_miss(alloc_out_ic_instr_q_odd),
 
-    .stall_cache(stall_cache_odd)
+    .stall_cache(stall_cache_odd),
+
+    .operation_in_orig(3'd0),
+    .addr_in_orig(32'd0),
+    .data_in_orig(32'd0),
+    .ooo_tag_in_orig(10'd0),
+    .ooo_rob_in_orig(10'd0),
+    .size_in_orig(2'd0),
+    .sext_in_orig(1'd0),
+
+    .operation_out_orig(),
+    .addr_out_orig(),
+    .data_out_orig(),
+    .ooo_tag_out_orig(),
+    .ooo_rob_out_orig(),
+    .size_out_orig(),
+    .sext_out_orig()
 );
 assign is_flush_out_ic_data_q_odd = 0;
 assign  src_out_ic_data_q_odd = 1;

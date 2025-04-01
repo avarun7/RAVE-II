@@ -166,9 +166,264 @@ wire  [1:0] dcache_src_in_dc_instr_q_odd;
 wire  [1:0] dcache_dest_in_dc_instr_q_odd;
 
 wire[4:0] dealloc_even;
+wire[4:0] dealloc_odd;
+
+
+wire [31:0] pipe_addr_in_dc_data_q;
+wire  [CL_SIZE-1:0] pipe_data_in_dc_data_q;
+wire  [2:0] pipe_operation_in_dc_data_q;
+wire  pipe_is_flush_in_dc_data_q;
+wire  pipe_valid_in_dc_data_q;
+wire  [1:0] pipe_src_in_dc_data_q;
+wire  [1:0] pipe_dest_in_dc_data_q;
+wire [1:0] pipe_size_in_dc_data_q;
+wire [OOO_TAG_SIZE-1:0] pipe_ooo_tag_in_dc_data_q;
+wire [OOO_ROB_SIZE-1:0] pipe_ooo_rob_in_dc_data_q;
+wire pipe_sext_in_dc_data_q;
+
+dinpq #(.Q_LENGTH(8), .DATA_SIZE(32), .OOO_TAG_SIZE(OOO_TAG_SIZE), .OOO_ROB_SIZE(OOO_ROB_SIZE), .CL_SIZE(CL_SIZE)) data_input_q (
+
+.clk(clk),
+.rst(rst),
+.resteer(rob_resteer),
+
+//FROM RSV
+.alloc(ls_unit_alloc), //Data from RAS is valid or not
+
+.addr_in(addr_in),
+.data_in(data_in),
+.size_in(size_in), //
+.is_st_in(is_st_in), //Say whether input is ST or LD
+.ooo_tag_in(ooo_tag_in), //tag from register renaming
+.ooo_rob_in(ooo_rob_in),
+.sext_in(sext),
+
+.dealloc(dealloc_even[0] || dealloc_odd[0]),
+
+.valid(valid_pipe),
+
+.addr_out(pipe_addr_in_dc_data_q),
+.data_out(pipe_data_in_dc_data_q),
+.size_out(pipe_size_in_dc_data_q), //
+.operation_out(pipe_operation_in_dc_data_q), //Say whether input is ST or LD
+.ooo_tag_out(pipe_ooo_tag_in_dc_data_q), //tag from register renaming
+.ooo_rob_out(pipe_ooo_rob_in_dc_data_q),
+.src_out(pipe_src_in_dc_data_q), 
+.dest_out(pipe_dest_in_dc_data_q),
+.sext_out(pipe_sext_in_dc_data_q),
+
+.full(stall)
+
+);
+wire [31:0] lsq_addr_in_dc_data_q;
+wire  [CL_SIZE-1:0] lsq_data_in_dc_data_q;
+wire  [2:0] lsq_operation_in_dc_data_q;
+wire  lsq_is_flush_in_dc_data_q;
+wire  lsq_valid_in_dc_data_q;
+wire  [1:0] lsq_src_in_dc_data_q;
+wire  [1:0] lsq_dest_in_dc_data_q;
+wire [1:0] lsq_size_in_dc_data_q;
+wire [OOO_TAG_SIZE-1:0] lsq_ooo_tag_in_dc_data_q;
+wire [OOO_ROB_SIZE-1:0] lsq_ooo_rob_in_dc_data_q;
+wire lsq_sext_in_dc_data_q;
+
+wire [31:0] lsq_addr_in_dc_data_q_even;
+wire  [CL_SIZE-1:0] lsq_data_in_dc_data_q_even;
+wire  [2:0] lsq_operation_in_dc_data_q_even;
+wire  lsq_is_flush_in_dc_data_q_even;
+wire  lsq_valid_in_dc_data_q_even;
+wire  [1:0] lsq_src_in_dc_data_q_even;
+wire  [1:0] lsq_dest_in_dc_data_q_even;
+wire [1:0] lsq_size_in_dc_data_q_even;
+wire [OOO_TAG_SIZE-1:0] lsq_ooo_tag_in_dc_data_q_even;
+wire [OOO_ROB_SIZE-1:0] lsq_ooo_rob_in_dc_data_q_even;
+wire lsq_sext_in_dc_data_q_even;
+
+wire [31:0] lsq_addr_in_dc_data_q_odd;
+wire  [CL_SIZE-1:0] lsq_data_in_dc_data_q_odd;
+wire  [2:0] lsq_operation_in_dc_data_q_odd;
+wire  lsq_is_flush_in_dc_data_q_odd;
+wire  lsq_valid_in_dc_data_q_odd;
+wire  [1:0] lsq_src_in_dc_data_q_odd;
+wire  [1:0] lsq_dest_in_dc_data_q_odd;
+wire [1:0] lsq_size_in_dc_data_q_odd;
+wire [OOO_TAG_SIZE-1:0] lsq_ooo_tag_in_dc_data_q_odd;
+wire [OOO_ROB_SIZE-1:0] lsq_ooo_rob_in_dc_data_q_odd;
+wire lsq_sext_in_dc_data_q_odd;
+
+wire [31:0] pipe_addr_in_dc_data_q_even;
+wire  [CL_SIZE-1:0] pipe_data_in_dc_data_q_even;
+wire  [2:0] pipe_operation_in_dc_data_q_even;
+wire  pipe_is_flush_in_dc_data_q_even;
+wire  pipe_valid_in_dc_data_q_even;
+wire  [1:0] pipe_src_in_dc_data_q_even;
+wire  [1:0] pipe_dest_in_dc_data_q_even;
+wire [1:0] pipe_size_in_dc_data_q_even;
+wire [OOO_TAG_SIZE-1:0] pipe_ooo_tag_in_dc_data_q_even;
+wire [OOO_ROB_SIZE-1:0] pipe_ooo_rob_in_dc_data_q_even;
+wire pipe_sext_in_dc_data_q_even;
+
+wire [31:0] pipe_addr_in_dc_data_q_odd;
+wire  [CL_SIZE-1:0] pipe_data_in_dc_data_q_odd;
+wire  [2:0] pipe_operation_in_dc_data_q_odd;
+wire  pipe_is_flush_in_dc_data_q_odd;
+wire  pipe_valid_in_dc_data_q_odd;
+wire  [1:0] pipe_src_in_dc_data_q_odd;
+wire  [1:0] pipe_dest_in_dc_data_q_odd;
+wire [1:0] pipe_size_in_dc_data_q_odd;
+wire [OOO_TAG_SIZE-1:0] pipe_ooo_tag_in_dc_data_q_odd;
+wire [OOO_ROB_SIZE-1:0] pipe_ooo_rob_in_dc_data_q_odd;
+wire pipe_sext_in_dc_data_q_odd;
+assign lsq_alloc = lsq_alloc_even && lsq_alloc_odd;
+lsq #(.Q_LENGTH(8), .OOO_TAG_BITS(OOO_TAG_SIZE), .OOO_ROB_BITS(OOO_ROB_SIZE)) lsq_one (
+    .clk(clk),
+    .rst(rst),
+
+    //From cache
+    .dealloc(dealloc_even[1] || dealloc_odd[1]),
+    .alloc(lsq_alloc),
+
+    .operation_in(operation_in_orig), 
+    .addr_in(addr_in_orig),
+    .data_in(data_in_orig),
+    .ooo_tag_in(ooo_tag_in_orig),
+    .ooo_rob_in(ooo_rob_in_orig),
+    .size_in(size_in_orig),
+    .sext_in(sext_in_orig),
+
+    .hit_even(hit_bank_even),
+    .hit_odd(hit_bank_odd),
+
+    //From MSHR  x
+    .mshr_wr_idx_even(mshr_wr_ptr_even), //next location to be allocated into mshr
+    .mshr_fin_even(mshr_fin_even),
+    .mshr_fin_idx_even(mshr_fin_ptr_even),// location being deallocated from mshr
+
+    .mshr_wr_idx_odd(mshr_wr_ptr_odd), //next location to be allocated into mshr
+    .mshr_fin_odd(mshr_fin_odd),
+    .mshr_fin_idx_odd(mshr_fin_ptr_eodd),// location being deallocated from mshr
+
+    //outputs 
+    .ooo_tag_out(lsq_ooo_tag_in_dc_data_q),
+    .ooo_rob_out(lsq_ooo_rob_in_dc_data_q),
+    .data_out(lsq_data_in_dc_data_q),
+    .addr_out(lsq_addr_in_dc_data_q),
+    .operation_out(lsq_operation_in_dc_data_q),
+    .size_out(lsq_size_in_dc_data_q),
+    .sext_out(lsq_sext_in_dc_data_q),
+    
+    .valid_out(valid_lsq),
+    .lsq_full(lsq_full)
+);
 
 
 
+d_split #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .OOO_TAG_SIZE(OOO_TAG_SIZE), .TAG_SIZE(TAG_SIZE)) split_lsq(
+    .clk(clk),
+    .rst(rst),
+
+    .stall(1'b0), //TODO: Check this
+   
+    .addr_in(lsq_addr_in_dc_data_q),
+    .data_in(lsq_data_in_dc_data_q),
+    .size_in(lsq_size_in_dc_data_q),
+    .operation_in(lsq_operation_in_dc_data_q),
+    .ooo_tag_in(lsq_ooo_tag_in_dc_data_q),
+
+    .addr_out_e(lsq_addr_in_dc_data_q_even),
+    .data_out_e(lsq_data_in_dc_data_q_even),
+    .size_out_e(lsq_size_in_dc_data_q_even),
+    .operation_out_e(lsq_operation_in_dc_data_q_even),
+    .ooo_tag_out_e(lsq_ooo_tag_in_dc_data_q_even),
+
+    .addr_out_o(lsq_addr_in_dc_data_q_odd),
+    .data_out_o(lsq_data_in_dc_data_q_odd),
+    .size_out_o(lsq_size_in_dc_data_q_odd),
+    .operation_out_o(lsq_operation_in_dc_data_q_odd),
+    .ooo_tag_out_o(lsq_ooo_tag_in_dc_data_q_odd),
+
+     .wake_e(         pipe_wake_even),
+     .wake_o(         pipe_wake_odd),
+     .out_q_alloc(    pipe_alloc_q),
+     .use_e_as_0(     pipe_e_as_0),
+     .need_p1(        pipe_need_p1)
+);
+
+d_split #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .OOO_TAG_SIZE(OOO_TAG_SIZE), .TAG_SIZE(TAG_SIZE)) split_pipe(
+    .clk(clk),
+    .rst(rst),
+
+    .stall(1'b0),
+   
+    .addr_in(pipe_addr_in_dc_data_q),
+    .data_in(pipe_data_in_dc_data_q),
+    .size_in(pipe_size_in_dc_data_q),
+    .operation_in(pipe_operation_in_dc_data_q),
+    .ooo_tag_in(pipe_ooo_tag_in_dc_data_q),
+
+    .addr_out_e(pipe_addr_in_dc_data_q_even),
+    .data_out_e(pipe_data_in_dc_data_q_even),
+    .size_out_e(pipe_size_in_dc_data_q_even),
+    .operation_out_e(pipe_operation_in_dc_data_q_even),
+    .ooo_tag_out_e(pipe_ooo_tag_in_dc_data_q_even),
+
+    .addr_out_o(pipe_addr_in_dc_data_q_odd),
+    .data_out_o(pipe_data_in_dc_data_q_odd),
+    .size_out_o(pipe_size_in_dc_data_q_odd),
+    .operation_out_o(pipe_operation_in_dc_data_q_odd),
+    .ooo_tag_out_o(pipe_ooo_tag_in_dc_data_q_odd),
+
+     .wake_e(       pipe_wake_even),
+     .wake_o(       pipe_wake_odd),
+     .out_q_alloc(  pipe_alloc_q),
+     .use_e_as_0(   pipe_e_as_0),
+     .need_p1(      pipe_need_p1)
+);
+
+assign pipe_valid_even =   pipe_operation_in_dc_data_q_even != 0;
+assign pipe_valid_odd =    pipe_operation_in_dc_data_q_odd != 0;
+
+assign lsq_valid_even = lsq_operation_in_dc_data_q_even != 0;
+assign lsqe_valid_odd = lsq_operation_in_dc_data_q_odd != 0;
+
+wire [31:0] rwnd_addr_in_dc_data_q_even;
+wire  [CL_SIZE-1:0] rwnd_data_in_dc_data_q_even;
+wire  [2:0] rwnd_operation_in_dc_data_q_even;
+wire  rwnd_is_flush_in_dc_data_q_even;
+wire  rwnd_valid_in_dc_data_q_even;
+wire  [1:0] rwnd_src_in_dc_data_q_even;
+wire  [1:0] rwnd_dest_in_dc_data_q_even;
+wire [1:0] rwnd_size_in_dc_data_q_even;
+wire [OOO_TAG_SIZE-1:0] rwnd_ooo_tag_in_dc_data_q_even;
+wire [OOO_ROB_SIZE-1:0] rwnd_ooo_rob_in_dc_data_q_even;
+wire rwnd_sext_in_dc_data_q_even;
+
+wire [31:0] rwnd_addr_in_dc_data_q_odd;
+wire  [CL_SIZE-1:0] rwnd_data_in_dc_data_q_odd;
+wire  [2:0] rwnd_operation_in_dc_data_q_odd;
+wire  rwnd_is_flush_in_dc_data_q_odd;
+wire  rwnd_valid_in_dc_data_q_odd;
+wire  [1:0] rwnd_src_in_dc_data_q_odd;
+wire  [1:0] rwnd_dest_in_dc_data_q_odd;
+wire [1:0] rwnd_size_in_dc_data_q_odd;
+wire [OOO_TAG_SIZE-1:0] rwnd_ooo_tag_in_dc_data_q_odd;
+wire [OOO_ROB_SIZE-1:0] rwnd_ooo_rob_in_dc_data_q_odd;
+wire rwnd_sext_in_dc_data_q_odd;
+
+wire [31:0] rwnd_addr_in_dc_data_q;
+wire  [CL_SIZE-1:0] rwnd_data_in_dc_data_q;
+wire  [2:0] rwnd_operation_in_dc_data_q;
+wire  rwnd_is_flush_in_dc_data_q;
+wire  rwnd_valid_in_dc_data_q;
+wire  [1:0] rwnd_src_in_dc_data_q;
+wire  [1:0] rwnd_dest_in_dc_data_q;
+wire [1:0] rwnd_size_in_dc_data_q;
+wire [OOO_TAG_SIZE-1:0] rwnd_ooo_tag_in_dc_data_q;
+wire [OOO_ROB_SIZE-1:0] rwnd_ooo_rob_in_dc_data_q;
+wire rwnd_sext_in_dc_data_q;
+/////////////////////////////////////
+//  Begin Even Side
+/////////////////////////////////////
 
 
 data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) dcache_data_q_even(
@@ -228,95 +483,39 @@ instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) dcache_instr_q_even(
     .is_flush_out(dcache_is_flush_in_dc_instr_q_even)
 );
 
-dinpq #(.Q_LENGTH(8), .DATA_SIZE(32), .OOO_TAG_SIZE(OOO_TAG_SIZE), .OOO_ROB_SIZE(OOO_ROB_SIZE), .CL_SIZE(CL_SIZE)) (
 
-clk,
-rst,
-resteer,
 
-//FROM RSV
-alloc, //Data from RAS is valid or not
-
-addr_in,
-data_in,
-size_in, //
-is_st_in, //Say whether input is ST or LD
-ooo_tag_in, //tag from register renaming
-ooo_rob_in,
-sext_in,
-
-dealloc,
-
-valid,
-
-addr_out,
-data_out,
-size_out, //
-operation_out, //Say whether input is ST or LD
-ooo_tag_out, //tag from register renaming
-ooo_rob_out,
-src_out, 
-dest_out,
-sext_out,
-
-full()
-
-);
-
-lsq #(.Q_LENGTH(8), .OOO_TAG_BITS(OOO_TAG_SIZE), .OOO_ROB_BITS(OOO_ROB_SIZE)) (
-    clk,
-    rst,
-
-    //From cache
-    rd,
-    wr,
-    operation_in, 
-    addr_in,
-    data_in,
-    ooo_tag_in,
-    ooo_rob_in,
-    size_in,
-    
-    //From MSHR  x
-    mshr_wr_idx, //next location to be allocated into mshr
-    mshr_fin,
-    mshr_fin_idx ,// location being deallocated from mshr
-
-    //outputs 
-    ooo_tag_out,
-    data_out,
-    addr_out,
-    operation_out,
-    size_out,
-    valid_out,
-    lsq_full
-);
-
-rewind #(.OOO_TAG_SIZE(OOO_TAG_SIZE)) (
+rewind #(.OOO_TAG_SIZE(OOO_TAG_SIZE)) rwnd_even(
     //Global
-    clk, 
-    rst,
+.clk(clk),
+.rst(rst),
+.stall(1'b0),
 
-    //From ROB
-    rob_ret_tag_in,
-    rob_valid,
-    rob_resteer,
 
-    //From Cache
-    addr_in,
-    data_repl,
-    operation,
-    cache_ooo_tag_in,
-    size,
+//From ROB
+.rob_ret_tag_in(rob_ret_tag_in),
+.rob_valid(rob_valid),
+.rob_resteer(rob_resteer),
 
-    //To Cache
-    valid_rewind,
-    addr_out,
-    data_out,
-    operation_out,
-    cache_ooo_tag_out,
-    size_out,
-    rewind_full
+//From Cache
+.addr_in(addr_out_bank_even),
+.data_repl(rwnd_data_even),
+.operation(operation_out_bank_even),
+.cache_ooo_tag_in(ooo_tag_out_bank_even),
+.size(size_out_bank_even),
+.alloc(rwnd_alloc_even),
+
+.dealloc(dealloc_even[2]),
+
+//To Cache
+.valid_rewind(rwnd_valid_even),
+.addr_out(rwnd_addr_in_dc_data_q_even),
+.data_out(rwnd_data_in_dc_data_q_even),
+.operation_out(rwnd_operation_in_dc_data_q_even),
+.cache_ooo_tag_out(rwnd_ooo_tag_in_dc_data_q_even),
+.size_out(rwnd_size_in_dc_data_q_even),
+
+.rewind_full(rwnd_full_even)
 );
 
 wire [31:0] dcache_addr_in_even;
@@ -334,43 +533,62 @@ wire dcache_valid_in_odd;
 wire [1:0]dcache_src_in_odd;
 wire [1:0] dcache_dest_in_odd;
 wire dcache_is_flush_in_odd;
-queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(3)) queue_arb_even(
+queue_arbitrator_sync #(.CL_SIZE(CL_SIZE), .Q_WIDTH(5)) queue_arb_even(
     .addr_in({
         dcache_addr_in_dc_data_q_even,
         dcache_addr_in_dc_instr_q_even,
-        addr_even
+          rwnd_addr_in_dc_data_q_even,
+           lsq_addr_in_dc_data_q_even,
+          pipe_addr_in_dc_data_q_even
+
     }),
     .data_in({
         dcache_data_in_dc_data_q_even,
-        256'd0
+        128'd0,
+          rwnd_data_in_dc_data_q_even,
+           lsq_data_in_dc_data_q_even,
+          pipe_data_in_dc_data_q_even
     }),
     .operation_in({
         dcache_operation_in_dc_data_q_even,
         dcache_operation_in_dc_instr_q_even,
-        3'b001
+          rwnd_operation_in_dc_data_q_even,
+           lsq_operation_in_dc_data_q_even,
+          pipe_operation_in_dc_data_q_even
     }), 
     .valid_in({
         dcache_valid_in_dc_data_q_even,
         dcache_valid_in_dc_instr_q_even,
-        1'b1
+        rwnd_valid_even,
+        lsq_valid_even,
+        pipe_valid_even
     }),
     .src_in({
         dcache_src_in_dc_data_q_even,
         dcache_src_in_dc_instr_q_even,
-        2'b01
+        2'b00,
+        2'b00,
+        2'b00
     }),
     .dest_in({
         dcache_dest_in_dc_data_q_even,
         dcache_dest_in_dc_instr_q_even,
-        2'b01
+        2'b00,
+        2'b00,
+        2'b00
     }),
     .is_flush_in({
         dcache_is_flush_in_dc_data_q_even,
         dcache_is_flush_in_dc_instr_q_even,
+        1'b0,
+        1'b0,
         1'b0
     }),
     
     .stall_in(stall_cache_even),
+
+    .partner_dealloc(dealloc_odd),
+
 
     .addr_out(      dcache_addr_in_even),
     .operation_out( dcache_operation_in_even), 
@@ -382,7 +600,83 @@ queue_arbitrator #(.CL_SIZE(CL_SIZE), .Q_WIDTH(3)) queue_arb_even(
 
     .dealloc(dealloc_even)
 );
+wire [1:0] size_in_even;
+wire[OOO_TAG_SIZE -1 : 0] ooo_tag_in_even;
+wire[OOO_ROB_SIZE-1:0]ooo_rob_in_even;
+assign size_in_even = dealloc_even[2] ? rwnd_size_in_dc_data_q_even : dealloc_even[1] ? lsq_size_in_dc_data_q : pipe_size_in_dc_data_q_even;
+assign ooo_tag_in_even = dealloc_even[2] ? rwnd_ooo_tag_in_dc_data_q_even : dealloc_even[1] ? lsq_ooo_tag_in_dc_data_q : pipe_ooo_tag_in_dc_data_q_even;
+assign ooo_rob_in_even = dealloc_even[2] ? rwnd_ooo_rob_in_dc_data_q_even : dealloc_even[1] ? lsq_ooo_rob_in_dc_data_q : pipe_ooo_rob_in_dc_data_q_even;
 
+//Pipeline Output : 
+wire [31:0] addr_out_bank_even;
+wire [CL_SIZE-1:0] data_out_bank_even;
+wire [1:0] size_out_bank_even;
+wire [2:0] operation_out_bank_even ;
+wire [OOO_TAG_SIZE-1:0] ooo_tag_out_bank_even;
+wire  hit_bank_even;
+
+
+
+wire[2:0] mshr_hit_ptr_even;//Not needed for I$
+wire[2:0] mshr_wr_ptr_even;//Not needed for I$
+wire[2:0] mshr_fin_ptr_even;//Not needed for I$
+
+
+//Cache
+
+wire [31:0] lsq_data_even; //Not needed for I$
+
+wire[31:0] rwnd_data_even;
+
+wire [OOO_TAG_SIZE-1:0] ooo_tag_in_orig;
+wire [OOO_ROB_SIZE-1:0] ooo_rob_in_orig;
+wire [31:0] addr_in_orig;
+wire[31:0] data_in_orig;
+wire [2:0] operation_in_orig;
+wire [1:0] size_in_orig;
+wire sext_in_orig;
+
+wire [OOO_TAG_SIZE-1:0] ooo_tag_out_orig;
+wire [OOO_ROB_SIZE-1:0] ooo_rob_out_orig;
+wire [31:0] addr_out_orig;
+wire[31:0] data_out_orig;
+wire [2:0] operation_out_orig;
+wire [1:0] size_out_orig;
+wire sext_out_orig;
+
+assign ooo_tag_in_orig = ooo_tag_in_even;
+assign ooo_rob_in_orig = ooo_rob_in_even;
+assign addr_in_orig = 
+    dealloc_even[4] ? dcache_addr_in_dc_data_q_even :
+    dealloc_even[3] ? dcache_addr_in_dc_instr_q_even :
+    dealloc_even[2] ? rwnd_addr_in_dc_data_q_even :
+    dealloc_even[1] ? lsq_addr_in_dc_data_q :
+    dealloc_even[0] ? pipe_addr_in_dc_data_q :
+    0;
+assign data_in_orig = 
+    dealloc_even[4] ? dcache_data_in_dc_data_q_even :
+    dealloc_even[3] ? dcache_data_in_dc_instr_q_even :
+    dealloc_even[2] ? rwnd_data_in_dc_data_q_even :
+    dealloc_even[1] ? lsq_data_in_dc_data_q :
+    dealloc_even[0] ? pipe_data_in_dc_data_q :
+    0;
+assign operation_in_orig = 
+    dealloc_even[4] ? dcache_operation_in_dc_data_q_even :
+    dealloc_even[3] ? dcache_operation_in_dc_instr_q_even :
+    dealloc_even[2] ? rwnd_operation_in_dc_data_q_even :
+    dealloc_even[1] ? lsq_operation_in_dc_data_q :
+    dealloc_even[0] ? pipe_operation_in_dc_data_q :
+    0;
+assign size_in_orig = 
+    dealloc_even[4] ? 0 :  
+    dealloc_even[3] ? 0 :
+    dealloc_even[2] ? rwnd_size_in_dc_data_q_even :
+    dealloc_even[1] ? lsq_size_in_dc_data_q :
+    dealloc_even[0] ? pipe_size_in_dc_data_q :
+    0;
+assign sext_in_orig =   dealloc_even[1] ? lsq_sext_in_dc_data_q : pipe_sext_in_dc_data_q;
+    
+   
 cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE), .BANK_NAME(1)) cache_bank_even (
     //Systen Input
     .clk(clk),
@@ -391,39 +685,39 @@ cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG
     //Pipeline Input - done
     .addr_in(dcache_addr_in_even),
     .data_in(dcache_data_in_even),
-    .size_in(2'b0),
+    .size_in(size_in_even),
     .operation_in(dcache_operation_in_even),
-    .ooo_tag_in({OOO_TAG_SIZE{1'b0}}),
+    .ooo_tag_in(ooo_tag_in_even),
 
     //Cache Inputs
-    .rwnd_full(1'b0),
-    .lsq_full(1'b0),
+    .rwnd_full(rwnd_full_even),
+    .lsq_full(lsq_full),
 
 
     //Pipeline Output : 
-    .addr_out(addr_out_even),
-    .data_out(cl_even),
-    .size_out(), //Not needed for I$
-    .operation_out(operation_out_even), 
-    .ooo_tag_out(), //Not needed for I$
-    .hit(hit_even),
+    .addr_out(addr_out_bank_even),
+    .data_out(data_out_bank_even),
+    .size_out(size_out_bank_even), //Not needed for I$
+    .operation_out(operation_out_bank_even), 
+    .ooo_tag_out(ooo_tag_out_bank_even), //Not needed for I$
+    .hit(hit_bank_even),
 
     //Outputs to LSQ
     //MSHR
-    .mshr_hit(), //Not needed for I$
-    .mshr_hit_ptr(),//Not needed for I$
-    .mshr_wr_ptr(),//Not needed for I$
-    .mshr_fin_ptr(),//Not needed for I$
-    .mshr_fin(),//Not needed for I$
-    .mshr_full(), //Not needed for I$
+    .mshr_hit(mshr_hit_bank_even), 
+    .mshr_hit_ptr(mshr_hit_ptr_even),
+    .mshr_wr_ptr(mshr_wr_ptr_even),
+    .mshr_fin_ptr(mshr_fin_ptr_even),
+    .mshr_fin(mshr_fin_bank_even),
+    .mshr_full(mshr_full_bank_even), 
 
     //Cache
-    .lsq_alloc(), //Not needed for I$
-    .lsq_data(), //Not needed for I$
+    .lsq_alloc(lsq_alloc_even), //Not needed for I$
+    .lsq_data(lsq_data_even), //Not needed for I$
 
     //Outputs to RWND Q
-    .rwnd_alloc(),  //Not needed for I$
-    .rwnd_data(),//Not needed for I$
+    .rwnd_alloc(rwnd_alloc_even),  //Not needed for I$
+    .rwnd_data(rwnd_data_even),//Not needed for I$
 
 
     //Requests to DRAM/Directory
@@ -437,35 +731,311 @@ cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG
     .addr_miss(addr_out_dc_instr_q_even),
     .alloc_miss(alloc_out_dc_instr_q_even),
 
-    .stall_cache(stall_cache_even)
+    .stall_cache(stall_cache_even), 
+
+    .operation_in_orig(operation_in_orig),
+    .addr_in_orig(addr_in_orig),
+    .data_in_orig(data_in_orig),
+    .ooo_tag_in_orig(ooo_tag_in_orig),
+    .ooo_rob_in_orig(ooo_rob_in_orig),
+    .size_in_orig(size_in_orig),
+    .sext_in_orig(sext_in_orig),
+
+    .operation_out_orig(operation_out_orig),
+    .addr_out_orig(addr_out_orig),
+    .data_out_orig(data_out_orig),
+    .ooo_tag_out_orig(ooo_tag_out_orig),
+    .ooo_rob_out_orig(ooo_rob_out_orig),
+    .size_out_orig(size_out_orig),
+    .sext_out_orig(sext_out_orig)
+);
+
+assign is_flush_out_dc_data_q_even = 0;
+assign  src_out_dc_data_q_even = 1;
+assign dest_out_dc_data_q_evend = operation_out_dc_data_q_even == WR ? 3 : 2;
+
+assign is_flush_out_dc_instr_q_even = 0;
+assign src_out_dc_instr_q_even = 1;
+assign dest_out_dc_instr_q_even = operation_out_dc_instr_q_even == WR || operation_out_dc_instr_q_even == RD ? 3 : 2;
+
+/////////////////////////////////////
+//  Begin Even Side
+/////////////////////////////////////
+
+
+data_q #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) dcache_data_q_odd(
+    //System     
+    .clk(clk),
+    .rst(rst),
+
+    //From Sender
+    .addr_in(addr_in_dc_data_q_odd),
+    .data_in(data_in_dc_data_q_odd),
+    .operation_in(operation_in_dc_data_q_odd),
+    .is_flush(is_flush_in_dc_data_q_odd),
+    .alloc(alloc_in_dc_data_q_odd),
+    .src(src_in_dc_data_q_odd),
+    .dest(dest_in_dc_data_q_odd),
+    //From reciever
+    .dealloc(dealloc_odd[4]),
+
+    //output sender
+    .full(full_out_dc_data_q_odd),
+
+    //output reciever
+    .addr_out(dcache_addr_in_dc_data_q_odd),
+    .data_out(dcache_data_in_dc_data_q_odd),
+    .operation_out(dcache_operation_in_dc_data_q_odd),
+    .valid(dcache_valid_in_dc_data_q_odd),
+    .src_out(dcache_src_in_dc_data_q_odd),
+    .dest_out(dcache_dest_in_dc_data_q_odd),
+    .is_flush_out(dcache_is_flush_in_dc_data_q_odd)
+);
+
+instr_q  #(.Q_LENGTH(8), .CL_SIZE(CL_SIZE)) dcache_instr_q_odd(
+    //System     
+    .clk(clk),
+    .rst(rst),
+
+    //From Sender
+    .addr_in(addr_in_dc_instr_q_odd),
+    .operation_in(operation_in_dc_instr_q_odd),
+    .is_flush(is_flush_in_dc_instr_q_odd),
+    .alloc(alloc_in_dc_instr_q_odd),
+    .src(src_in_dc_instr_q_odd),
+    .dest(dest_in_dc_instr_q_odd),
+
+    //From reciever
+    .dealloc(dealloc_odd[3]),
+
+    //output sender
+    .full(full_out_dc_instr_q_odd),
+
+    //output reciever
+    .addr_out(dcache_addr_in_dc_instr_q_odd),
+    .operation_out(dcache_operation_in_dc_instr_q_odd),
+    .valid(dcache_valid_in_dc_instr_q_odd),
+    .src_out(dcache_src_in_dc_instr_q_odd),
+    .dest_out(dcache_dest_in_dc_instr_q_odd),
+    .is_flush_out(dcache_is_flush_in_dc_instr_q_odd)
 );
 
 
-doutq #(parameter Q_LENGTH = 8, DATA_SIZE = 32, OOO_TAG_SIZE = 10, OOO_ROB_SIZE = 10) (
-    input clk, rst,
 
-    input[31:0] addr_in,
-    input [DATA_SIZE-1:0] data_in,
-    input [2:0] operation_in,
-    input is_flush_in,
-    input [OOO_TAG_SIZE-1:0] tag_in,
-    input [OOO_ROB_SIZE-1:0] rob_line_in,
-    input alloc,
+rewind #(.OOO_TAG_SIZE(OOO_TAG_SIZE)) rwnd_odd(
+    //Global
+.clk(clk),
+.rst(rst),
+.stall(1'b0),
 
-    //From ROB
-    input dealloc,
-    input resteer,
 
-    //TO CACHE
-    output full,
+//From ROB
+.rob_ret_tag_in(rob_ret_tag_in),
+.rob_valid(rob_valid),
+.rob_resteer(rob_resteer),
 
-    //TO ROB
-    output[31:0] addr_out,
-    output [DATA_SIZE-1:0] data_out,
-    output is_st_out,
-    output is_flush_out,
-    output [OOO_TAG_SIZE-1:0] tag_out,
-    output [OOO_ROB_SIZE-1:0] rob_line_out,
-    output valid_out
+//From Cache
+.addr_in(addr_out_bank_odd),
+.data_repl(rwnd_data_odd),
+.operation(operation_out_bank_odd),
+.cache_ooo_tag_in(ooo_tag_out_bank_odd),
+.size(size_out_bank_odd),
+.alloc(rwnd_alloc_odd),
+
+.dealloc(dealloc_odd[2]),
+
+//To Cache
+.valid_rewind(rwnd_valid_odd),
+.addr_out(rwnd_addr_in_dc_data_q_odd),
+.data_out(rwnd_data_in_dc_data_q_odd),
+.operation_out(rwnd_operation_in_dc_data_q_odd),
+.cache_ooo_tag_out(rwnd_ooo_tag_in_dc_data_q_odd),
+.size_out(rwnd_size_in_dc_data_q_odd),
+
+.rewind_full(rwnd_full_odd)
 );
+
+
+
+
+queue_arbitrator_sync #(.CL_SIZE(CL_SIZE), .Q_WIDTH(5)) queue_arb_odd(
+    .addr_in({
+        dcache_addr_in_dc_data_q_odd,
+        dcache_addr_in_dc_instr_q_odd,
+          rwnd_addr_in_dc_data_q_odd,
+           lsq_addr_in_dc_data_q_odd,
+          pipe_addr_in_dc_data_q_odd
+
+    }),
+    .data_in({
+        dcache_data_in_dc_data_q_odd,
+        128'd0,
+          rwnd_data_in_dc_data_q_odd,
+           lsq_data_in_dc_data_q_odd,
+          pipe_data_in_dc_data_q_odd
+    }),
+    .operation_in({
+        dcache_operation_in_dc_data_q_odd,
+        dcache_operation_in_dc_instr_q_odd,
+          rwnd_operation_in_dc_data_q_odd,
+           lsq_operation_in_dc_data_q_odd,
+          pipe_operation_in_dc_data_q_odd
+    }), 
+    .valid_in({
+        dcache_valid_in_dc_data_q_odd,
+        dcache_valid_in_dc_instr_q_odd,
+        rwnd_valid_odd,
+        lsq_valid_odd,
+        pipe_valid_odd
+    }),
+    .src_in({
+        dcache_src_in_dc_data_q_odd,
+        dcache_src_in_dc_instr_q_odd,
+        2'b00,
+        2'b00,
+        2'b00
+    }),
+    .dest_in({
+        dcache_dest_in_dc_data_q_odd,
+        dcache_dest_in_dc_instr_q_odd,
+        2'b00,
+        2'b00,
+        2'b00
+    }),
+    .is_flush_in({
+        dcache_is_flush_in_dc_data_q_odd,
+        dcache_is_flush_in_dc_instr_q_odd,
+        1'b0,
+        1'b0,
+        1'b0
+    }),
+    
+    .stall_in(stall_cache_odd),
+
+    .partner_dealloc(dealloc_odd),
+
+
+    .addr_out(      dcache_addr_in_odd),
+    .operation_out( dcache_operation_in_odd), 
+    .data_out(      dcache_data_in_odd),
+    .valid_out(     dcache_valid_in_odd),
+    .src_out(       dcache_src_in_odd),
+    .dest_out(      dcache_dest_in_odd),
+    .is_flush_out(  dcache_is_flush_in_odd),
+
+    .dealloc(dealloc_odd)
+);
+wire [1:0] size_in_odd;
+wire[OOO_TAG_SIZE -1 : 0] ooo_tag_in_odd;
+wire[OOO_ROB_SIZE-1:0]ooo_rob_in_odd;
+assign size_in_odd = dealloc_odd[2] ? rwnd_size_in_dc_data_q_odd : dealloc_odd[1] ? lsq_size_in_dc_data_q : pipe_size_in_dc_data_q_odd;
+assign ooo_tag_in_odd = dealloc_odd[2] ? rwnd_ooo_tag_in_dc_data_q_odd : dealloc_odd[1] ? lsq_ooo_tag_in_dc_data_q : pipe_ooo_tag_in_dc_data_q_odd;
+assign ooo_rob_in_odd = dealloc_odd[2] ? rwnd_ooo_rob_in_dc_data_q_odd : dealloc_odd[1] ? lsq_ooo_rob_in_dc_data_q : pipe_ooo_rob_in_dc_data_q_odd;
+
+//Pipeline Output : 
+wire [31:0] addr_out_bank_odd;
+wire [CL_SIZE-1:0] data_out_bank_odd;
+wire [1:0] size_out_bank_odd;
+wire [2:0] operation_out_bank_odd ;
+wire [OOO_TAG_SIZE-1:0] ooo_tag_out_bank_odd;
+wire  hit_bank_odd;
+
+
+
+wire[2:0] mshr_hit_ptr_odd;//Not needed for I$
+wire[2:0] mshr_wr_ptr_odd;//Not needed for I$
+wire[2:0] mshr_fin_ptr_odd;//Not needed for I$
+
+
+//Cache
+
+wire [31:0] lsq_data_odd; //Not needed for I$
+
+wire[31:0] rwnd_data_odd;
+
+
+
+   
+cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG_SIZE(OOO_TAG_SIZE), .BANK_NAME(1)) cache_bank_odd (
+    //Systen Input
+    .clk(clk),
+    .rst(rst),
+
+    //Pipeline Input - done
+    .addr_in(dcache_addr_in_odd),
+    .data_in(dcache_data_in_odd),
+    .size_in(size_in_odd),
+    .operation_in(dcache_operation_in_odd),
+    .ooo_tag_in(ooo_tag_in_odd),
+
+    //Cache Inputs
+    .rwnd_full(rwnd_full_odd),
+    .lsq_full(lsq_full),
+
+
+    //Pipeline Output : 
+    .addr_out(addr_out_bank_odd),
+    .data_out(data_out_bank_odd),
+    .size_out(size_out_bank_odd), //Not needed for I$
+    .operation_out(operation_out_bank_odd), 
+    .ooo_tag_out(ooo_tag_out_bank_odd), //Not needed for I$
+    .hit(hit_bank_odd),
+
+    //Outputs to LSQ
+    //MSHR
+    .mshr_hit(mshr_hit_bank_odd), 
+    .mshr_hit_ptr(mshr_hit_ptr_odd),
+    .mshr_wr_ptr(mshr_wr_ptr_odd),
+    .mshr_fin_ptr(mshr_fin_ptr_odd),
+    .mshr_fin(mshr_fin_bank_odd),
+    .mshr_full(mshr_full_bank_odd), 
+
+    //Cache
+    .lsq_alloc(lsq_alloc_odd), //Not needed for I$
+    .lsq_data(lsq_data_odd), //Not needed for I$
+
+    //Outputs to RWND Q
+    .rwnd_alloc(rwnd_alloc_odd),  //Not needed for I$
+    .rwnd_data(rwnd_data_odd),//Not needed for I$
+
+
+    //Requests to DRAM/Directory
+    //Evdction Q
+    .operation_evdc(operation_out_dc_data_q_odd),
+    .addr_evdc(addr_out_dc_data_q_odd), 
+    .alloc_evdc(alloc_out_dc_data_q_odd),
+    .data_evdc(data_out_dc_data_q_odd),
+    //Miss Q
+    .operation_miss(operation_out_dc_instr_q_odd),
+    .addr_miss(addr_out_dc_instr_q_odd),
+    .alloc_miss(alloc_out_dc_instr_q_odd),
+
+    .stall_cache(stall_cache_odd), 
+
+    .operation_in_orig(operation_in_orig),
+    .addr_in_orig(addr_in_orig),
+    .data_in_orig(data_in_orig),
+    .ooo_tag_in_orig(ooo_tag_in_orig),
+    .ooo_rob_in_orig(ooo_rob_in_orig),
+    .size_in_orig(size_in_orig),
+    .sext_in_orig(sext_in_orig),
+
+    .operation_out_orig(),
+    .addr_out_orig(),
+    .data_out_orig(),
+    .ooo_tag_out_orig(),
+    .ooo_rob_out_orig(),
+    .size_out_orig(),
+    .sext_out_orig()
+);
+
+assign is_flush_out_dc_data_q_odd = 0;
+assign  src_out_dc_data_q_odd = 1;
+assign dest_out_dc_data_q_oddd = operation_out_dc_data_q_odd == WR ? 3 : 2;
+
+assign is_flush_out_dc_instr_q_odd = 0;
+assign src_out_dc_instr_q_odd = 1;
+assign dest_out_dc_instr_q_odd = operation_out_dc_instr_q_odd == WR || operation_out_dc_instr_q_odd == RD ? 3 : 2;
+
+
 endmodule

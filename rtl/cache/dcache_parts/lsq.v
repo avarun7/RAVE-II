@@ -5,12 +5,14 @@ module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6, OOO_ROB_BITS = 6) (
     //From cache
     input dealloc,
     input alloc,
+    
     input [2:0] operation_in, 
     input [31:0] addr_in,
     input [31:0] data_in,
     input [OOO_TAG_BITS-1:0] ooo_tag_in,
     input [OOO_ROB_BITS-1:0] ooo_rob_in,
     input [1:0] size_in,
+    input sext_in,
     
     input hit_even,
     input hit_odd,
@@ -26,6 +28,7 @@ module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6, OOO_ROB_BITS = 6) (
 
     //outputs 
     output [OOO_TAG_BITS-1:0] ooo_tag_out,
+    output [OOO_ROB_BITS-1:0] ooo_rob_out,
     output [31:0] data_out,
     output [31:0] addr_out,
     output [2:0] operation_out,
@@ -44,9 +47,9 @@ assign valid_out = ~valid_n && valid_even && valid_odd;
 
 
 
-qnm #(.N_WIDTH(32+32+3+2+OOO_ROB_BITS+OOO_TAG_BITS), .M_WIDTH(1+3+ 1 +3), .Q_LENGTH(8)) q1(
+qnm #(.N_WIDTH(32+32+3+2+OOO_ROB_BITS+OOO_TAG_BITS+1), .M_WIDTH(1+3+ 1 +3), .Q_LENGTH(8)) q1(
     .m_din({mshr_wr_idx_odd, (mshr_fin_odd && (mshr_fin_idx_odd == mshr_wr_idx_odd)) || hit_odd ,mshr_wr_idx_even, (mshr_fin_even && (mshr_fin_idx_even == mshr_wr_idx_even)) || hit_even}),
-    .n_din({ooo_rob_in, size_in,operation, addr_in, data_in, ooo_tag_in}),
+    .n_din({sext_in, ooo_rob_in, size_in,operation, addr_in, data_in, ooo_tag_in}),
     .new_m_vector(new_m_vector),
     .wr(alloc), 
     .rd(dealloc),
@@ -56,7 +59,7 @@ qnm #(.N_WIDTH(32+32+3+2+OOO_ROB_BITS+OOO_TAG_BITS), .M_WIDTH(1+3+ 1 +3), .Q_LEN
     .full(lsq_full), 
     .empty(valid_n),
     .old_m_vector(old_m_vector),
-    .dout({ooo_rob_out, size_out, opeartion, addr_out, data_out, ooo_tag_out,mshr_wr_idx_out_odd, valid_odd,mshr_wr_idx_out_even, valid_even})
+    .dout({sext_out, ooo_rob_out, size_out, opeartion, addr_out, data_out, ooo_tag_out,mshr_wr_idx_out_odd, valid_odd,mshr_wr_idx_out_even, valid_even})
 );
 wire [Q_LENGTH-1:0] even_vector, odd_vector;
 assign modify_vector = odd_vector | even_vector;
