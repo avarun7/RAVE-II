@@ -1,4 +1,6 @@
 module queue_arbitrator_sync #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
+    input rst,    
+
     input[32*Q_WIDTH-1:0]   addr_in,
     input[Q_WIDTH * CL_SIZE-1:0] data_in,
     input[3*Q_WIDTH-1:0]    operation_in, 
@@ -19,14 +21,16 @@ module queue_arbitrator_sync #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
     output reg              is_flush_out,
     output reg[CL_SIZE-1:0] data_out,
 
-    output wire[Q_WIDTH-1:0] dealloc
+    output wire[Q_WIDTH-1:0] dealloc,
+    output wire[Q_WIDTH-1:0] dealloc_desired
 );
 reg[3-1:0]       operation_out_temp;
 wire[Q_WIDTH-1:0] op_choice;
-assign sync_stall = partner_dealloc > dealloc;
+assign sync_stall = partner_dealloc > dealloc_desired;
 pencoder_copy #(.WIDTH(Q_WIDTH)) pec1(.a(valid_in), .o(op_choice));
-assign dealloc = sync_stall? 0 : op_choice & {8{~stall_in}};
-assign valid_out = sync_stall ? 0 : |op_choice;
+assign dealloc_desired =  op_choice & {8{~stall_in}};
+assign dealloc = rst ? 0 : sync_stall ? 0 : op_choice & {8{~stall_in}};
+assign valid_out = rst ? 0 :sync_stall ? 0 : |op_choice;
 assign operation_out = sync_stall ? 0 :valid_out ? operation_out_temp : 0;
 
 genvar i;
