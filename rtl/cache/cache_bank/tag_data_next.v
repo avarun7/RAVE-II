@@ -50,10 +50,12 @@ localparam  PM= 10; //Pending Modified
 localparam  M= 4; //Modified
 localparam  S= 2; //Shared
 localparam PLS = 15; //Pending Load Store (edge case where store comes after load but before write)
-
-    assign data_evic = data_to_mod;
+    
     reg [CL_SIZE-1:0] data_to_mod, mod_data;
     wire [CL_SIZE-1:0] data_st;
+    
+    assign data_evic = data_to_mod;
+    
     always @(*) begin 
         case(selected_way)
             1: data_to_mod <= data_cur_state[CL_SIZE-1:0];

@@ -22,12 +22,14 @@ module mshr #(parameter Q_LEGNTH = 8) (
 
     output mshr_full //done
 );
-assign mshr_hit = |hit_vector;
-assign mshr_fin = |modify_vector && l22q_valid;
 wire[7:0] modify_vector, hit_vector;
 wire [30*8-1:0] new_m_vector;
 wire [29:0] hit_first; 
 wire [29:0] hit_second[0:7];
+
+assign mshr_hit = |hit_vector;
+assign mshr_fin = |modify_vector && l22q_valid;
+
 assign hit_first = {addr_cache[31:4], operation_cache == 3};
 
 genvar i;

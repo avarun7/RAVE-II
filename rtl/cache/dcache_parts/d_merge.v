@@ -35,6 +35,23 @@ output valid_out, //done
 
 output [31:0] rwnd_data
 );
+
+//Handle just one cache line
+wire [31:0] addr_0; //done
+wire [CL_SIZE-1:0] data_0; //done
+wire [1:0] size_0; //done
+wire  [2:0] operation_0; //done
+wire [OOO_TAG_SIZE-1:0] ooo_tag_0; //done
+wire wake_0;
+
+wire [31:0] addr_1; //done
+wire [CL_SIZE-1:0] data_1; //done 
+wire [1:0] size_1; //done
+wire  [2:0] operation_1; //done
+wire [OOO_TAG_SIZE-1:0] ooo_tag_1; //done
+wire wake_1;
+wire [31:0]rwnd_data_0, rwnd_data_1;
+
 assign use_e_as_0 = addr_in_e < addr_in_o;
 wire [31:0] temp_addr;
 assign temp_addr = addr_0 + (size_in << 3);
@@ -53,21 +70,6 @@ localparam RWITM = 7;
 localparam RINV = 7;
 
 
-//Handle just one cache line
-wire [31:0] addr_0; //done
-wire [CL_SIZE-1:0] data_0; //done
-wire [1:0] size_0; //done
-wire  [2:0] operation_0; //done
-wire [OOO_TAG_SIZE-1:0] ooo_tag_0; //done
-wire wake_0;
-
-wire [31:0] addr_1; //done
-wire [CL_SIZE-1:0] data_1; //done 
-wire [1:0] size_1; //done
-wire  [2:0] operation_1; //done
-wire [OOO_TAG_SIZE-1:0] ooo_tag_1; //done
-wire wake_1;
-wire [31:0]rwnd_data_0, rwnd_data_1;
 assign rwnd_data_0 = use_e_as_0 ? even_rwnd_data : odd_rwnd_data;
 assign hit_0 = use_e_as_0 ? hit_e : hit_o;
 assign addr_0 = use_e_as_0 ? addr_in_e : addr_in_o;
