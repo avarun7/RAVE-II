@@ -9,3 +9,10 @@ sim
 
 todo_Felipe.txt
 
+# Ignore generated verif files
+__pycache__/
+sim_build/
+simv
+compiled_file.vvp
+results.xml
+

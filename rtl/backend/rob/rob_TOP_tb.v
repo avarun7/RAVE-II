@@ -86,7 +86,7 @@ module TOP;
     end
 
     initial begin
-        $dumpfile("test.fst");
+        $dumpfile("test.vcd");
         $dumpvars(0, TOP);
     end
 

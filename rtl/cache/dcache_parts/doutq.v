@@ -25,7 +25,7 @@ module doutq #(parameter Q_LENGTH = 8, DATA_SIZE = 32, OOO_TAG_SIZE = 10, OOO_RO
     output [OOO_ROB_SIZE-1:0] rob_line_out,
     output valid_out
 );
-
+wire [2:0] operation_out;
 localparam  NO_OP= 0;
 localparam LD = 1;
 localparam ST = 2;
@@ -37,7 +37,7 @@ localparam RWITM = 7;
 localparam RINV = 7;
 localparam REPLY = 2;
 assign is_st_out = operation_out == ST;
-wire [2:0] operation_out;
+
 assign valid_out = !valid_n & ~resteer;
 qn #(.N_WIDTH(32 + DATA_SIZE + 3 + 1 + OOO_TAG_SIZE + OOO_ROB_SIZE), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
     .m_din(),

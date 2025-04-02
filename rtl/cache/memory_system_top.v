@@ -1,4 +1,4 @@
-module memory_system_top #(parameter CL_SIZE = 128, OOO_TAG_SIZE = 10, TAG_SIZE = 18, IDX_CNT = 512) (
+module memory_system_top #(parameter CL_SIZE = 128, OOO_TAG_SIZE = 10, OOO_ROB_SIZE = 10, TAG_SIZE = 18, IDX_CNT = 512) (
     input clk,
     input rst,
 
@@ -19,11 +19,38 @@ module memory_system_top #(parameter CL_SIZE = 128, OOO_TAG_SIZE = 10, TAG_SIZE 
     output is_write_even, //Tells whether the data being processed is a write (probably want to ignore results if it is)
     output is_write_odd,
 
-    output stall, //Signal to say stop feeding data to cache. I don't think its needed since this is blocking
+    output ic_stall, //Signal to say stop feeding data to cache. I don't think its needed since this is blocking
     
     //TLB
-    output exception
+    output exception,
     
+    //D$
+    //FROM RSV
+    input ls_unit_alloc, //Data from RAS is valid or not
+    input [31:0] addr_in,
+    input [31:0] data_in,
+    input [1:0] size_in, //
+    input is_st_in, //Say whether input is ST or LD
+    input [OOO_TAG_SIZE-1:0] ooo_tag_in, //tag from register renaming
+    input [OOO_ROB_SIZE-1:0] ooo_rob_in,
+    input sext,
+
+    //FROM ROB
+    input [OOO_TAG_SIZE-1:0] rob_ret_tag_in, //Show top of ROB tag
+    input rob_valid, //bit to say whether or not the top of the rag is valid or not
+    input rob_resteer, //Signal if there is a flush from ROB
+    
+    //TO ROB
+    output addr_out,
+    output [31:0] data_out,
+    output is_st_out,
+    output valid_out, //1 bit signal to tell whether or not there are cache results
+    output [OOO_TAG_SIZE-1:0] tag_out,
+    output [OOO_ROB_SIZE-1:0] rob_line_out,
+    output is_flush_out,
+
+    //TO RSV
+    output dc_stall
 );
 
            //ic_2_dir_data
@@ -291,9 +318,9 @@ directory_top #(
     //TODO: UNZERO OUT
     .addr_in_dc_data_q_even(dc_2_dir_addr_data_q_even),
     .data_in_dc_data_q_even(dc_2_dir_data_data_q_even),
-    .operation_in_dc_data_q_even(dc_2_dir_operation_data_q_even & 3'd0),
+    .operation_in_dc_data_q_even(dc_2_dir_operation_data_q_even),
     .is_flush_in_dc_data_q_even(dc_2_dir_is_flush_data_q_even),
-    .alloc_in_dc_data_q_even(dc_2_dir_valid_data_q_even & 1'd0),
+    .alloc_in_dc_data_q_even(dc_2_dir_valid_data_q_even ),
     .src_in_dc_data_q_even(dc_2_dir_src_data_q_even),
     .dest_in_dc_data_q_even(dc_2_dir_dest_data_q_even),
     
@@ -301,9 +328,9 @@ directory_top #(
 
     //TODO: UNZERO OUT
     .addr_in_dc_instr_q_even(dc_2_dir_addr_instr_q_even),
-    .operation_in_dc_instr_q_even(dc_2_dir_operation_instr_q_even &  & 3'd0),
+    .operation_in_dc_instr_q_even(dc_2_dir_operation_instr_q_even ),
     .is_flush_in_dc_instr_q_even(dc_2_dir_is_flush_instr_q_even),
-    .alloc_in_dc_instr_q_even(dc_2_dir_valid_instr_q_even &  & 1'd0),
+    .alloc_in_dc_instr_q_even(dc_2_dir_valid_instr_q_even ),
     .src_in_dc_instr_q_even(dc_2_dir_src_instr_q_even),
     .dest_in_dc_instr_q_even(dc_2_dir_dest_instr_q_even),
     
@@ -369,9 +396,9 @@ directory_top #(
     //TODO: UNZERO OUT
     .addr_in_dc_data_q_odd(dc_2_dir_addr_data_q_odd),
     .data_in_dc_data_q_odd(dc_2_dir_data_data_q_odd),
-    .operation_in_dc_data_q_odd(dc_2_dir_operation_data_q_odd &  & 3'd0),
+    .operation_in_dc_data_q_odd(dc_2_dir_operation_data_q_odd  ),
     .is_flush_in_dc_data_q_odd(dc_2_dir_is_flush_data_q_odd),
-    .alloc_in_dc_data_q_odd(dc_2_dir_valid_data_q_odd & 1'd0),
+    .alloc_in_dc_data_q_odd(dc_2_dir_valid_data_q_odd ),
     .src_in_dc_data_q_odd(dc_2_dir_src_data_q_odd),
     .dest_in_dc_data_q_odd(dc_2_dir_dest_data_q_odd),
     
@@ -379,9 +406,9 @@ directory_top #(
 
     //TODO: UNZERO OUT
     .addr_in_dc_instr_q_odd(dc_2_dir_addr_instr_q_odd),
-    .operation_in_dc_instr_q_odd(dc_2_dir_operation_instr_q_odd &  & 3'd0),
+    .operation_in_dc_instr_q_odd(dc_2_dir_operation_instr_q_odd  ),
     .is_flush_in_dc_instr_q_odd(dc_2_dir_is_flush_instr_q_odd),
-    .alloc_in_dc_instr_q_odd(dc_2_dir_valid_instr_q_odd &  & 1'd0),
+    .alloc_in_dc_instr_q_odd(dc_2_dir_valid_instr_q_odd   ),
     .src_in_dc_instr_q_odd(dc_2_dir_src_instr_q_odd),
     .dest_in_dc_instr_q_odd(dc_2_dir_dest_instr_q_odd),
     
@@ -598,5 +625,125 @@ icache_TOP #(
     .full_in_ic_instr_q_odd(1'b0)
 );
 
+dcache_TOP #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .OOO_TAG_SIZE(OOO_TAG_SIZE), .TAG_SIZE(TAG_SIZE), .OOO_ROB_SIZE(OOO_ROB_SIZE)) dcache(
+    //FROM SYSTEM
+    .clk(clk),
+    .rst(rst),
+
+    //FROM RSV
+    .ls_unit_alloc(ls_unit_alloc), //Data from RAS is valid or not
+    .addr_in(addr_in),
+    .data_in(data_in),
+    .size_in(size_in), //
+    .is_st_in(is_st_in), //Say whether input is ST or LD
+    .ooo_tag_in(ooo_tag_in), //tag from register renaming
+    .ooo_rob_in(ooo_rob_in),
+    .sext(sext),
+
+    //FROM ROB
+    .rob_ret_tag_in(rob_ret_tag_in), //Show top of ROB tag
+    .rob_valid(rob_valid), //bit to say whether or not the top of the rag is valid or not
+    .rob_resteer(rob_resteer), //Signal if there is a flush from ROB
+    
+    //TO ROB
+    .addr_out(addr_out),
+    .data_out(data_out),
+    .is_st_out(is_st_out),
+    .valid_out(valid_out), //1 bit signal to tell whether or not there are cache results
+    .tag_out(tag_out),
+    .rob_line_out(rob_line_out),
+    .is_flush_out(is_flush_out),
+
+    //TO RSV
+    .stall(dc_stall),
+
+    //TODO: All other I/O memory facing and I will handle
+    //Shouldn't affect people working on integrating the pipeline
+
+    .addr_in_dc_data_q_even(dir_2_dc_addr_data_q_even),
+    .data_in_dc_data_q_even(dir_2_dc_data_data_q_even),
+    .operation_in_dc_data_q_even(dir_2_dc_operation_data_q_even),
+    .is_flush_in_dc_data_q_even(dir_2_dc_is_flush_data_q_even),
+    .alloc_in_dc_data_q_even(dir_2_dc_valid_data_q_even),
+    .src_in_dc_data_q_even(dir_2_dc_src_data_q_even),
+    .dest_in_dc_data_q_even(dir_2_dc_dest_data_q_even),
+
+    .full_out_dc_data_q_even(),
+    
+    //I$_INSTR_Q_in
+    .addr_in_dc_instr_q_even(dir_2_dc_addr_instr_q_even),
+    .operation_in_dc_instr_q_even(dir_2_dc_operation_instr_q_even),
+    .is_flush_in_dc_instr_q_even(dir_2_dc_is_flush_instr_q_even),
+    .alloc_in_dc_instr_q_even(dir_2_dc_valid_instr_q_even),
+    .src_in_dc_instr_q_even(dir_2_dc_src_instr_q_even),
+    .dest_in_dc_instr_q_even(dir_2_dc_dest_instr_q_even),
+
+    .full_out_dc_instr_q_even(),
+
+        //I$_DATA_Q_in
+    .addr_in_dc_data_q_odd(dir_2_dc_addr_data_q_odd),
+    .data_in_dc_data_q_odd(dir_2_dc_data_data_q_odd),
+    .operation_in_dc_data_q_odd(dir_2_dc_operation_data_q_odd),
+    .is_flush_in_dc_data_q_odd(dir_2_dc_is_flush_data_q_odd),
+    .alloc_in_dc_data_q_odd(dir_2_dc_valid_data_q_odd),
+    .src_in_dc_data_q_odd(dir_2_dc_src_data_q_odd),
+    .dest_in_dc_data_q_odd(dir_2_dc_dest_data_q_odd),
+
+    .full_out_dc_data_q_odd(),
+    
+    //I$_INSTR_Q_in
+    .addr_in_dc_instr_q_odd(dir_2_dc_addr_instr_q_odd),
+    .operation_in_dc_instr_q_odd(dir_2_dc_operation_instr_q_odd),
+    .is_flush_in_dc_instr_q_odd(dir_2_dc_is_flush_instr_q_odd),
+    .alloc_in_dc_instr_q_odd(dir_2_dc_valid_instr_q_odd),
+    .src_in_dc_instr_q_odd(dir_2_dc_src_instr_q_odd),
+    .dest_in_dc_instr_q_odd(dir_2_dc_dest_instr_q_odd),
+
+    .full_out_dc_instr_q_odd(),
+
+    //OUTPUTS TO MEM
+
+    //I$_DATA_Q_in
+    .addr_out_dc_data_q_even(dc_2_dir_addr_data_q_even),
+    .data_out_dc_data_q_even(dc_2_dir_data_data_q_even),
+    .operation_out_dc_data_q_even(dc_2_dir_operation_data_q_even),
+    .is_flush_out_dc_data_q_even(dc_2_dir_is_flush_data_q_even),
+    .alloc_out_dc_data_q_even(dc_2_dir_valid_data_q_even),
+    .src_out_dc_data_q_even(dc_2_dir_src_data_q_even),
+    .dest_out_dc_data_q_even(dc_2_dir_dest_data_q_even),
+
+    .full_in_dc_data_q_even(),
+    
+    //I$_INSTR_Q_in
+    .addr_out_dc_instr_q_even(dc_2_dir_addr_instr_q_even),
+    .operation_out_dc_instr_q_even(dc_2_dir_operation_instr_q_even),
+    .is_flush_out_dc_instr_q_even(dc_2_dir_is_flush_instr_q_even),
+    .alloc_out_dc_instr_q_even(dc_2_dir_valid_instr_q_even),
+    .src_out_dc_instr_q_even(dc_2_dir_src_instr_q_even),
+    .dest_out_dc_instr_q_even(dc_2_dir_dest_instr_q_even),
+
+    .full_in_dc_instr_q_even(),
+
+        //I$_DATA_Q_in
+    .addr_out_dc_data_q_odd(dc_2_dir_addr_data_q_odd),
+    .data_out_dc_data_q_odd(dc_2_dir_data_data_q_odd),
+    .operation_out_dc_data_q_odd(dc_2_dir_operation_data_q_odd),
+    .is_flush_out_dc_data_q_odd(dc_2_dir_is_flush_data_q_odd),
+    .alloc_out_dc_data_q_odd(dc_2_dir_valid_data_q_odd),
+    .src_out_dc_data_q_odd(dc_2_dir_src_data_q_odd),
+    .dest_out_dc_data_q_odd(dc_2_dir_dest_data_q_odd),
+
+    .full_in_dc_data_q_odd(),
+    
+    //I$_INSTR_Q_in
+    .addr_out_dc_instr_q_odd(dc_2_dir_addr_instr_q_odd),
+    .operation_out_dc_instr_q_odd(dc_2_dir_operation_instr_q_odd),
+    .is_flush_out_dc_instr_q_odd(dc_2_dir_is_flush_instr_q_odd),
+    .alloc_out_dc_instr_q_odd(dc_2_dir_valid_instr_q_odd),
+    .src_out_dc_instr_q_odd(dc_2_dir_src_instr_q_odd),
+    .dest_out_dc_instr_q_odd(dc_2_dir_dest_instr_q_odd),
+
+    .full_in_dc_instr_q_odd()
+);
 
 endmodule
