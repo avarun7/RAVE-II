@@ -62,7 +62,7 @@ reg[XLEN-1:0]                         ring_update_val     [0:5];
 reg[$clog2(ROB_ENTRY)-1:0]            ring_rob_entry      [0:5];
 
 // Queue values
-wire[NUM_IN-1:0]                           inserts;
+// wire[NUM_IN-1:0]                           inserts;
 // Insertion interface
 wire[NUM_IN-1:0]                           insert_valid;                            // Valid signal for each potential insert
 
@@ -86,9 +86,9 @@ wire full;
 wire empty;
 wire [$clog2(RF_QUEUE)-1:0] occupancy;
 
-multi_insertion_queue #(.DATA_WIDTH(XLEN), .QUEUE_DEPTH(RF_QUEUE), .MAX_INSERTS_PER_CYCLE(NUM_IN)) miq_val(.clk(clk), .rst(rst), .insert_valid(inserts), .insert_data(insert_vals), .insert_ready(insert_ready), .remove_valid(remove_valid), .remove_data(remove_data), .remove_ready(remove_ready));
-multi_insertion_queue #(.DATA_WIDTH($clog2(PHYS_REG_SIZE)), .QUEUE_DEPTH(RF_QUEUE), .MAX_INSERTS_PER_CYCLE(NUM_IN)) miq_reg(.clk(clk), .rst(rst), .insert_valid(inserts), .insert_data(insert_regs), .insert_ready(insert_ready), .remove_valid(remove_valid), .remove_data(remove_reg), .remove_ready(remove_ready));
-multi_insertion_queue #(.DATA_WIDTH($clog2(ROB_ENTRY)), .QUEUE_DEPTH(RF_QUEUE), .MAX_INSERTS_PER_CYCLE(NUM_IN)) miq_rob(.clk(clk), .rst(rst), .insert_valid(inserts), .insert_data(insert_rob_entry), .insert_ready(insert_ready), .remove_valid(remove_valid), .remove_data(remove_rob_entry), .remove_ready(remove_ready));
+multi_insertion_queue #(.DATA_WIDTH(XLEN), .QUEUE_DEPTH(RF_QUEUE), .MAX_INSERTS_PER_CYCLE(NUM_IN)) miq_val(.clk(clk), .rst(rst), .insert_valid(insert_valid), .insert_data(insert_vals), .insert_ready(insert_ready), .remove_valid(remove_valid), .remove_data(remove_data), .remove_ready(remove_ready));
+multi_insertion_queue #(.DATA_WIDTH($clog2(PHYS_REG_SIZE)), .QUEUE_DEPTH(RF_QUEUE), .MAX_INSERTS_PER_CYCLE(NUM_IN)) miq_reg(.clk(clk), .rst(rst), .insert_valid(insert_valid), .insert_data(insert_regs), .insert_ready(insert_ready), .remove_valid(remove_valid), .remove_data(remove_reg), .remove_ready(remove_ready));
+multi_insertion_queue #(.DATA_WIDTH($clog2(ROB_ENTRY)), .QUEUE_DEPTH(RF_QUEUE), .MAX_INSERTS_PER_CYCLE(NUM_IN)) miq_rob(.clk(clk), .rst(rst), .insert_valid(insert_valid), .insert_data(insert_rob_entry), .insert_ready(insert_ready), .remove_valid(remove_valid), .remove_data(remove_rob_entry), .remove_ready(remove_ready));
 
 assign insert_valid[4] = logical_update;
 assign insert_valid[3] = arithmetic_update;
@@ -105,7 +105,7 @@ assign insert_vals[1*XLEN-1:0]      = mul_div_update_val;
 assign insert_regs[5*$clog2(PHYS_REG_SIZE)-1:4*$clog2(PHYS_REG_SIZE)] = logical_update_reg;
 assign insert_regs[4*$clog2(PHYS_REG_SIZE)-1:3*$clog2(PHYS_REG_SIZE)] = arithmetic_update_reg;
 assign insert_regs[3*$clog2(PHYS_REG_SIZE)-1:2*$clog2(PHYS_REG_SIZE)] = branch_update_reg;
-assign insert_regs[2*$clog2(PHYS_REG_SIZE)-1:1*$clog2(PHYS_REG_SIZE)]   = ld_st_update_reg;
+assign insert_regs[2*$clog2(PHYS_REG_SIZE)-1:1*$clog2(PHYS_REG_SIZE)] = ld_st_update_reg;
 assign insert_regs[$clog2(PHYS_REG_SIZE)-1:0]                         = mul_div_update_reg;
 
 assign insert_regs[5*$clog2(ROB_ENTRY)-1:4*$clog2(ROB_ENTRY)] = logical_rob_entry;
@@ -124,6 +124,11 @@ always @(posedge clk ) begin
         out_rob_update_reg    <= ring_update_reg[0];
         out_rob_update_val    <= ring_update_val[0];
         out_rob_rob_entry     <= ring_rob_entry[0];
+    end else begin
+        out_rob_valid         <= 0;
+        out_rob_update_reg    <= 0;
+        out_rob_update_val    <= 0;
+        out_rob_rob_entry     <= 0;
     end
 
     // if(logical_ring[0] & logical_update);
@@ -132,38 +137,58 @@ always @(posedge clk ) begin
         out_logical_valid         <= ring_update[1];
         out_logical_update_reg    <= ring_update_reg[1];
         out_logical_update_val    <= ring_update_val[1];
+    end else begin
+        out_logical_valid         <= 0;
+        out_logical_update_reg    <= 0;
+        out_logical_update_val    <= 0;
     end
 
     // if(arithmetic_ring[0] & arithmetic_update);
         //stall the FU
-    else if(ring_update[2]) begin
+    if(ring_update[2]) begin
         out_arithmetic_valid         <= ring_update[2];
         out_arithmetic_update_reg    <= ring_update_reg[2];
         out_arithmetic_update_val    <= ring_update_val[2];
+    end else begin
+        out_arithmetic_valid         <= 0;
+        out_arithmetic_update_reg    <= 0;
+        out_arithmetic_update_val    <= 0;
     end
 
     // if(branch_ring[0] & branch_update);
         //stall the FU
-    else if(ring_update[3]) begin
+    if(ring_update[3]) begin
         out_branch_valid         <= ring_update[3];
         out_branch_update_reg    <= ring_update_reg[3];
         out_branch_update_val    <= ring_update_val[3];
+    end else begin
+        out_branch_valid         <= 0;
+        out_branch_update_reg    <= 0;
+        out_branch_update_val    <= 0;
     end
 
     // if(ld_st_ring[0] & ld_st_update);
         //stall the FU
-    else if(ring_update[4]) begin //TODO: make ld_st
+    if(ring_update[4]) begin //TODO: make ld_st
         out_logical_valid         <= ring_update[4];
         out_logical_update_reg    <= ring_update_reg[4];
         out_logical_update_val    <= ring_update_val[4];
+    end else begin
+        out_logical_valid         <= 0;
+        out_logical_update_reg    <= 0;
+        out_logical_update_val    <= 0;
     end
 
     // if(m[0] & logical_update);
         //stall the FU
-    else if(ring_update[5]) begin
+    if(ring_update[5]) begin
         out_logical_valid         <= ring_update[5];
         out_logical_update_reg    <= ring_update_reg[5];
         out_logical_update_val    <= ring_update_val[5];
+    end else begin
+        out_logical_valid         <= 0;
+        out_logical_update_reg    <= 0;
+        out_logical_update_val    <=0;
     end
 
     // Get from queue
@@ -181,8 +206,6 @@ always @(posedge clk ) begin
         ring_update_val[i+1] = ring_update_val[i];
         ring_rob_entry[i+1]  = ring_rob_entry[i];
     end
- 
-
 
 end
 
