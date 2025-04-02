@@ -1,13 +1,18 @@
 # Ignore the generated executable file
 sim
-__pycache__/
-sim_build/
-simv
-compiled_file.vvp
-results.xml
 
 # Ignore temporary and backup files
 *.o
 *.vcd
 *.log
 *~
+
+todo_Felipe.txt
+
+# Ignore generated verif files
+__pycache__/
+sim_build/
+simv
+compiled_file.vvp
+results.xml
+
