@@ -17,6 +17,7 @@ module directory_data_store #(parameter CL_SIZE = 4,  IDX_CNT = 512) (
 );
 
 reg [CL_SIZE*8-1:0] data_store[IDX_CNT-1:0];
+
 genvar i;
 for(i = 0; i < IDX_CNT; i = i +1 ) begin : init_ts
     initial begin 
@@ -31,7 +32,7 @@ always @(posedge clk) begin
     end
     else begin
         if(operation != 0) begin
-            cl_lines_out <= st_fwd ? cl_in_wb : data_store[idx];
+            cl_lines_out <= st_fwd && alloc ? cl_in_wb : data_store[idx];
         end
         if(alloc) begin
             data_store[idx_in_wb] <= cl_in_wb;

@@ -8,7 +8,8 @@ i = 0
 with open(output_file, "w") as f:
     f.write("$fdisplay(file, \"")
     for i in range(num_rows):
-        f.write(f"0x{i:X},0x%h_0x%h\\n")  # Format i in hex (uppercase)
+        f.write("$fdisplay(file, \"")
+        f.write("$fdisplay(file, \""+ f"0x{i:X},0x%h_0x%h" )  # Format i in hex (uppercase)
         # if i < num_rows - 1:
         #     f.write(",")  # Add a comma except for the last row
     f.write("\",")

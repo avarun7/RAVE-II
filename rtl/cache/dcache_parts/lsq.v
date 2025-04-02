@@ -34,13 +34,14 @@ module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6, OOO_ROB_BITS = 6) (
     output [2:0] operation_out,
     output [1:0] size_out,
     output valid_out,
-    output lsq_full
+    output lsq_full,
+    output sext_out
 );
 
 wire[2:0] mshr_wr_idx_out_even,mshr_wr_idx_out_odd;  
-wire[(3+1)*Q_LENGTH-1:0] new_m_vector;
+reg [(8)*Q_LENGTH-1:0] new_m_vector;
 wire[Q_LENGTH-1:0] modify_vector;
-wire [(3+1)*Q_LENGTH-1:0] old_m_vector;
+wire [(8)*Q_LENGTH-1:0] old_m_vector;
 
 
 assign valid_out = ~valid_n && valid_even && valid_odd;
@@ -49,7 +50,7 @@ assign valid_out = ~valid_n && valid_even && valid_odd;
 
 qnm #(.N_WIDTH(32+32+3+2+OOO_ROB_BITS+OOO_TAG_BITS+1), .M_WIDTH(1+3+ 1 +3), .Q_LENGTH(8)) q1(
     .m_din({mshr_wr_idx_odd, (mshr_fin_odd && (mshr_fin_idx_odd == mshr_wr_idx_odd)) || hit_odd ,mshr_wr_idx_even, (mshr_fin_even && (mshr_fin_idx_even == mshr_wr_idx_even)) || hit_even}),
-    .n_din({sext_in, ooo_rob_in, size_in,operation, addr_in, data_in, ooo_tag_in}),
+    .n_din({sext_in, ooo_rob_in, size_in,operation_in, addr_in, data_in, ooo_tag_in}),
     .new_m_vector(new_m_vector),
     .wr(alloc), 
     .rd(dealloc),
@@ -59,9 +60,9 @@ qnm #(.N_WIDTH(32+32+3+2+OOO_ROB_BITS+OOO_TAG_BITS+1), .M_WIDTH(1+3+ 1 +3), .Q_L
     .full(lsq_full), 
     .empty(valid_n),
     .old_m_vector(old_m_vector),
-    .dout({sext_out, ooo_rob_out, size_out, opeartion, addr_out, data_out, ooo_tag_out,mshr_wr_idx_out_odd, valid_odd,mshr_wr_idx_out_even, valid_even})
+    .dout({sext_out, ooo_rob_out, size_out, operation_out, addr_out, data_out, ooo_tag_out,mshr_wr_idx_out_odd, valid_odd,mshr_wr_idx_out_even, valid_even})
 );
-wire [Q_LENGTH-1:0] even_vector, odd_vector;
+reg [Q_LENGTH-1:0] even_vector, odd_vector;
 assign modify_vector = odd_vector | even_vector;
 genvar i;
 for(i = 0; i < Q_LENGTH; i = i + 1) begin : hmm
@@ -75,8 +76,8 @@ for(i = 0; i < Q_LENGTH; i = i + 1) begin : hmm
             even_vector[i] = 1'b0;
         end
         if(old_m_vector[i*8+ 4] ==0 && mshr_fin_odd) begin
-            new_m_vector[i*8+4] = old_m_vector[i*9-1:i*8 + 1+ 4] == mshr_fin_idx_odd;
-            odd_vector[i] =  old_m_vector[i*9-1:i*8 + 1+ 4] == mshr_fin_idx_odd;
+            new_m_vector[i*8+4] = old_m_vector[i*8+4 +: 3] == mshr_fin_idx_odd;
+            odd_vector[i] =  old_m_vector[i*8+4 +: 3] == mshr_fin_idx_odd;
         end
         else begin
             odd_vector[i] = 1'b0;

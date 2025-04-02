@@ -70,16 +70,16 @@ tag update
     input [2:0] operation_in_orig,
     input [31:0] addr_in_orig,
     input [31:0] data_in_orig,
-    input [OOO_TAG_BITS-1:0] ooo_tag_in_orig,
-    input [OOO_ROB_BITS-1:0] ooo_rob_in_orig,
+    input [OOO_TAG_SIZE-1:0] ooo_tag_in_orig,
+    input [OOO_ROB_SIZE-1:0] ooo_rob_in_orig,
     input [1:0] size_in_orig,
     input sext_in_orig,
 
     output [2:0] operation_out_orig,
     output [31:0] addr_out_orig,
     output [31:0] data_out_orig,
-    output [OOO_TAG_BITS-1:0] ooo_tag_out_orig,
-    output [OOO_ROB_BITS-1:0] ooo_rob_out_orig,
+    output [OOO_TAG_SIZE-1:0] ooo_tag_out_orig,
+    output [OOO_ROB_SIZE-1:0] ooo_rob_out_orig,
     output [1:0] size_out_orig,
     output sext_out_orig
 
@@ -110,8 +110,8 @@ wire parity_in, parity_buf;
    reg  [2:0]               operation_buff_orig;
    reg  [31:0]              addr_buff_orig;
    reg  [31:0]              data_buff_orig;
-   reg  [OOO_TAG_BITS-1:0]  ooo_tag_buff_orig;
-   reg  [OOO_ROB_BITS-1:0]  ooo_rob_buff_orig;
+   reg  [OOO_ROB_SIZE-1:0]  ooo_tag_buff_orig;
+   reg  [OOO_ROB_SIZE-1:0]  ooo_rob_buff_orig;
    reg  [1:0]               size_buff_orig;
    reg                      sext_buff_orig;
 

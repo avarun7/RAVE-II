@@ -49,11 +49,11 @@ localparam  M= 4; //Modified
 localparam  S= 2; //Shared
 localparam PLS = 15; //Pending Load Store (edge case where store comes after load but before write)
 
-wire [(1+1+1+OOO_TAG_BITS)*8-1:0] old_m_vector;
-wire [(1+1+1+OOO_TAG_BITS)*8-1:0] new_m_vector;
+wire [(1+1+1+OOO_TAG_SIZE)*8-1:0] old_m_vector;
+wire [(1+1+1+OOO_TAG_SIZE)*8-1:0] new_m_vector;
 reg[7:0] wr_ptr, rd_ptr;
-wire[Q_LENGTH-1:0] modify_vector;
-qnm #(.N_WIDTH(32+32+3+2), .M_WIDTH(1+1+1+OOO_TAG_BITS), .Q_LENGTH(8)) q1(
+wire[8-1:0] modify_vector;
+qnm #(.N_WIDTH(32+32+3+2), .M_WIDTH(1+1+1+OOO_TAG_SIZE), .Q_LENGTH(8)) q1(
     .m_din({1'b1, 1'b0,1'b0, cache_ooo_tag_in}),
     .n_din({addr_in,data_repl, operation, size}),
     .new_m_vector(new_m_vector),
