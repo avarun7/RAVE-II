@@ -2,6 +2,8 @@ module rewind #(parameter OOO_TAG_SIZE= 10) (
     //Global
     input clk, 
     input rst,
+    input stall,
+
 
     //From ROB
     input [OOO_TAG_SIZE-1:0] rob_ret_tag_in,
@@ -14,6 +16,9 @@ module rewind #(parameter OOO_TAG_SIZE= 10) (
     input [2:0] operation,
     input [OOO_TAG_SIZE-1:0] cache_ooo_tag_in,
     input [1:0] size,
+    input alloc,
+
+    input dealloc,
 
     //To Cache
     output valid_rewind,
@@ -52,7 +57,7 @@ qnm #(.N_WIDTH(32+32+3+2), .M_WIDTH(1+1+1+OOO_TAG_BITS), .Q_LENGTH(8)) q1(
     .m_din({1'b1, 1'b0,1'b0, cache_ooo_tag_in}),
     .n_din({addr_in,data_repl, operation, size}),
     .new_m_vector(new_m_vector),
-    .wr(operation == ST), 
+    .wr(alloc), 
     .rd(rd),
     .modify_vector(modify_vector),
     .rst(rst),
@@ -62,8 +67,10 @@ qnm #(.N_WIDTH(32+32+3+2), .M_WIDTH(1+1+1+OOO_TAG_BITS), .Q_LENGTH(8)) q1(
     .old_m_vector(old_m_vector),
     .dout({addr_out, data_out, operation_out, size_out, valid_out, flush_out, ret_out, cache_ooo_tag_out})
 );
-assign valid_rewind = valid_out && flush_out;
-assign rd = valid_out && (flush_out || ret_out) && ~empty;
+assign valid_rewind = valid_out && flush_out && !empty;
+assign valid_retire  = valid_out && ret_out && !empty;
+assign rd = valid_rewind && dealloc || valid_retire;
+// valid_out && (flush_out || ret_out) && ~empty;
 
 
 initial begin
@@ -84,7 +91,7 @@ for(i = 0; i < 8; i = i + 1) begin
     
     assign new_m_vector[i*(OOO_TAG_SIZE+3) +: OOO_TAG_SIZE] = old_m_vector[i*(OOO_TAG_SIZE+3) +: OOO_TAG_SIZE];
     
-    assign modify_vector[i] = old_m_vector[i*(OOO_TAG_SIZE+3) +: OOO_TAG_SIZE] == rob_ret_tag_in || rob_resteer; 
+    assign modify_vector[i] = old_m_vector[i*(OOO_TAG_SIZE+3) +: OOO_TAG_SIZE] == (rob_ret_tag_in && rob_valid) || rob_resteer; 
     
     assign new_m_vector[i*(OOO_TAG_SIZE+3)+OOO_TAG_SIZE] = (old_m_vector[i*(OOO_TAG_SIZE+3) +: OOO_TAG_SIZE] == rob_ret_tag_in)&&rob_valid;
     
