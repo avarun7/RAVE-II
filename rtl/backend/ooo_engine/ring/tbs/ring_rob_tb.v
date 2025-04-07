@@ -35,6 +35,11 @@ module ring_rob_tb;
     reg[XLEN-1:0]                  mul_div_update_val;
     reg[$clog2(ROB_ENTRY)-1:0]     mul_div_rob_entry;
 
+    output wire                              out_reg_file_valid;
+    output wire[$clog2(PHYS_REG_SIZE)-1:0]   out_reg_file_update_reg;
+    output wire[XLEN-1:0]                    out_reg_file_update_val;
+    output wire[$clog2(ROB_ENTRY)-1:0]       out_reg_file_rob_entry;
+
     output wire                              out_rob_valid;
     output wire[$clog2(PHYS_REG_SIZE)-1:0]   out_rob_update_reg;
     output wire[XLEN-1:0]                    out_rob_update_val;
@@ -94,6 +99,11 @@ ring_rob #(
     .mul_div_update_reg(mul_div_update_reg),
     .mul_div_update_val(mul_div_update_val),
     .mul_div_rob_entry(mul_div_rob_entry),
+
+    .out_reg_file_valid(out_reg_file_valid),
+    .out_reg_file_update_reg(out_reg_file_update_reg),
+    .out_reg_file_update_val(out_reg_file_update_val),
+    .out_reg_file_rob_entry(out_reg_file_rob_entry),
                                                                                                                                                     
     .out_rob_valid(out_rob_valid),
     .out_rob_update_reg(out_rob_update_reg),
@@ -150,6 +160,26 @@ initial begin
     // Initialize signals
     clk = 0;
     rst = 0;
+    logical_update         = 0;
+    logical_update_reg     = 0;
+    logical_update_val     = 0;
+    logical_rob_entry      = 0;
+    arithmetic_update      = 0;
+    arithmetic_update_reg  = 0;
+    arithmetic_update_val  = 0; 
+    arithmetic_rob_entry   = 0;
+    branch_update          = 0;
+    branch_update_reg      = 0;
+    branch_update_val      = 0;
+    branch_rob_entry       = 0;
+    ld_st_update           = 0;
+    ld_st_update_reg       = 0;
+    ld_st_update_val       = 0;
+    ld_st_rob_entry        = 0;
+    mul_div_update         = 0;
+    mul_div_update_reg     = 0;
+    mul_div_update_val     = 0;
+    mul_div_rob_entry      = 0;
     
     // Apply reset
     #10;

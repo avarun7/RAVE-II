@@ -70,46 +70,46 @@ reg[3:0]                              loop_run            [0:6];
 // Queue values
 // wire[NUM_IN-1:0]                           inserts;
 // Insertion interface
-wire[NUM_IN-1:0]                           insert_valid;                            // Valid signal for each potential insert
+// wire[NUM_IN-1:0]                           insert_valid;                            // Valid signal for each potential insert
 
-wire[NUM_IN*XLEN-1:0]                      insert_vals;                 // Data for each potential insert
-wire[NUM_IN*$clog2(PHYS_REG_SIZE)-1:0]     insert_regs;
-wire[NUM_IN*$clog2(ROB_ENTRY)-1:0]         insert_rob_entry;
+// wire[NUM_IN*XLEN-1:0]                      insert_vals;                 // Data for each potential insert
+// wire[NUM_IN*$clog2(PHYS_REG_SIZE)-1:0]     insert_regs;
+// wire[NUM_IN*$clog2(ROB_ENTRY)-1:0]         insert_rob_entry;
 
-wire[NUM_IN-1:0] insert_ready;                           // Ready signal for each potential insert
+// wire[NUM_IN-1:0] insert_ready;                           // Ready signal for each potential insert
 
 // Removal interface
 wire remove_valid;
 assign remove_valid = 1;
 
 // Status signals
-wire full;            
-wire empty;
-wire [$clog2(RF_QUEUE)-1:0] occupancy;
+// wire full;            
+// wire empty;
+// wire [$clog2(RF_QUEUE)-1:0] occupancy;
 
-assign insert_valid[4] = logical_update;
-assign insert_valid[3] = arithmetic_update;
-assign insert_valid[2] = branch_update;
-assign insert_valid[1] = ld_st_update;
-assign insert_valid[0] = mul_div_update;
+// assign insert_valid[4] = logical_update;
+// assign insert_valid[3] = arithmetic_update;
+// assign insert_valid[2] = branch_update;
+// assign insert_valid[1] = ld_st_update;
+// assign insert_valid[0] = mul_div_update;
 
-assign insert_vals[5*XLEN-1:4*XLEN] = logical_update_val;
-assign insert_vals[4*XLEN-1:3*XLEN] = arithmetic_update_val;
-assign insert_vals[3*XLEN-1:2*XLEN] = branch_update_val;
-assign insert_vals[2*XLEN-1:XLEN]   = ld_st_update_val;
-assign insert_vals[1*XLEN-1:0]      = mul_div_update_val;
+// assign insert_vals[5*XLEN-1:4*XLEN] = logical_update_val;
+// assign insert_vals[4*XLEN-1:3*XLEN] = arithmetic_update_val;
+// assign insert_vals[3*XLEN-1:2*XLEN] = branch_update_val;
+// assign insert_vals[2*XLEN-1:XLEN]   = ld_st_update_val;
+// assign insert_vals[1*XLEN-1:0]      = mul_div_update_val;
 
-assign insert_regs[5*$clog2(PHYS_REG_SIZE)-1:4*$clog2(PHYS_REG_SIZE)] = logical_update_reg;
-assign insert_regs[4*$clog2(PHYS_REG_SIZE)-1:3*$clog2(PHYS_REG_SIZE)] = arithmetic_update_reg;
-assign insert_regs[3*$clog2(PHYS_REG_SIZE)-1:2*$clog2(PHYS_REG_SIZE)] = branch_update_reg;
-assign insert_regs[2*$clog2(PHYS_REG_SIZE)-1:1*$clog2(PHYS_REG_SIZE)] = ld_st_update_reg;
-assign insert_regs[$clog2(PHYS_REG_SIZE)-1:0]                         = mul_div_update_reg;
+// assign insert_regs[5*$clog2(PHYS_REG_SIZE)-1:4*$clog2(PHYS_REG_SIZE)] = logical_update_reg;
+// assign insert_regs[4*$clog2(PHYS_REG_SIZE)-1:3*$clog2(PHYS_REG_SIZE)] = arithmetic_update_reg;
+// assign insert_regs[3*$clog2(PHYS_REG_SIZE)-1:2*$clog2(PHYS_REG_SIZE)] = branch_update_reg;
+// assign insert_regs[2*$clog2(PHYS_REG_SIZE)-1:1*$clog2(PHYS_REG_SIZE)] = ld_st_update_reg;
+// assign insert_regs[$clog2(PHYS_REG_SIZE)-1:0]                         = mul_div_update_reg;
 
-assign insert_regs[5*$clog2(ROB_ENTRY)-1:4*$clog2(ROB_ENTRY)] = logical_rob_entry;
-assign insert_regs[4*$clog2(ROB_ENTRY)-1:3*$clog2(ROB_ENTRY)] = arithmetic_rob_entry;
-assign insert_regs[3*$clog2(ROB_ENTRY)-1:2*$clog2(ROB_ENTRY)] = branch_rob_entry;
-assign insert_regs[2*$clog2(ROB_ENTRY)-1:1*$clog2(ROB_ENTRY)] = ld_st_rob_entry;
-assign insert_regs[$clog2(ROB_ENTRY)-1:0]                     = mul_div_rob_entry;
+// assign insert_regs[5*$clog2(ROB_ENTRY)-1:4*$clog2(ROB_ENTRY)] = logical_rob_entry;
+// assign insert_regs[4*$clog2(ROB_ENTRY)-1:3*$clog2(ROB_ENTRY)] = arithmetic_rob_entry;
+// assign insert_regs[3*$clog2(ROB_ENTRY)-1:2*$clog2(ROB_ENTRY)] = branch_rob_entry;
+// assign insert_regs[2*$clog2(ROB_ENTRY)-1:1*$clog2(ROB_ENTRY)] = ld_st_rob_entry;
+// assign insert_regs[$clog2(ROB_ENTRY)-1:0]                     = mul_div_rob_entry;
 
 integer i;
 
@@ -267,6 +267,7 @@ always @(posedge clk ) begin
         out_reg_file_valid         <= 0;
         out_reg_file_update_reg    <= 0;
         out_reg_file_update_val    <= 0;
+        out_reg_file_rob_entry     <= 0;
     end
 
     // Get from queue
