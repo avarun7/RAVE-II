@@ -31,7 +31,6 @@ module archregfile_TOP #(parameter ARCHFILE_SIZE=32,
             nonspec_af(.clk(clk), .rst(rst),
                        .update(rob_update),
                        .arch_wr(arch_rob_update), .arch_wr_phys(arch_rob_nonspec_phys),
-                       .rollback(1'b0),
                        .arch_dump(rb_dump));
 
 endmodule

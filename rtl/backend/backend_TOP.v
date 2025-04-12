@@ -101,7 +101,7 @@ module backend_TOP #(parameter NUM_UOPS=32,
                .rob_update(rob_update_rob_rf),
                .arch_rob_update(arch_rob_update_rob_rf), .arch_rob_nonspec_phys(arch_rob_nonspec_phys_rob_rf),
                .phys_rob_free(phys_rob_free_rob_rf),
-               .rollback(),
+               .rollback(1'b0),
                     //mapper outputs
                .phys_rd1_rdy(src1_rdy_rf_map), .phys_rd2_rdy(src2_rdy_rf_map),
                .phys_rd1(src1_tag_rf_map), .phys_rd2(src2_tag_rf_map),
