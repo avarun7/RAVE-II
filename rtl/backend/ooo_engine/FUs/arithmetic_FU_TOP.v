@@ -19,7 +19,8 @@ assign dest_reg = dest_reg_in;
 always @(posedge clk) begin
     if(rst)
         result <= 1'b0;
-    else begin
+    else if(valid_in) begin
+        valid_out <= 1;
         case (uop)
             3'b000: // Add/Sub
                 if(uop[0])
@@ -34,6 +35,10 @@ always @(posedge clk) begin
             default: 
                 result <= 2;
         endcase
+    end
+    else begin 
+        result <= 0;
+        valid_out <= 0;
     end
 end
 endmodule
