@@ -70,7 +70,7 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
                 .phys_ring(phys_ring), .phys_ring_val(phys_ring_val),
                     //rob inputs
                 .rob_update(rob_update),
-                .phys_rob_free(phys_rob_free),
+                .phys_rob_free(phys_rob_free), .phys_rob_nonspec(arch_rob_nonspec_phys)
                     //1st cycle inputs
                 .arch_update(uop_update),
                     //rollback
