@@ -93,7 +93,7 @@ always @(posedge clk or posedge rst) begin
     // TODO: Needs double pointer method, no idea how imma do that
     if(!none_allocate & valid_in) begin
         // Write to FU
-        rob_queue[allocate]             <= rob_entry;
+        rob_queue[allocate]             <= rob_entry_in;
         rs1_reg_queue[allocate]         <= rs1_reg;
         rs1_received_queue[allocate]    <= rs1_received;
         rs1_value_queue[allocate]       <= rs1_value;
