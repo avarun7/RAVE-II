@@ -1,0 +1,114 @@
+
+for_loop.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .plt:
+
+00010270 <_PROCEDURE_LINKAGE_TABLE_>:
+   10270:	97 23 00 00 33 03 c3 41 03 ae 83 d8 13 03 43 fd     .#..3..A......C.
+   10280:	93 82 83 d8 13 53 23 00 83 a2 42 00 67 00 0e 00     .....S#...B.g...
+
+00010290 <__libc_start_main@plt>:
+   10290:	00002e17          	auipc	t3,0x2
+   10294:	d70e2e03          	lw	t3,-656(t3) # 12000 <__libc_start_main@GLIBC_2.34>
+   10298:	000e0367          	jalr	t1,t3
+   1029c:	00000013          	nop
+
+Disassembly of section .text:
+
+000102a0 <_start>:
+   102a0:	2005                	jal	102c0 <load_gp>
+   102a2:	87aa                	mv	a5,a0
+   102a4:	00000517          	auipc	a0,0x0
+   102a8:	01a50513          	addi	a0,a0,26 # 102be <__wrap_main>
+   102ac:	4582                	lw	a1,0(sp)
+   102ae:	0050                	addi	a2,sp,4
+   102b0:	ff017113          	andi	sp,sp,-16
+   102b4:	4681                	li	a3,0
+   102b6:	4701                	li	a4,0
+   102b8:	880a                	mv	a6,sp
+   102ba:	3fd9                	jal	10290 <__libc_start_main@plt>
+   102bc:	9002                	ebreak
+
+000102be <__wrap_main>:
+   102be:	a89d                	j	10334 <main>
+
+000102c0 <load_gp>:
+   102c0:	00002197          	auipc	gp,0x2
+   102c4:	54418193          	addi	gp,gp,1348 # 12804 <__global_pointer$>
+   102c8:	8082                	ret
+   102ca:	0001                	nop
+
+000102cc <_dl_relocate_static_pie>:
+   102cc:	8082                	ret
+
+000102ce <deregister_tm_clones>:
+   102ce:	6549                	lui	a0,0x12
+   102d0:	6749                	lui	a4,0x12
+   102d2:	00450793          	addi	a5,a0,4 # 12004 <__TMC_END__>
+   102d6:	00470713          	addi	a4,a4,4 # 12004 <__TMC_END__>
+   102da:	00f70863          	beq	a4,a5,102ea <deregister_tm_clones+0x1c>
+   102de:	00000793          	li	a5,0
+   102e2:	c781                	beqz	a5,102ea <deregister_tm_clones+0x1c>
+   102e4:	00450513          	addi	a0,a0,4
+   102e8:	8782                	jr	a5
+   102ea:	8082                	ret
+
+000102ec <register_tm_clones>:
+   102ec:	6549                	lui	a0,0x12
+   102ee:	00450793          	addi	a5,a0,4 # 12004 <__TMC_END__>
+   102f2:	6749                	lui	a4,0x12
+   102f4:	00470593          	addi	a1,a4,4 # 12004 <__TMC_END__>
+   102f8:	8d9d                	sub	a1,a1,a5
+   102fa:	4025d793          	srai	a5,a1,0x2
+   102fe:	81fd                	srli	a1,a1,0x1f
+   10300:	95be                	add	a1,a1,a5
+   10302:	8585                	srai	a1,a1,0x1
+   10304:	c599                	beqz	a1,10312 <register_tm_clones+0x26>
+   10306:	00000793          	li	a5,0
+   1030a:	c781                	beqz	a5,10312 <register_tm_clones+0x26>
+   1030c:	00450513          	addi	a0,a0,4
+   10310:	8782                	jr	a5
+   10312:	8082                	ret
+
+00010314 <__do_global_dtors_aux>:
+   10314:	1141                	addi	sp,sp,-16
+   10316:	c422                	sw	s0,8(sp)
+   10318:	6449                	lui	s0,0x12
+   1031a:	00844783          	lbu	a5,8(s0) # 12008 <completed.0>
+   1031e:	c606                	sw	ra,12(sp)
+   10320:	e789                	bnez	a5,1032a <__do_global_dtors_aux+0x16>
+   10322:	3775                	jal	102ce <deregister_tm_clones>
+   10324:	4785                	li	a5,1
+   10326:	00f40423          	sb	a5,8(s0)
+   1032a:	40b2                	lw	ra,12(sp)
+   1032c:	4422                	lw	s0,8(sp)
+   1032e:	0141                	addi	sp,sp,16
+   10330:	8082                	ret
+
+00010332 <frame_dummy>:
+   10332:	bf6d                	j	102ec <register_tm_clones>
+
+00010334 <main>:
+   10334:	1101                	addi	sp,sp,-32
+   10336:	ce06                	sw	ra,28(sp)
+   10338:	cc22                	sw	s0,24(sp)
+   1033a:	1000                	addi	s0,sp,32
+   1033c:	fe042623          	sw	zero,-20(s0)
+   10340:	fe042423          	sw	zero,-24(s0)
+   10344:	a819                	j	1035a <main+0x26>
+   10346:	fec42783          	lw	a5,-20(s0)
+   1034a:	078d                	addi	a5,a5,3
+   1034c:	fef42623          	sw	a5,-20(s0)
+   10350:	fe842783          	lw	a5,-24(s0)
+   10354:	0785                	addi	a5,a5,1
+   10356:	fef42423          	sw	a5,-24(s0)
+   1035a:	fe842703          	lw	a4,-24(s0)
+   1035e:	47a5                	li	a5,9
+   10360:	fee7d3e3          	bge	a5,a4,10346 <main+0x12>
+   10364:	fec42783          	lw	a5,-20(s0)
+   10368:	853e                	mv	a0,a5
+   1036a:	40f2                	lw	ra,28(sp)
+   1036c:	4462                	lw	s0,24(sp)
+   1036e:	6105                	addi	sp,sp,32
+   10370:	8082                	ret

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PATH=$PATH:./gcc_riscv/bin
+
 # Check if a C file is provided as input
 if [ $# -ne 1 ]; then
     echo "Usage: $0 <source_file.c>"
@@ -26,14 +28,14 @@ if [ $? -ne 0 ]; then
 fi
 
 # Set up toolchain commands
-GCC=riscv32-unknown-elf-gcc
-OBJDUMP=riscv32-unknown-elf-objdump
-OBJCOPY=riscv32-unknown-elf-objcopy
+GCC=riscv32-unknown-linux-gnu-gcc
+OBJDUMP=riscv32-unknown-linux-gnu-objdump
+OBJCOPY=riscv32-unknown-linux-gnu-objcopy
 XXD=xxd
 
 # Compile to object file
 echo "Compiling $INPUT_C_FILE to object file..."
-$GCC -march=rv32imac_zicsr_zifencei -mabi=ilp32 -c -o "${BASENAME}.o" "$INPUT_C_FILE"
+$GCC -march=rv32imc -mabi=ilp32 -c -o "${BASENAME}.o" "$INPUT_C_FILE"
 if [ $? -ne 0 ]; then
     echo "Error during compilation!"
     exit 1
@@ -41,7 +43,7 @@ fi
 
 # Link to ELF executable
 echo "Linking to ELF executable..."
-$GCC -march=rv32imac_zicsr_zifencei -mabi=ilp32 -o "${BASENAME}.elf" "${BASENAME}.o"
+$GCC -march=rv32imc -mabi=ilp32 -o "${BASENAME}.elf" "${BASENAME}.o"
 if [ $? -ne 0 ]; then
     echo "Error during linking!"
     exit 1
