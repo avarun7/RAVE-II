@@ -1,15 +1,16 @@
 #!/bin/bash
 
-export PATH=$PATH:./gcc_riscv/bin
-
-# Check if a C file is provided as input
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <source_file.c>"
+# Check correct inputs
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <path_to_compiler_bindir> <source_file.c>"
     exit 1
 fi
 
-# Input C file
-INPUT_C_FILE=$1
+
+
+# Inputs
+BINDIR=$1
+INPUT_C_FILE=$2
 
 # Check if the file exists
 if [ ! -f "$INPUT_C_FILE" ]; then
@@ -28,9 +29,9 @@ if [ $? -ne 0 ]; then
 fi
 
 # Set up toolchain commands
-GCC=riscv32-unknown-linux-gnu-gcc
-OBJDUMP=riscv32-unknown-linux-gnu-objdump
-OBJCOPY=riscv32-unknown-linux-gnu-objcopy
+GCC=$BINDIR/riscv32-unknown-linux-gnu-gcc
+OBJDUMP=$BINDIR/riscv32-unknown-linux-gnu-objdump
+OBJCOPY=$BINDIR/riscv32-unknown-linux-gnu-objcopy
 XXD=xxd
 
 # Compile to object file
