@@ -17,7 +17,7 @@ localparam  WR= 4;
 localparam  INV = 5;
 localparam  UPD= 6;
 localparam WR_LD = 7;
-localparam RINV = 2;
+localparam RINV = 7;
 
 //State Names
 localparam I = 1; //Invalid
@@ -42,6 +42,7 @@ always @(*) begin
         case(current_state)
         I:  begin
             if(operation == LD) next_state <= PL;
+            else if(operation == ST) next_state <= PS;
             else next_state <= current_state;
             end
         PL: begin

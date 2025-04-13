@@ -34,6 +34,34 @@ initial begin
     ls_unit_alloc = 1;
     #15
     ls_unit_alloc = 0;
+    #299
+    rob_ret_tag_in = 0;
+    rob_valid =0; rob_resteer = 0;
+    ls_unit_alloc = 0;
+    addr_in = 32'b110_0010;
+    data_in = 32'hDEAD_BEEF;
+    size_in = 3;
+    is_st_in = 1;
+    ooo_tag_in = 20;
+    ooo_rob_in = 7;
+    sext = 1;
+    ls_unit_alloc = 1;
+    #8
+    ls_unit_alloc = 0;
+//    #10
+//    rob_ret_tag_in = 0;
+//    rob_valid =0; rob_resteer = 0;
+//    ls_unit_alloc = 0;
+//    addr_in = 32'b110_1000;
+//    data_in = 32'hFFFF_FFFF;
+//    size_in = 4;
+//    is_st_in = 0;
+//    ooo_tag_in = 22;
+//    ooo_rob_in = 19;
+//    sext = 1;
+//    ls_unit_alloc = 1;
+//    #8
+//    ls_unit_alloc = 0;
 end
 
 always begin
@@ -63,7 +91,7 @@ initial begin
      addr_odd = 32'b101_0000;
      
     tmp = 1;
-    #600
+    #1000
     tmp = 0;
     $finish;
     end

@@ -660,44 +660,44 @@ dcache_TOP #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .OOO_TAG_SIZE(OOO_TAG_SIZE), 
     //TODO: All other I/O memory facing and I will handle
     //Shouldn't affect people working on integrating the pipeline
 
-    .addr_in_dc_data_q_even(dir_2_dc_addr_data_q_even),
-    .data_in_dc_data_q_even(dir_2_dc_data_data_q_even),
+    .addr_in_dc_data_q_even(addr_dir_2_all_even),
+    .data_in_dc_data_q_even(data_dir_2_all_even),
     .operation_in_dc_data_q_even(dir_2_dc_operation_data_q_even),
     .is_flush_in_dc_data_q_even(dir_2_dc_is_flush_data_q_even),
     .alloc_in_dc_data_q_even(dir_2_dc_valid_data_q_even),
-    .src_in_dc_data_q_even(dir_2_dc_src_data_q_even),
-    .dest_in_dc_data_q_even(dir_2_dc_dest_data_q_even),
+    .src_in_dc_data_q_even(src_dir_2_all_even),
+    .dest_in_dc_data_q_even(dest_dir_2_all_even),
 
     .full_out_dc_data_q_even(),
     
     //I$_INSTR_Q_in
-    .addr_in_dc_instr_q_even(dir_2_dc_addr_instr_q_even),
+    .addr_in_dc_instr_q_even(addr_dir_2_all_even),
     .operation_in_dc_instr_q_even(dir_2_dc_operation_instr_q_even),
     .is_flush_in_dc_instr_q_even(dir_2_dc_is_flush_instr_q_even),
     .alloc_in_dc_instr_q_even(dir_2_dc_valid_instr_q_even),
-    .src_in_dc_instr_q_even(dir_2_dc_src_instr_q_even),
-    .dest_in_dc_instr_q_even(dir_2_dc_dest_instr_q_even),
+    .src_in_dc_instr_q_even(src_dir_2_all_even),
+    .dest_in_dc_instr_q_even(dest_dir_2_all_even),
 
     .full_out_dc_instr_q_even(),
 
         //I$_DATA_Q_in
-    .addr_in_dc_data_q_odd(dir_2_dc_addr_data_q_odd),
-    .data_in_dc_data_q_odd(dir_2_dc_data_data_q_odd),
+    .addr_in_dc_data_q_odd(addr_dir_2_all_odd),
+    .data_in_dc_data_q_odd(data_dir_2_all_odd),
     .operation_in_dc_data_q_odd(dir_2_dc_operation_data_q_odd),
     .is_flush_in_dc_data_q_odd(dir_2_dc_is_flush_data_q_odd),
     .alloc_in_dc_data_q_odd(dir_2_dc_valid_data_q_odd),
-    .src_in_dc_data_q_odd(dir_2_dc_src_data_q_odd),
-    .dest_in_dc_data_q_odd(dir_2_dc_dest_data_q_odd),
+    .src_in_dc_data_q_odd(src_dir_2_all_odd),
+    .dest_in_dc_data_q_odd(dest_dir_2_all_odd),
 
     .full_out_dc_data_q_odd(),
     
     //I$_INSTR_Q_in
-    .addr_in_dc_instr_q_odd(dir_2_dc_addr_instr_q_odd),
+    .addr_in_dc_instr_q_odd(addr_dir_2_all_odd),
     .operation_in_dc_instr_q_odd(dir_2_dc_operation_instr_q_odd),
     .is_flush_in_dc_instr_q_odd(dir_2_dc_is_flush_instr_q_odd),
     .alloc_in_dc_instr_q_odd(dir_2_dc_valid_instr_q_odd),
-    .src_in_dc_instr_q_odd(dir_2_dc_src_instr_q_odd),
-    .dest_in_dc_instr_q_odd(dir_2_dc_dest_instr_q_odd),
+    .src_in_dc_instr_q_odd(src_dir_2_all_odd),
+    .dest_in_dc_instr_q_odd(dest_dir_2_all_odd),
 
     .full_out_dc_instr_q_odd(),
 

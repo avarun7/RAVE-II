@@ -52,7 +52,7 @@ wire [OOO_TAG_SIZE-1:0] ooo_tag_1; //done
 wire wake_1;
 wire [31:0]rwnd_data_0, rwnd_data_1;
 
-assign use_e_as_0 = addr_in_e < addr_in_o;
+assign use_e_as_0 = operation_in_o && operation_in_e ?addr_in_e < addr_in_o : operation_in_e ? 1 : 0;
 wire [31:0] temp_addr;
 assign temp_addr = addr_0 + (size_in << 3);
 assign need_p1 =  temp_addr[4] != addr_0[4];
@@ -99,12 +99,13 @@ reg[31:0] data_0_concat;
 wire [CL_SIZE * 2 -1 : 0] data_full, data_shift;
 assign data_full = {data_1, data_0};
 assign data_shift = data_full >>> (addr_0[3:0]* 8);
-
+wire[31:0] temp_data;
+assign temp_data = size_in == 0 ? {data_shift[7:0], 24'd0} : size_in == 1? {data_shift[15:0], 16'd0} :data_shift[31:0];
 always @(*) begin
     if(sext_in) begin
     case(size_in) 
-        0: data_out = {data_shift[7:0], 24'd0} >>> 24;
-        1: data_out = {data_shift[15:0], 16'd0} >>> 16;
+        0: data_out = (temp_data >>> 24) | {{8{data_shift[7]}},{24{1'b0}}};
+        1: data_out = (temp_data >>> 16)  | {{16{data_shift[15]}},{16{1'b0}}} ;
        
         3: data_out = data_shift[31:0];
         default: data_out = 0;
@@ -112,8 +113,8 @@ always @(*) begin
     end
     else begin
         case(size_in) 
-        0: data_out = {data_shift[7:0], 24'd0} >> 24;
-        1: data_out = {data_shift[15:0], 16'd0} >> 16;
+        0: data_out = temp_data >> 24;
+        1: data_out = temp_data >> 16;
        
         3: data_out = data_shift[31:0];
         default: data_out = 0;

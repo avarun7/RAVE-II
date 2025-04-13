@@ -59,7 +59,7 @@ assign dc_inst_q_alloc = !d_is_src ? other_instr_alloc : src_instr_alloc;
 assign dc_inst_q_operation = !d_is_src ? other_instr_operation : src_instr_operation;
 
 assign dc_data_q_alloc = !d_is_src ? other_data_alloc : src_data_alloc;
-assign dc_data_q_operation = !d_is_src ? other_instr_operation : src_instr_operation;
+assign dc_data_q_operation = !d_is_src ? other_data_operation : src_data_operation;
 
 
 

@@ -29,15 +29,15 @@ wire [29:0] hit_second[0:7];
 
 assign mshr_hit = |hit_vector;
 assign mshr_fin = |modify_vector && l22q_valid;
-
-assign hit_first = {addr_cache[31:4], operation_cache == 3};
-
+wire[31:0] old_v_0;
+assign hit_first = {addr_cache[31:4], 1'b0};
+assign old_v_0 = old_m_vector[29:1];
 genvar i;
 for(i = 0; i < 8; i = i + 1) begin
-    assign modify_vector[i]  = {addr_l2[31:4], l2_ldst} == old_m_vector[29+i*8:1+8*i];
+    assign modify_vector[i]  = {addr_l2[31:4], 1'b0} == old_m_vector[29+i*30:1+30*i];
     assign new_m_vector[i*30] = 1;
     assign new_m_vector[i*30 + 29 : i*30 +1 ] = old_m_vector[i*30 + 29 : i * 30 + 1];
-    assign hit_vector[i] = {addr_cache[31:4], operation_cache == 3} == old_m_vector[29+i*30:1+30*i];
+    assign hit_vector[i] = {addr_cache[31:4], 1'b0} == old_m_vector[29+i*30:1+30*i];
     assign hit_second[i] = old_m_vector[29+i*30:1+30*i];
 
 end
@@ -45,16 +45,16 @@ end
 wire [30*8-1:0] old_m_vector;
 wire[27:0] addr_out;
 qm #(.N_WIDTH(0), .M_WIDTH(1+1+28), .Q_LENGTH(8)) q1(
-    .m_din({addr_cache[31:4], operation_cache == 2,1'b0}),
+    .m_din({addr_cache[31:4], 1'b0,1'b0}),
     .n_din(),
     .new_m_vector(new_m_vector),
     .wr(alloc), 
-    .rd(valid_out),
+    .rd(valid_out && ~valid_n),
     .modify_vector(modify_vector),
     .rst(rst),
     .clk(clk),
     .full(mshr_full), 
-    .empty(),
+    .empty(valid_n),
     .old_m_vector(old_m_vector),
     .dout({addr_out, ld_st_out, valid_out})
 );

@@ -5,8 +5,9 @@ module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6, OOO_ROB_BITS = 6) (
     //From cache
     input dealloc,
     input alloc,
-    
-    input [2:0] operation_in, 
+    input [2:0]  operation_in_even,
+    input [2:0]  operation_in_odd, 
+     
     input [31:0] addr_in,
     input [31:0] data_in,
     input [OOO_TAG_BITS-1:0] ooo_tag_in,
@@ -37,7 +38,8 @@ module lsq #(parameter Q_LENGTH = 8, OOO_TAG_BITS = 6, OOO_ROB_BITS = 6) (
     output lsq_full,
     output sext_out
 );
-
+wire valid_even, valid_odd;
+wire [2:0] operation_in;
 wire[2:0] mshr_wr_idx_out_even,mshr_wr_idx_out_odd;  
 reg [(8)*Q_LENGTH-1:0] new_m_vector;
 wire[Q_LENGTH-1:0] modify_vector;
@@ -46,14 +48,20 @@ wire [(8)*Q_LENGTH-1:0] old_m_vector;
 
 assign valid_out = ~valid_n && valid_even && valid_odd;
 
-
-
-qnm #(.N_WIDTH(32+32+3+2+OOO_ROB_BITS+OOO_TAG_BITS+1), .M_WIDTH(1+3+ 1 +3), .Q_LENGTH(8)) q1(
-    .m_din({mshr_wr_idx_odd, (mshr_fin_odd && (mshr_fin_idx_odd == mshr_wr_idx_odd)) || hit_odd ,mshr_wr_idx_even, (mshr_fin_even && (mshr_fin_idx_even == mshr_wr_idx_even)) || hit_even}),
-    .n_din({sext_in, ooo_rob_in, size_in,operation_in, addr_in, data_in, ooo_tag_in}),
+wire [2:0] old_vector_even, old_vector_odd;
+assign valid_odd_in = (mshr_fin_odd && (mshr_fin_idx_odd == mshr_wr_idx_odd)) || hit_odd || !(|operation_in_odd);
+assign valid_even_in = (mshr_fin_even && (mshr_fin_idx_even == mshr_wr_idx_even)) || hit_even || !(|operation_in_even);
+assign old_vector_even = old_m_vector[1+3-1:0 + 1];
+assign old_vector_odd =  old_m_vector[0+5 +: 3];
+assign new_m_vector_0_even = new_m_vector[0];
+assign new_m_vector_0_odd = new_m_vector[4];
+assign odd_if_cond = old_m_vector[0*8+ 4] ==0 && mshr_fin_odd;
+qnm #(.N_WIDTH(32+32+3+2+OOO_ROB_BITS+OOO_TAG_BITS+1), .M_WIDTH(1+3+ 1 +3), .Q_LENGTH(8), .SET_FF(1)) q1(
+    .m_din({mshr_wr_idx_odd, (mshr_fin_odd && (mshr_fin_idx_odd == mshr_wr_idx_odd)) || hit_odd || !(|operation_in_odd),mshr_wr_idx_even, (mshr_fin_even && (mshr_fin_idx_even == mshr_wr_idx_even)) || hit_even || !(|operation_in_even)}),
+    .n_din({sext_in, ooo_rob_in, size_in,operation_in_even | operation_in_odd, addr_in, data_in, ooo_tag_in}),
     .new_m_vector(new_m_vector),
     .wr(alloc), 
-    .rd(dealloc),
+    .rd(dealloc && ~valid_n),
     .modify_vector(modify_vector),
     .rst(rst),
     .clk(clk),
@@ -67,24 +75,30 @@ assign modify_vector = odd_vector | even_vector;
 genvar i;
 for(i = 0; i < Q_LENGTH; i = i + 1) begin : hmm
     always @(*) begin
-        new_m_vector = old_m_vector;
-        if(old_m_vector[i*8] ==0 && mshr_fin_even) begin
-            new_m_vector[i*8] = old_m_vector[i*8+1+3-1:i*8 + 1] == mshr_fin_idx_even;
-            even_vector[i] =  old_m_vector[i*8+1+3-1:i*8 + 1] == mshr_fin_idx_even;
-        end
+        if(rst) new_m_vector[8*i+7:8*i] = 8'd0;
         else begin
-            even_vector[i] = 1'b0;
-        end
-        if(old_m_vector[i*8+ 4] ==0 && mshr_fin_odd) begin
-            new_m_vector[i*8+4] = old_m_vector[i*8+4 +: 3] == mshr_fin_idx_odd;
-            odd_vector[i] =  old_m_vector[i*8+4 +: 3] == mshr_fin_idx_odd;
-        end
-        else begin
-            odd_vector[i] = 1'b0;
+            new_m_vector[i*8+7:i*8] = old_m_vector[i*8+7:i*8];
+            if(old_m_vector[i*8] ==0 && mshr_fin_even) begin
+                new_m_vector[i*8] = old_m_vector[i*8+1+3-1:i*8 + 1] == mshr_fin_idx_even;
+                even_vector[i] =  old_m_vector[i*8+1+3-1:i*8 + 1] == mshr_fin_idx_even;
+            end
+            else begin
+                even_vector[i] = 1'b0;
+            end
+            if(old_m_vector[i*8+ 4] ==0 && mshr_fin_odd) begin
+                new_m_vector[i*8+4] = old_m_vector[i*8+5 +: 3] == mshr_fin_idx_odd;
+                odd_vector[i] =  old_m_vector[i*8+5 +: 3] == mshr_fin_idx_odd;
+            end
+            else begin
+                odd_vector[i] = 1'b0;
+            end
         end
     end
 end
-
+wire [7:0] all_new_m[7:0];
+for(i = 0; i < 8; i = i +1) begin :sadge
+    assign all_new_m[i] = new_m_vector[8*i +: 8];
+end
 
 
 // qnm #(.N_WIDTH(32+32+3+3+2+OOO_ROB_BITS), .M_WIDTH(1+OOO_TAG_BITS), .Q_LENGTH(8)) q1(

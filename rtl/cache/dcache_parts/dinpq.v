@@ -44,9 +44,9 @@ localparam REPLY = 2;
 wire[2:0] operation_in;
 assign operation_in = is_st_in ? ST : LD;
 assign valid = !valid_n & ~resteer;
-qn #(.N_WIDTH(32 + 32 + 8 + 1 + OOO_TAG_SIZE + OOO_ROB_SIZE), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
+qn #(.N_WIDTH(2+32 + 32 + 8 + 1 + OOO_TAG_SIZE + OOO_ROB_SIZE), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
     .m_din(),
-    .n_din({sext_in, ooo_rob_in, ooo_tag_in, 2'd0, 2'd0, 1'd0, operation_in, addr_in, data_in}),
+    .n_din({size_in, sext_in, ooo_rob_in, ooo_tag_in, 2'd0, 2'd0, 1'd0, operation_in, addr_in, data_in}),
     .new_m_vector(2'b0),
     .wr(alloc), 
     .rd(dealloc && valid),
@@ -56,7 +56,7 @@ qn #(.N_WIDTH(32 + 32 + 8 + 1 + OOO_TAG_SIZE + OOO_ROB_SIZE), .M_WIDTH(0), .Q_LE
     .full(full), 
     .empty(valid_n),
     .old_m_vector(),
-    .dout({sext_out, ooo_rob_out, ooo_tag_out,src_out, dest_out, is_flush_out, operation_out, addr_out, data_out[31:0]})
+    .dout({size_out, sext_out, ooo_rob_out, ooo_tag_out,src_out, dest_out, is_flush_out, operation_out, addr_out, data_out[31:0]})
 );
 assign data_out[127:32] = 0;
 endmodule

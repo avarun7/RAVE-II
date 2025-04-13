@@ -1,4 +1,4 @@
-module qnm #(parameter N_WIDTH = 8, M_WIDTH = 8, Q_LENGTH = 8) (
+module qnm #(parameter N_WIDTH = 8, M_WIDTH = 8, Q_LENGTH = 8, SET_FF=0) (
     input [M_WIDTH-1:0] m_din,
     input [N_WIDTH-1:0] n_din,
     input [M_WIDTH*Q_LENGTH-1:0] new_m_vector,
@@ -18,7 +18,7 @@ genvar k;
 generate
     for (k = 0; k < Q_LENGTH; k = k + 1) begin : flatten
         assign flat_queue[(k * (M_WIDTH+N_WIDTH)) +: (M_WIDTH+N_WIDTH)] = queue[k];
-        assign old_m_vector[(k * (M_WIDTH)) +: (M_WIDTH)] = flat_queue[(k * (M_WIDTH+N_WIDTH)) +: (M_WIDTH)];
+        assign old_m_vector[(k * (M_WIDTH)) +: (M_WIDTH)] = rst ? 0 :flat_queue[(k * (M_WIDTH+N_WIDTH)) +: (M_WIDTH)];
     end
 endgenerate
 
@@ -32,6 +32,7 @@ mux_nm #(M_WIDTH+N_WIDTH, Q_LENGTH) mnm1 (
 genvar i;
 for(i = 0; i < Q_LENGTH; i= i + 1) begin :plz
     initial begin
+        if(SET_FF) queue[i] = {(N_WIDTH+M_WIDTH){1'b0}};
         queue[i] = 0;
 
     end

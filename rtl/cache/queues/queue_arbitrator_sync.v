@@ -27,22 +27,22 @@ module queue_arbitrator_sync #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
 reg[3-1:0]       operation_out_temp;
 wire[Q_WIDTH-1:0] op_choice;
 assign sync_stall = partner_dealloc > dealloc_desired;
-pencoder_copy #(.WIDTH(Q_WIDTH)) pec1(.a(valid_in), .o(op_choice));
-assign dealloc_desired =  op_choice & {8{~stall_in}};
-assign dealloc = rst ? 0 : sync_stall ? 0 : op_choice & {8{~stall_in}};
-assign valid_out = rst ? 0 :sync_stall ? 0 : |op_choice;
+pencoder_copy #(.WIDTH(Q_WIDTH)) pec1(.a(valid_in), .rst(rst), .o(op_choice));
+assign dealloc_desired =  valid_out? op_choice & {8{~stall_in}} : 0;
+assign dealloc = rst ? 0 : !valid_out ? 0 : sync_stall ? 0 : op_choice & {8{~stall_in}};
+assign valid_out = rst ? 0 :sync_stall ? 0 : |valid_in;
 assign operation_out = sync_stall ? 0 :valid_out ? operation_out_temp : 0;
 
 genvar i;
 for(i = 0; i < Q_WIDTH; i = i + 1) begin
     always @(*) begin
     if(op_choice[i]) begin
-        addr_out = addr_in [i*32 + 31:i*32] ;  
-        operation_out_temp = operation_in [i*3 + 2:i*3] ;
-        src_out = src_in [i*2 + 1:i*2] ;
-        dest_out = dest_in [i*2 + 1:i*2]  ;
-        is_flush_out = is_flush_in [i]  ;
-        data_out = data_in[CL_SIZE*(i+1)-1:CL_SIZE*i];
+        addr_out = !valid_out ? 0 : addr_in [i*32 + 31:i*32] ;  
+        operation_out_temp = !valid_out ? 0 :operation_in [i*3 + 2:i*3] ;
+        src_out = !valid_out ? 0 : src_in [i*2 + 1:i*2] ;
+        dest_out = !valid_out ? 0 :dest_in [i*2 + 1:i*2]  ;
+        is_flush_out = !valid_out ? 0 : is_flush_in [i]  ;
+        data_out = !valid_out ? 0 :data_in[CL_SIZE*(i+1)-1:CL_SIZE*i];
         end
     end
 end
@@ -51,13 +51,18 @@ endmodule
 
 module pencoder_copy #(parameter WIDTH=32)(
     input [WIDTH-1:0] a,
+    input rst,
     output reg [WIDTH-1:0] o
 );
-
+    
     integer unsigned i;
     always@(*) begin
+        
         for(i = 0; i < WIDTH; i = i + 1) begin
-            if(a[i]) begin
+            if(rst) begin
+                o[i] = 0;
+            end
+            else if(a[i]) begin
                 o = 1 << i;
             end
         end

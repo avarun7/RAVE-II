@@ -115,6 +115,14 @@ wire parity_in, parity_buf;
    reg  [1:0]               size_buff_orig;
    reg                      sext_buff_orig;
 
+assign operation_out_orig =   operation_buff_orig;
+assign addr_out_orig =   addr_buff_orig;
+assign data_out_orig =   data_buff_orig;
+assign ooo_tag_out_orig =   ooo_tag_buff_orig;
+assign ooo_rob_out_orig =   ooo_rob_buff_orig;
+assign  size_out_orig =   size_buff_orig;
+assign sext_out_orig =   sext_buff_orig;
+
 reg [31:0] addr_buffer;
 reg [CL_SIZE-1:0] data_buffer;
 reg [1:0] size_buffer;
@@ -141,22 +149,22 @@ assign tag_buf = addr_buffer[31:32-TAG_SIZE];
 
 assign valid_operation_in = |operation_in;
 assign valid_operation_buf = |operation_buffer;
-assign lsq_alloc = (is_miss || is_pending) && valid_operation_buf;
+assign lsq_alloc = (is_miss || is_pending) && valid_operation_buf && (operation_buffer == LD || operation_buffer == ST);
 wire [CL_SIZE-1:0] data_evict;
-assign hit = is_hit && !is_pending;
+assign hit = is_hit && !is_pending && valid_operation_buf;
 assign addr_out = addr_buffer;
 assign size_out = size_buffer;
 assign operation_out = operation_buffer;
 assign ooo_tag_out = OOO_TAG_buffer;
 assign data_out = data_evict;
 assign data_evic = data_evict;
-assign st_fwd = !stall_cache && addr_in[31:5] == addr_buffer[31:5] && valid_operation_in; 
-assign rwnd_alloc = operation_buffer == ST;
+assign st_fwd = !stall_cache && addr_in[31:5] == addr_buffer[31:5] && valid_operation_in && operation_buffer != 0; 
+assign rwnd_alloc = operation_buffer == ST && hit ;
 assign lsq_data = data_buffer[31:0];
 
 //TODO: adjust mshr_alloc to be mshr_alloc_pre_stall
 assign stall_cache = pending_stall  || mshr_alloc && mshr_full || rwnd_full && rwnd_alloc || lsq_full && lsq_alloc;
-
+assign valid_input = |operation_buffer;
 always @(posedge clk) begin
     if(rst) begin
         addr_buffer = 32'hFFFF_FFFF;
@@ -349,7 +357,7 @@ mshr #(.Q_LEGNTH(8)) mshr1(
 
     //from l2
     .l22q_valid(operation_buffer == WR_LD || operation_buffer == WR),
-    .l2_ldst(operation_buffer == WR),
+    .l2_ldst(1'b0),
     .addr_l2(addr_buffer),
 
     //output to cache
@@ -431,8 +439,8 @@ initial begin
     src_names[3] = "MEM";
     size_names[0] = "1B";
     size_names[1] = "2B";
-    size_names[2] = "4B";
-    size_names[3] = "???";
+    size_names[2] = "3B";
+    size_names[3] = "4B";
 
     dir_opcode_names[0] = "NOOP";
     dir_opcode_names[1] = "???"; // Unused index
@@ -449,6 +457,8 @@ initial begin
     end
     
     $fdisplay(file, "Time,Cycle,Address_Buffer, Operation_Buffer, Size_Buffer,Data_Buffer,OOO_Tag_Buffer, Index_buffer, Tag_Buffer, Offset_buffer,Stall,Hit,MSHR_Alloc, Selected_Way, Tag_Old, Tag_New, Tag_Alloc, Meta_Old, Meta_New,Meta_Alloc, Data_Old, Data_New,Data_Alloc, Instr_Q_Alloc, Instr_Q_Operation, Data_Q_Alloc, Data_Q_Operation, Data_Q_Data"); // Write header
+    #1000
+    $fclose(file);
   end
   localparam META_SIZE = 8;
 //  MSHR_Alloc

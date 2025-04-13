@@ -44,7 +44,7 @@ qn #(.N_WIDTH(32 + DATA_SIZE + 3 + 1 + OOO_TAG_SIZE + OOO_ROB_SIZE), .M_WIDTH(0)
     .n_din({rob_line_in, tag_in, is_flush_in, operation_in, addr_in, data_in}),
     .new_m_vector(2'b0),
     .wr(alloc), 
-    .rd(dealloc && valid),
+    .rd(dealloc && valid_out),
     .modify_vector(8'b0),
     .rst(rst | resteer),
     .clk(clk),
