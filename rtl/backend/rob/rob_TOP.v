@@ -66,10 +66,12 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
                 $fdisplay(fullfile, "ROB%0d\t= [(spec(archR%0d)\t<-\tphysR%0d),\tfree(physR%0d)],  \tRDY:%b\t\t\t\t\tROB%0d\t= [(spec(archR%0d)\t<-\tphysR%0d),\tfree(physR%0d)],  \tRDY:%b",
                             i, rob.rob_entries[i][$clog2(ARCHFILE_SIZE)+(2*$clog2(PHYSFILE_SIZE))-1:(2*$clog2(PHYSFILE_SIZE))],
                                rob.rob_entries[i][(2*$clog2(PHYSFILE_SIZE))-1:$clog2(PHYSFILE_SIZE)],
-                               rob.rob_entries[i][$clog2(PHYSFILE_SIZE)-1:0], rob.rdyvect[i],
+                               rob.rob_entries[i][$clog2(PHYSFILE_SIZE)-1:0],
+                               rob.rdyvect[i],
                             i+ROB_SIZE/2, rob.rob_entries[i+ROB_SIZE/2][$clog2(ARCHFILE_SIZE)+(2*$clog2(PHYSFILE_SIZE))-1:(2*$clog2(PHYSFILE_SIZE))],
                                rob.rob_entries[i+ROB_SIZE/2][(2*$clog2(PHYSFILE_SIZE))-1:$clog2(PHYSFILE_SIZE)],
-                               rob.rob_entries[i+ROB_SIZE/2][$clog2(PHYSFILE_SIZE)-1:0], rob.rdyvect[i+ROB_SIZE/2]);
+                               rob.rob_entries[i+ROB_SIZE/2][$clog2(PHYSFILE_SIZE)-1:0],
+                               rob.rdyvect[i+ROB_SIZE/2]);
             end
             $fdisplay(fullfile, "\n\n");
 
@@ -95,10 +97,11 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
                 if(~rob.rob_empty) begin
                     $fdisplay(sparsefile, "[====ROB ENTRIES====]");
                     for(i = rob.rd_ptr; i != rob.wr_ptr; i = (i + 1)%ROB_SIZE) begin
-                        $fdisplay(sparsefile, "ROB%0d\t= [(spec(archR%0d)<-physR%0d), free(physR%0d)]",
+                        $fdisplay(sparsefile, "ROB%0d\t= [(spec(archR%0d)<-physR%0d), free(physR%0d)], \tRDY:%b",
                                     i, rob.rob_entries[i][$clog2(ARCHFILE_SIZE)+(2*$clog2(PHYSFILE_SIZE))-1:(2*$clog2(PHYSFILE_SIZE))],
                                     rob.rob_entries[i][(2*$clog2(PHYSFILE_SIZE))-1:$clog2(PHYSFILE_SIZE)],
-                                    rob.rob_entries[i][$clog2(PHYSFILE_SIZE)-1:0]);
+                                    rob.rob_entries[i][$clog2(PHYSFILE_SIZE)-1:0],
+                                    rob.rdyvect[i]);
                     end
                 end
                 $fdisplay(sparsefile, "\n\n");

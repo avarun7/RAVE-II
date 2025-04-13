@@ -50,7 +50,7 @@ module physfile #(parameter PHYSFILE_SIZE=256,
         for(i = 0; i < PHYSFILE_SIZE; i = i + 1) begin
             physvect[i] <= {REG_SIZE{1'b0}};
         end
-        rdyvect <= {PHYSFILE_SIZE{1'b0}};
+        rdyvect <= {PHYSFILE_SIZE{1'b1}};
     end
 
 endmodule

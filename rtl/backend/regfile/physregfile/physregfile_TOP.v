@@ -11,7 +11,7 @@ module physregfile_TOP #(parameter PHYSFILE_SIZE=256,
     input [REG_SIZE-1:0] phys_ring_val,
 
     input rob_update,
-    input [$clog2(PHYSFILE_SIZE)-1:0] phys_rob_free,
+    input [$clog2(PHYSFILE_SIZE)-1:0] phys_rob_free, phys_rob_nonspec,
 
     input arch_update,
 
@@ -37,8 +37,8 @@ module physregfile_TOP #(parameter PHYSFILE_SIZE=256,
 
     freelist #(.PHYSFILE_SIZE(PHYSFILE_SIZE))
             fl(.clk(clk), .rst(rst),
-               .phys_rsv(arch_update), .phys_free(rob_update),
-               .phystag_rsv(next_free), .phystag_free(phys_rob_free),
+               .phys_rsv(arch_update), .phys_free(rob_update), .phys_nonspec(rob_update),
+               .phystag_rsv(next_free), .phystag_free(phys_rob_free), .phystag_nonspec(),
                .rollback(rollback),
                .none_free(none_free), .next_free(next_free));
 

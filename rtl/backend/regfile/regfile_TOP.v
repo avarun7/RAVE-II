@@ -70,7 +70,7 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
                 .phys_ring(phys_ring), .phys_ring_val(phys_ring_val),
                     //rob inputs
                 .rob_update(rob_update),
-                .phys_rob_free(phys_rob_free),
+                .phys_rob_free(phys_rob_free), .phys_rob_nonspec(arch_rob_nonspec_phys),
                     //1st cycle inputs
                 .arch_update(uop_update),
                     //rollback
@@ -108,11 +108,11 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
             end
             $fdisplay(fullfile, "[====PHYS REGFILE====]");
             for(i = 0; i < PHYSFILE_SIZE/4; i = i + 1) begin
-                $fdisplay(fullfile, "physR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b\t\t\tphysR%0d  \t= 0x%h, FREE:%b",
-                            i, prf.pf.physvect[i], prf.fl.freevect[i],
-                            i+PHYSFILE_SIZE/4, prf.pf.physvect[i+PHYSFILE_SIZE/4], prf.fl.freevect[i+PHYSFILE_SIZE/4],
-                            i+PHYSFILE_SIZE/2, prf.pf.physvect[i+PHYSFILE_SIZE/2], prf.fl.freevect[i+PHYSFILE_SIZE/2],
-                            i+3*PHYSFILE_SIZE/4, prf.pf.physvect[i+3*PHYSFILE_SIZE/2], prf.fl.freevect[i+3*PHYSFILE_SIZE/4]);
+                $fdisplay(fullfile, "physR%0d  \t= 0x%h, RDY:%b, FREE:%b\t\tphysR%0d  \t= 0x%h, RDY:%b, FREE:%b\t\tphysR%0d  \t= 0x%h, RDY:%b, FREE:%b\t\tphysR%0d  \t= 0x%h, RDY:%b, FREE:%b",
+                            i, prf.pf.physvect[i], prf.pf.rdyvect[i], prf.fl.freevect[i],
+                            i+PHYSFILE_SIZE/4, prf.pf.physvect[i+PHYSFILE_SIZE/4], prf.pf.rdyvect[i+PHYSFILE_SIZE/4], prf.fl.freevect[i+PHYSFILE_SIZE/4],
+                            i+PHYSFILE_SIZE/2, prf.pf.physvect[i+PHYSFILE_SIZE/2], prf.pf.rdyvect[i+PHYSFILE_SIZE/2], prf.fl.freevect[i+PHYSFILE_SIZE/2],
+                            i+3*PHYSFILE_SIZE/4, prf.pf.physvect[i+3*PHYSFILE_SIZE/4], prf.pf.rdyvect[i+3*PHYSFILE_SIZE/4], prf.fl.freevect[i+3*PHYSFILE_SIZE/4]);
             end
             $fdisplay(fullfile, "\n\n");
 
@@ -141,7 +141,7 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
                 end else begin 
                     for(i = 0; i < PHYSFILE_SIZE; i = i + 1) begin
                         if(~prf.fl.freevect[i]) begin
-                            $fdisplay(sparsefile, "physR%0d  \t= 0x%h", i, prf.pf.physvect[i]);
+                            $fdisplay(sparsefile, "physR%0d  \t= 0x%h, RDY:%b", i, prf.pf.physvect[i], prf.pf.rdyvect[i]);
                         end
                     end
                 end

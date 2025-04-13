@@ -189,7 +189,7 @@ initial begin
 
     // Wait for reset to complete
     #20;
-    test_phase = "Post-Reset";
+    test_phase = "Input Prop";
     mul_div_update = 1;
     mul_div_update_reg = 55;
     mul_div_update_val = 32'h12345678;
@@ -203,7 +203,7 @@ initial begin
 
     mul_div_update = 0;
     logical_update = 0;
-    #100;
+    #240;
 
     $finish;
 end
