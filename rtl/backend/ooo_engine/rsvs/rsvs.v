@@ -1,7 +1,7 @@
 // https://electronics.stackexchange.com/questions/266587/finding-an-empty-slot-in-an-array-of-registers
 // Use of pencoders for access
 
-module rsv #(parameter XLEN=32, SIZE=16, PHYS_REG_SIZE=256, ROB_SIZE=265, UOP_SIZE=16)( // Assume mapper handles SEXT
+module rsv #(parameter XLEN=32, SIZE=16, PHYS_REG_SIZE=256, ROB_SIZE=265, UOP_SIZE=16, RSV_NUM=0)( // Assume mapper handles SEXT
     input clk, rst, valid_in,
 
     // Organized as such within the RSV
@@ -32,9 +32,9 @@ module rsv #(parameter XLEN=32, SIZE=16, PHYS_REG_SIZE=256, ROB_SIZE=265, UOP_SI
 );
 
 reg[SIZE-1:0]                     free_list;
-wire[SIZE-1:0]                     available;
-wire[SIZE-1:0]                     rs1_update;
-wire[SIZE-1:0]                     rs2_update;
+wire[SIZE-1:0]                    available;
+wire[SIZE-1:0]                    rs1_update;
+wire[SIZE-1:0]                    rs2_update;
 wire[$clog2(SIZE)-1:0]            dispatch;
 wire[$clog2(SIZE)-1:0]            allocate;
 wire                              none_dispatch;
@@ -45,7 +45,7 @@ reg[$clog2(PHYS_REG_SIZE)-1:0]    rs1_reg_queue            [0:SIZE-1];
 reg                               rs1_received_queue       [0:SIZE-1];
 reg[XLEN-1:0]                     rs1_value_queue          [0:SIZE-1];
 reg[XLEN-1:0]                     pc_queue                 [0:SIZE-1];
-reg[$clog2(UOP_SIZE)-1:0]          uop_encoding_queue       [0:SIZE-1];
+reg[$clog2(UOP_SIZE)-1:0]         uop_encoding_queue       [0:SIZE-1];
 reg[XLEN-1:0]                     rs2_value_queue          [0:SIZE-1];
 reg                               rs2_received_queue       [0:SIZE-1];
 reg[$clog2(PHYS_REG_SIZE)-1:0]    rs2_reg_queue            [0:SIZE-1];
@@ -75,8 +75,22 @@ generate
         assign rs2_update[k] = (update_reg == rs2_reg_queue[k]) & !rs2_received_queue[k];
     end
 endgenerate
+always@(negedge rst) begin
+    for(i = 0; i < SIZE; i = i + 1) begin
+        rob_queue[i]            <= {$clog2(ROB_SIZE){1'b0}};
+        rs1_reg_queue[i]        <= {$clog2(PHYS_REG_SIZE){1'b0}};
+        rs1_received_queue[i]   <= 1'b0;                       
+        rs1_value_queue[i]      <= {XLEN{1'b0}};
+        pc_queue[i]             <= {XLEN{1'b0}};
+        uop_encoding_queue[i]   <= {$clog2(UOP_SIZE){1'b0}};
+        rs2_value_queue[i]      <= {XLEN{1'b0}};
+        rs2_received_queue[i]   <= 1'b0;                          
+        rs2_reg_queue[i]        <= {$clog2(PHYS_REG_SIZE){1'b0}};
+        dest_reg_queue[i]       <= {$clog2(PHYS_REG_SIZE){1'b0}};
+    end
+end
 
-always @(posedge clk or posedge rst) begin
+always @(posedge clk) begin
     
     if(!none_dispatch)begin
         // Dispatch to fu
@@ -121,6 +135,67 @@ always @(posedge clk or posedge rst) begin
     end
     
 end
+
+`ifdef DEBUG
+integer cycle_cnt;
+integer fullfile, sparsefile, retirefile;
+
+
+initial begin
+    cycle_cnt = 0;
+    if(RSV_NUM == 0) begin
+        fullfile = $fopen("./out/arithmetic_rsv.dump");
+        sparsefile = $fopen("./out/arithmetic_rsv_sparse.dump");
+    end
+    else if(RSV_NUM == 1) begin
+        fullfile = $fopen("./out/logical_rsv.dump");
+        sparsefile = $fopen("./out/logical_rsv_sparse.dump");
+    end 
+    else if(RSV_NUM == 2) begin
+        fullfile = $fopen("./out/branch_rsv.dump");
+        sparsefile = $fopen("./out/branch_rsv_sparse.dump");
+    end 
+    else if(RSV_NUM == 3) begin
+        fullfile = $fopen("./out/mul_div_rsv.dump");
+        sparsefile = $fopen("./out/mul_div_rsv_sparse.dump");
+    end
+    else if(RSV_NUM == 4) begin
+        fullfile = $fopen("./out/ld_st_rsv.dump");
+        sparsefile = $fopen("./out/ld_st_rsv_sparse.dump");
+    end
+    
+end
+
+always@(posedge clk) begin
+    $fdisplay(fullfile, "cycle number: %d", cycle_cnt);
+    $fdisplay(fullfile, "[====RSV UPDATES====]");
+    $fdisplay(fullfile, "UPDATE: %b\t--\t Reg: %0d \t--\t Value: %0d",update_valid, update_reg, update_val);
+    $fdisplay(fullfile, "[====RSV ENTRIES====]");
+    for(i=0; i<SIZE; i = i+1) begin
+        $fdisplay(fullfile, "RSV%0d\t= \t ROB: %0d ,\tRSV_1[REG%0d\tRDY\t%0d,VAL\t%0d],\tPC: %0d\t , \tRSV%0d\t= RSV_2[REG%0d\tRDY\t%0d,VAL\t%0d] \t DEST: %0d",
+        i,rob_queue[i], rs1_reg_queue[i], rs1_received_queue[i], rs1_value_queue[i], pc_queue[i], uop_encoding_queue[i], rs2_value_queue[i], rs2_received_queue[i], rs2_reg_queue[i], dest_reg_queue[i]);
+    end
+
+    $fdisplay(fullfile, "\n\n");
+
+    if(update_valid || (!none_allocate & valid_in) || !none_dispatch) begin
+        $fdisplay(sparsefile, "cycle number: %d", cycle_cnt);
+        if(!none_allocate & valid_in) begin
+            $fdisplay(sparsefile, "[====RSV UPDATES====]");
+            $fdisplay(sparsefile, "UPDATE: %b\t--\t Reg: %0d \t--\t Value: %0d",update_valid, update_reg, update_val);
+        end
+        $fdisplay(sparsefile, "[====RSV ENTRIES====]");
+        for(i=0; i<SIZE; i = i+1) begin
+            $fdisplay(sparsefile, "RSV%0d\t= \t ROB: %0d ,\tRSV_1[REG%0d\tRDY\t%0d,VAL\t%0d],\tPC: %0d\t ,\tRSV%0d\t= RSV_2[REG%0d\tRDY\t%0d,VAL\t%0d] \t DEST: %0d",
+            i,rob_queue[i], rs1_reg_queue[i], rs1_received_queue[i], rs1_value_queue[i], pc_queue[i], uop_encoding_queue[i], rs2_value_queue[i], rs2_received_queue[i], rs2_reg_queue[i], dest_reg_queue[i]);
+        end
+        $fdisplay(sparsefile, "\n\n");
+    end
+
+    cycle_cnt = cycle_cnt + 1;
+end
+`endif
+
 
 
 endmodule

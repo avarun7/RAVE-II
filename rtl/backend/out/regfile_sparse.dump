@@ -1,0 +1,133 @@
+cycle number:           1
+[====REGFILE UPDATES====]
+UPDATE FROM MAPPER: 1	--	archR0 <- UOP(archR0, archR0)
+UPDATE FROM MAPPER: 1	--	spec(archR0) <- physR127
+UPDATE FROM MAPPER: 1	--	rsv(physR127)
+[====ARCH REGFILE====]
+archR0: 	nonspec = physR0,  	spec = physR0
+archR1: 	nonspec = physR0,  	spec = physR0
+archR2: 	nonspec = physR0,  	spec = physR0
+archR3: 	nonspec = physR0,  	spec = physR0
+archR4: 	nonspec = physR0,  	spec = physR0
+archR5: 	nonspec = physR0,  	spec = physR0
+archR6: 	nonspec = physR0,  	spec = physR0
+archR7: 	nonspec = physR0,  	spec = physR0
+archR8: 	nonspec = physR0,  	spec = physR0
+archR9: 	nonspec = physR0,  	spec = physR0
+archR10: 	nonspec = physR0,  	spec = physR0
+archR11: 	nonspec = physR0,  	spec = physR0
+archR12: 	nonspec = physR0,  	spec = physR0
+archR13: 	nonspec = physR0,  	spec = physR0
+archR14: 	nonspec = physR0,  	spec = physR0
+archR15: 	nonspec = physR0,  	spec = physR0
+[====PHYS REGFILE====]
+NO ACTIVE PHYSREGS
+
+
+
+cycle number:           2
+[====REGFILE UPDATES====]
+UPDATE FROM MAPPER: 1	--	archR0 <- UOP(archR0, archR0)
+UPDATE FROM MAPPER: 1	--	spec(archR0) <- physR126
+UPDATE FROM MAPPER: 1	--	rsv(physR126)
+[====ARCH REGFILE====]
+archR0: 	nonspec = physR0,  	spec = physR127
+archR1: 	nonspec = physR0,  	spec = physR0
+archR2: 	nonspec = physR0,  	spec = physR0
+archR3: 	nonspec = physR0,  	spec = physR0
+archR4: 	nonspec = physR0,  	spec = physR0
+archR5: 	nonspec = physR0,  	spec = physR0
+archR6: 	nonspec = physR0,  	spec = physR0
+archR7: 	nonspec = physR0,  	spec = physR0
+archR8: 	nonspec = physR0,  	spec = physR0
+archR9: 	nonspec = physR0,  	spec = physR0
+archR10: 	nonspec = physR0,  	spec = physR0
+archR11: 	nonspec = physR0,  	spec = physR0
+archR12: 	nonspec = physR0,  	spec = physR0
+archR13: 	nonspec = physR0,  	spec = physR0
+archR14: 	nonspec = physR0,  	spec = physR0
+archR15: 	nonspec = physR0,  	spec = physR0
+[====PHYS REGFILE====]
+physR127  	= 0x00000000, RDY:1
+
+
+
+cycle number:          17
+[====REGFILE UPDATES====]
+UPDATE FROM RING:   1	--	physR127 <- 0x00000001
+[====ARCH REGFILE====]
+archR0: 	nonspec = physR0,  	spec = physR126
+archR1: 	nonspec = physR0,  	spec = physR0
+archR2: 	nonspec = physR0,  	spec = physR0
+archR3: 	nonspec = physR0,  	spec = physR0
+archR4: 	nonspec = physR0,  	spec = physR0
+archR5: 	nonspec = physR0,  	spec = physR0
+archR6: 	nonspec = physR0,  	spec = physR0
+archR7: 	nonspec = physR0,  	spec = physR0
+archR8: 	nonspec = physR0,  	spec = physR0
+archR9: 	nonspec = physR0,  	spec = physR0
+archR10: 	nonspec = physR0,  	spec = physR0
+archR11: 	nonspec = physR0,  	spec = physR0
+archR12: 	nonspec = physR0,  	spec = physR0
+archR13: 	nonspec = physR0,  	spec = physR0
+archR14: 	nonspec = physR0,  	spec = physR0
+archR15: 	nonspec = physR0,  	spec = physR0
+[====PHYS REGFILE====]
+physR126  	= 0x00000000, RDY:0
+physR127  	= 0x00000000, RDY:0
+
+
+
+cycle number:          19
+[====REGFILE UPDATES====]
+UPDATE FROM ROB:    1	--	nonspec(archR0) <- physR127
+UPDATE FROM ROB:    1	--	free(physR0)
+[====ARCH REGFILE====]
+archR0: 	nonspec = physR0,  	spec = physR126
+archR1: 	nonspec = physR0,  	spec = physR0
+archR2: 	nonspec = physR0,  	spec = physR0
+archR3: 	nonspec = physR0,  	spec = physR0
+archR4: 	nonspec = physR0,  	spec = physR0
+archR5: 	nonspec = physR0,  	spec = physR0
+archR6: 	nonspec = physR0,  	spec = physR0
+archR7: 	nonspec = physR0,  	spec = physR0
+archR8: 	nonspec = physR0,  	spec = physR0
+archR9: 	nonspec = physR0,  	spec = physR0
+archR10: 	nonspec = physR0,  	spec = physR0
+archR11: 	nonspec = physR0,  	spec = physR0
+archR12: 	nonspec = physR0,  	spec = physR0
+archR13: 	nonspec = physR0,  	spec = physR0
+archR14: 	nonspec = physR0,  	spec = physR0
+archR15: 	nonspec = physR0,  	spec = physR0
+[====PHYS REGFILE====]
+physR126  	= 0x00000000, RDY:0
+physR127  	= 0x00000001, RDY:1
+
+
+
+cycle number:          24
+[====REGFILE UPDATES====]
+UPDATE FROM RING:   1	--	physR127 <- 0x00000001
+[====ARCH REGFILE====]
+archR0: 	nonspec = physR127,  	spec = physR126
+archR1: 	nonspec = physR0,  	spec = physR0
+archR2: 	nonspec = physR0,  	spec = physR0
+archR3: 	nonspec = physR0,  	spec = physR0
+archR4: 	nonspec = physR0,  	spec = physR0
+archR5: 	nonspec = physR0,  	spec = physR0
+archR6: 	nonspec = physR0,  	spec = physR0
+archR7: 	nonspec = physR0,  	spec = physR0
+archR8: 	nonspec = physR0,  	spec = physR0
+archR9: 	nonspec = physR0,  	spec = physR0
+archR10: 	nonspec = physR0,  	spec = physR0
+archR11: 	nonspec = physR0,  	spec = physR0
+archR12: 	nonspec = physR0,  	spec = physR0
+archR13: 	nonspec = physR0,  	spec = physR0
+archR14: 	nonspec = physR0,  	spec = physR0
+archR15: 	nonspec = physR0,  	spec = physR0
+[====PHYS REGFILE====]
+physR126  	= 0x00000000, RDY:0
+physR127  	= 0x00000001, RDY:1
+
+
+

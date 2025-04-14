@@ -1,0 +1,3081 @@
+cycle number:           0
+[====ARCHREGREAD====]
+uop: 0xxx, eoi: x
+dest_arch: archRx
+use_imm: x, imm: 0xxxxxxxxx
+PC: 0xxxxxxxxx
+exception: x
+[====PHYSREGREAD====]
+uop: 0xxx, eoi: x
+dest_arch: archRx
+use_imm: x, imm: 0xxxxxxxxx
+PC: 0xxxxxxxxx
+exception: x
+[====DISPATCH-TO-RSV====]
+dispatch: x
+uop: 0xxx, eoi: x
+op1: rdy=x, tag=physRx, val=0xxxxxxxxx
+op2: rdy=x, tag=physRx, val=0xxxxxxxxx
+dest: tag=physRx
+PC: 0xxxxxxxxx
+rob_entry: ROBx
+[====DISPATCH-TO-ROB====]
+dispatch: x
+alloc([(spec(archRx)<-physRx), free(physRx)])
+exception: x
+
+
+
+cycle number:           1
+[====ARCHREGREAD====]
+uop: 0x00, eoi: 0
+dest_arch: archR0
+use_imm: 0, imm: 0x00000000
+PC: 0x00000000
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x00, eoi: 0
+dest_arch: archR0
+use_imm: 0, imm: 0x00000000
+PC: 0x00000000
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x00, eoi: 0
+op1: rdy=0, tag=physR0, val=0x00000000
+op2: rdy=0, tag=physR0, val=0x00000000
+dest: tag=physR0
+PC: 0x00000000
+rob_entry: ROB0
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR0), free(physR0)])
+exception: 0
+
+
+
+cycle number:           2
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000000
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x00, eoi: 0
+dest_arch: archR0
+use_imm: 0, imm: 0x00000000
+PC: 0x00000000
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x00, eoi: 0
+op1: rdy=x, tag=physRx, val=0xxxxxxxxx
+op2: rdy=x, tag=physRx, val=0xxxxxxxxx
+dest: tag=physRx
+PC: 0x00000000
+rob_entry: ROB0
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physRx), free(physRx)])
+exception: 0
+
+
+
+cycle number:           3
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000002
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000000
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x00, eoi: 0
+op1: rdy=x, tag=physRx, val=0xxxxxxxxx
+op2: rdy=x, tag=physRx, val=0xxxxxxxxx
+dest: tag=physRx
+PC: 0x00000000
+rob_entry: ROB0
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physRx), free(physRx)])
+exception: 0
+
+
+
+cycle number:           4
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000002
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000002
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 1
+uop: 0x20, eoi: 0
+op1: rdy=1, tag=physR0, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR127
+PC: 0x00000000
+rob_entry: ROB0
+[====DISPATCH-TO-ROB====]
+dispatch: 1
+alloc([(spec(archR0)<-physR127), free(physR0)])
+exception: 0
+
+
+
+cycle number:           5
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000004
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000002
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 1
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR127, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR126
+PC: 0x00000002
+rob_entry: ROB0
+[====DISPATCH-TO-ROB====]
+dispatch: 1
+alloc([(spec(archR0)<-physR126), free(physR127)])
+exception: 0
+
+
+
+cycle number:           6
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000004
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000004
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000002
+rob_entry: ROB1
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:           7
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000006
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000004
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000004
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:           8
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000006
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000006
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000004
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:           9
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000008
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000006
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000006
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          10
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000008
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000008
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000006
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          11
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000008
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000008
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          12
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000008
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          13
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000000a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          14
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000000a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          15
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000000c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          16
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000000c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          17
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000010
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000000e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000000e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          18
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000010
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000010
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000000e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          19
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000012
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000010
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000010
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          20
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000012
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000012
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000010
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          21
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000014
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000012
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000012
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          22
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000014
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000014
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000012
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          23
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000016
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000014
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000014
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          24
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000016
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000016
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000014
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          25
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000018
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000016
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000016
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          26
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000018
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000018
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000016
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          27
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000018
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000018
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          28
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000018
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          29
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000001a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          30
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000001a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          31
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000001c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          32
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000001c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          33
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000020
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000001e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000001e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          34
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000020
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000020
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000001e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          35
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000022
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000020
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000020
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          36
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000022
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000022
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000020
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          37
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000024
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000022
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000022
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          38
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000024
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000024
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000022
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          39
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000026
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000024
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000024
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          40
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000026
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000026
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000024
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          41
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000028
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000026
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000026
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          42
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000028
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000028
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000026
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          43
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000028
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000028
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          44
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000028
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          45
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000002a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          46
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000002a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          47
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000002c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          48
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000002c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          49
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000030
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000002e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000002e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          50
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000030
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000030
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000002e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          51
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000032
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000030
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000030
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          52
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000032
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000032
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000030
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          53
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000034
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000032
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000032
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          54
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000034
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000034
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000032
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          55
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000036
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000034
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000034
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          56
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000036
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000036
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000034
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          57
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000038
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000036
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000036
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          58
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000038
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000038
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000036
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          59
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000038
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000038
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          60
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000038
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          61
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000003a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          62
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000003a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          63
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000003c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          64
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000003c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          65
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000040
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000003e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000003e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          66
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000040
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000040
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000003e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          67
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000042
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000040
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000040
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          68
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000042
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000042
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000040
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          69
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000044
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000042
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000042
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          70
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000044
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000044
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000042
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          71
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000046
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000044
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000044
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          72
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000046
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000046
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000044
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          73
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000048
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000046
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000046
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          74
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000048
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000048
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000046
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          75
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000048
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000048
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          76
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000048
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          77
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000004a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          78
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000004a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          79
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000004c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          80
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000004c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          81
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000050
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000004e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000004e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          82
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000050
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000050
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000004e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          83
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000052
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000050
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000050
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          84
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000052
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000052
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000050
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          85
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000054
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000052
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000052
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          86
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000054
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000054
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000052
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          87
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000056
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000054
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000054
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          88
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000056
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000056
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000054
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          89
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000058
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000056
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000056
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          90
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000058
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000058
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000056
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          91
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000058
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000058
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          92
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000058
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          93
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000005a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          94
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000005a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          95
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005c
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000005c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          96
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005e
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000005c
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          97
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000060
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000005e
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000005e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          98
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000060
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000060
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000005e
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:          99
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000062
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000060
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000060
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         100
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000062
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000062
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000060
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         101
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000064
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000062
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000062
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         102
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000064
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000064
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000062
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         103
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000066
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000064
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000064
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         104
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000066
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000066
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000064
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         105
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000068
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000066
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000066
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         106
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000068
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000068
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000066
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         107
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000006a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x00000068
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000068
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         108
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000006a
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000006a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x00000068
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         109
+[====ARCHREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000006c
+exception: 0
+[====PHYSREGREAD====]
+uop: 0x20, eoi: 0
+dest_arch: archR0
+use_imm: 1, imm: 0x00000001
+PC: 0x0000006a
+exception: 0
+[====DISPATCH-TO-RSV====]
+dispatch: 0
+uop: 0x20, eoi: 0
+op1: rdy=0, tag=physR126, val=0x00000000
+op2: rdy=1, tag=physR0, val=0x00000001
+dest: tag=physR125
+PC: 0x0000006a
+rob_entry: ROB2
+[====DISPATCH-TO-ROB====]
+dispatch: 0
+alloc([(spec(archR0)<-physR125), free(physR127)])
+exception: 0
+
+
+
+cycle number:         110
