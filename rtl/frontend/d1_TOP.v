@@ -7,13 +7,13 @@ module d1_TOP #(parameter XLEN = 32) (
     input [3:0] IBuff_valid_in,   // New input: valid bits from IBuff (one per 128-bit region)
     input [31:0] pc_in,
     input resteer,
-    input [XLEN - 1:0] resteer_target_BR,
-    input [XLEN - 1:0] resteer_target_ROB,
+    // input [XLEN - 1:0] resteer_target_BR,
+    // input [XLEN - 1:0] resteer_target_ROB,
 
-    input bp_update,        // 1b
-    input bp_update_taken,  // 1b
-    input [XLEN - 1:0] bp_update_target,  // 32b
-    input [9:0] bp_update_bhr,
+    // input bp_update,        // 1b
+    // input bp_update_taken,  // 1b
+    // input [XLEN - 1:0] bp_update_target,  // 32b
+    // input [9:0] bp_update_bhr,
 
     // outputs
     output [XLEN - 1:0] pc,

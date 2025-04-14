@@ -54,37 +54,37 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
         end
     end
 
-        wire [CLC_WIDTH - 1:0] clc_even, clc_odd;
-        wire [XLEN - 1:0] c1_ras_target; 
-        wire c1_ras_valid;
+    wire [CLC_WIDTH - 1:0] clc_even, clc_odd;
+    wire [XLEN - 1:0] c1_ras_target; 
+    wire c1_ras_valid;
 
-        c_TOP #(.XLEN(XLEN), .CLC_WIDTH(CLC_WIDTH)) control(
-            .clk(clk), .rst(rst),
+    c_TOP #(.XLEN(XLEN), .CLC_WIDTH(CLC_WIDTH)) control(
+        .clk(clk), .rst(rst),
 
-            //inputs
-            .stall_in(stall_in),
-            .resteer(resteer),
-            
-            .resteer_target_D1(32'b0),
-            .resteer_taken_D1(1'b0),
+        //inputs
+        .stall_in(stall_in),
+        .resteer(resteer),
+        
+        .resteer_target_D1(32'b0),
+        .resteer_taken_D1(1'b0),
 
-            .resteer_target_BR(resteer_target_BR),
-            .resteer_taken_BR(mispredict_BR),
+        .resteer_target_BR(resteer_target_BR),
+        .resteer_taken_BR(mispredict_BR),
 
-            .resteer_target_ROB(resteer_target_ROB),
-            .resteer_taken_ROB(exception_ROB),
+        .resteer_target_ROB(resteer_target_ROB),
+        .resteer_taken_ROB(exception_ROB),
 
-            .ras_push(1'b0),
-            .ras_pop(1'b0),
-            .ras_ret_addr(32'b0),
-            .ras_valid_in(1'b0),
+        .ras_push(1'b0),
+        .ras_pop(1'b0),
+        .ras_ret_addr(32'b0),
+        .ras_valid_in(1'b0),
 
-            //outputs
-            .clc_even(clc_even),
-            .clc_odd(clc_odd),
-            .ras_data_out(c1_ras_target),
-            .ras_valid_out(c1_ras_valid)
-        );
+        //outputs
+        .clc_even(clc_even),
+        .clc_odd(clc_odd),
+        .ras_data_out(c1_ras_target),
+        .ras_valid_out(c1_ras_valid)
+    );
 
         wire [XLEN - 1:0] f1_addr_even, f1_addr_odd;
         wire f1_clc_even_valid, f1_clc_odd_valid, f1_pcd, f1_hit, f1_exceptions;
@@ -109,7 +109,8 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .addr_odd(cache_addr_odd)
         );
 
-        wire [XLEN - 1:0] IBuff_out, pc_out;
+        wire [511:0] IBuff_out;
+        wire [XLEN-1:0] f2_pc_out;
 
         f2_TOP #(.XLEN(XLEN)) fetch_2( 
             .clk(clk),  .rst(rst),
@@ -151,41 +152,44 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             //outputs
             .exceptions_out(),
             .IBuff_out(IBuff_out),
-            .pc_out(pc_out)
+            .pc_out(f2_pc_out)
         );
 
-        // d1_TOP #(.XLEN(XLEN)) opcode_decode(
-        //     .clk(clk), .rst(),
-        //     // inputs
-        //     .exception_in(),
-        //     .IBuff_in(),
-        //     .resteer(), //onehot, 2b, ROB or WB/BR
-        //     .resteer_target_BR(), //32b - mispredict
-        //     .resteer_target_ROB(), //32b - exception
+        wire [XLEN - 1:0] d1_pc_out;
+
+        d1_TOP #(.XLEN(XLEN)) opcode_decode(
+            .clk(clk), .rst(rst),
+            // inputs
+            .exception_in(1'b0),
+            .IBuff_in(IBuff_out),
+            .resteer(resteer),
+            .pc_in(f2_pc_out),
+            // .resteer_target_BR(), //32b - mispredict
+            // .resteer_target_ROB(), //32b - exception
     
-        //     .bp_update(), //1b
-        //     .bp_update_taken(), //1b
-        //     .bp_update_target(), //32b
-        //     .pcbp_update_bhr(),
+            // .bp_update(), //1b
+            // .bp_update_taken(), //1b
+            // .bp_update_target(), //32b
+            // .pcbp_update_bhr(),
             
-        //     // outputs
-        //     .pc(),
+            // outputs
+            .pc(d1_pc_out),
+            .exception_out(),
+            .opcode_format(), //format of the instruction - compressed or not
+            .instruction_out(), //expanded instruction
+            .instruction_valid(),   // New output: valid flag from the rotator
+            .compressed_inst(),
 
-        //     .exception_out(),
-        //     .opcode_format(), //format of the instruction - compressed or not
-        //     .instruction_out(), //expanded instruction
+            .resteer_D1(),
+            .resteer_target_D1(),
+            .resteer_taken(),
 
-        //     .resteer_D1(),
-        //     .resteer_target_D1(),
-        //     .resteer_taken(),
-        //     .clbp_update_bhr_D1(), // bhr to update in cache line branch predictor
-
-        //     .ras_push(),
-        //     .ras_pop(),
-        //     .ras_ret_addr()
+            .ras_push(),
+            .ras_pop(),
+            .ras_ret_addr()
 
 
-        // );
+        );
 
         // d2_TOP #(.XLEN(XLEN)) decode(
         //     .clk(clk), .rst(),
@@ -225,7 +229,6 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             $fwrite(file, "- addr_even: 0x%h\n", f1_addr_even);
             $fwrite(file, "- addr_odd: 0x%h\n", f1_addr_odd);
             $fwrite(file, "\n");
-
 
             $fwrite(file, "Fetch 2:\n");
             $fwrite(file, "- IBuff_out: 0x%h\n", IBuff_out);

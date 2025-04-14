@@ -42,7 +42,7 @@ module f2_TOP #(parameter XLEN = 32,
     
     // Outputs
     output reg exceptions_out,
-    output reg [XLEN - 1:0] IBuff_out, // Instruction (or word) sent to decode  
+    output reg [511:0] IBuff_out, // Instruction (or word) sent to decode  
     output reg [XLEN - 1:0] pc_out,
     output reg stall   // Stall signal if IBuff insertion is blocked
 );
@@ -81,7 +81,7 @@ module f2_TOP #(parameter XLEN = 32,
         .final_target_addr(final_target_addr)
     );
     
-    //--------------------------------------------------------------------------
+    //----------------------------------------------------------------------
     // PC and sequencing logic
     always @(posedge clk) begin
         if (rst) begin
@@ -112,7 +112,7 @@ module f2_TOP #(parameter XLEN = 32,
         pc_out <= pc;
     end
 
-    //--------------------------------------------------------------------------
+    //----------------------------------------------------------------------
     // IBuff connection signals
     // Replace the array of IBuff outputs with individual wires for Verilog 2005.
     wire [3:0] ibuff_valid;
