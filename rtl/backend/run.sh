@@ -1,4 +1,0 @@
-#!/bin/bash
-
-iverilog -o backend  -D DEBUG backend_TOP_tb.v backend_TOP.v mapper/mapper_TOP.v mapper/regread.v mapper/dispatch.v regfile/regfile_TOP.v regfile/archregfile/archregfile_TOP.v regfile/archregfile/archfile.v regfile/physregfile/physregfile_TOP.v regfile/physregfile/physfile.v regfile/physregfile/freelist.v rob/rob_TOP.v rob/rob.v ../lib/pencoder.v ooo_engine/ooo_engine_TOP.v ooo_engine/FUs/arithmetic_FU_TOP.v ooo_engine/FUs/branch_FU_TOP.v ooo_engine/FUs/ld_st_FU_TOP.v ooo_engine/FUs/logical_FU_TOP.v ooo_engine/FUs/md_FU_TOP.v ../lib/multi_insert_queue.v ooo_engine/ring/ring_rob.v ooo_engine/ring/ring_rsvs.v ooo_engine/rsvs/rsvs.v
-vvp backend
