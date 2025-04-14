@@ -170,9 +170,11 @@ always@(posedge clk) begin
     $fdisplay(fullfile, "cycle number: %d", cycle_cnt);
     $fdisplay(fullfile, "[====RSV UPDATES====]");
     $fdisplay(fullfile, "UPDATE: %b\t--\t Reg: %0d \t--\t Value: %0d",update_valid, update_reg, update_val);
+    $fdisplay(fullfile, "FREE_LIST: %b", free_list);
+    $fdisplay(fullfile, "AVAILABLE: %b", available);
     $fdisplay(fullfile, "[====RSV ENTRIES====]");
     for(i=0; i<SIZE; i = i+1) begin
-        $fdisplay(fullfile, "RSV%0d\t= \t ROB: %0d ,\tRSV_1[REG%0d\tRDY\t%0d,VAL\t%0d],\tPC: %0d\t , \tRSV%0d\t= RSV_2[REG%0d\tRDY\t%0d,VAL\t%0d] \t DEST: %0d",
+        $fdisplay(fullfile, "RSV%0d\t= \t ROB: %0d ,\tRSV_1[REG:%0d\tRDY:\t%0d,VAL:\t%0d],\tPC: %0d\t ,\UOP:%0d\t= RSV_2[VAL:%0d\tRDY:\t%0d,REG:\t%0d] \t DEST: %0d",
         i,rob_queue[i], rs1_reg_queue[i], rs1_received_queue[i], rs1_value_queue[i], pc_queue[i], uop_encoding_queue[i], rs2_value_queue[i], rs2_received_queue[i], rs2_reg_queue[i], dest_reg_queue[i]);
     end
 
@@ -184,9 +186,11 @@ always@(posedge clk) begin
             $fdisplay(sparsefile, "[====RSV UPDATES====]");
             $fdisplay(sparsefile, "UPDATE: %b\t--\t Reg: %0d \t--\t Value: %0d",update_valid, update_reg, update_val);
         end
+        $fdisplay(sparsefile, "FREE_LIST: %b", free_list);
+        $fdisplay(sparsefile, "AVAILABLE: %b", available);
         $fdisplay(sparsefile, "[====RSV ENTRIES====]");
         for(i=0; i<SIZE; i = i+1) begin
-            $fdisplay(sparsefile, "RSV%0d\t= \t ROB: %0d ,\tRSV_1[REG%0d\tRDY\t%0d,VAL\t%0d],\tPC: %0d\t ,\tRSV%0d\t= RSV_2[REG%0d\tRDY\t%0d,VAL\t%0d] \t DEST: %0d",
+            $fdisplay(sparsefile, "RSV%0d\t= \t ROB: %0d ,\tRSV_1[REG:%0d\tRDY:\t%0d,VAL:\t%0d],\tPC: %0d\t ,\UOP:%0d\t= RSV_2[VAL:%0d\tRDY:\t%0d,REG:\t%0d] \t DEST: %0d",
             i,rob_queue[i], rs1_reg_queue[i], rs1_received_queue[i], rs1_value_queue[i], pc_queue[i], uop_encoding_queue[i], rs2_value_queue[i], rs2_received_queue[i], rs2_reg_queue[i], dest_reg_queue[i]);
         end
         $fdisplay(sparsefile, "\n\n");

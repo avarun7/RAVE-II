@@ -153,8 +153,8 @@ always @(posedge clk ) begin
     // Use 3-bit sat counter, clear your entry when 6, only zero at insertion
     if(valid_in) begin
         ring_uop_disperse_functional_unit_num               <= functional_unit_num;
-        ring_uop_disperse_rs1_reg                           <= rob_entry;
-        ring_uop_disperse_rob_entry                         <= uop_rs1_reg;
+        ring_uop_disperse_rs1_reg                           <= uop_rs1_reg;
+        ring_uop_disperse_rob_entry                         <= rob_entry;
         ring_uop_disperse_rs1_received                      <= uop_rs1_received;
         ring_uop_disperse_rs1_value                         <= uop_rs1_value;
         ring_uop_disperse_pc                                <= uop_pc_in;

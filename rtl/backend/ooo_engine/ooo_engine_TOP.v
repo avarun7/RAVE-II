@@ -190,7 +190,7 @@ wire[$clog2(UOP_SIZE)-1:0]       logical_rsv_to_fu_uop_encoding;
 wire[$clog2(PHYS_REG_SIZE)-1:0] logical_rsv_to_fu_dest_reg;
 wire                            logical_rsv_to_fu_valid_out;
 
-rsv #(.XLEN(XLEN), .PHYS_REG_SIZE(PHYS_REG_SIZE), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE), .RSV_NUM(0)) logical_rsv(
+rsv #(.XLEN(XLEN), .PHYS_REG_SIZE(PHYS_REG_SIZE), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE), .RSV_NUM(1)) logical_rsv(
     .clk(clk), .rst(rst), .valid_in(ring_to_logical_valid),
 
     .rob_entry_in(ring_to_logical_rob_entry),
@@ -248,7 +248,7 @@ wire[$clog2(UOP_SIZE)-1:0]       arithmetic_rsv_to_fu_uop_encoding;
 wire[$clog2(PHYS_REG_SIZE)-1:0] arithmetic_rsv_to_fu_dest_reg;
 wire                            arithmetic_rsv_to_fu_valid_out;
 
-rsv #(.XLEN(XLEN), .PHYS_REG_SIZE(PHYS_REG_SIZE), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE), .RSV_NUM(1)) arithmetic_rsv(
+rsv #(.XLEN(XLEN), .PHYS_REG_SIZE(PHYS_REG_SIZE), .ROB_SIZE(ROB_SIZE), .UOP_SIZE(UOP_SIZE), .RSV_NUM(0)) arithmetic_rsv(
     .clk(clk), .rst(rst), .valid_in(ring_to_arithmetic_valid),
 
     .rob_entry_in(ring_to_arithmetic_rob_entry),
