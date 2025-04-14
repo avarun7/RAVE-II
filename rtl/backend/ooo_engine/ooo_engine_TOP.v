@@ -13,15 +13,15 @@ module ooo_engine_TOP#(parameter XLEN=32,PHYS_REG_SIZE=256, ROB_SIZE=256, UOP_SI
     input[$clog2(PHYS_REG_SIZE)-1:0]         mapper_to_ring_uop_rs2_reg,
     input[$clog2(PHYS_REG_SIZE)-1:0]         mapper_to_ring_dest_reg,
 
-    output reg                              out_reg_file_valid,
-    output reg[$clog2(PHYS_REG_SIZE)-1:0]   out_reg_file_update_reg,
-    output reg[XLEN-1:0]                    out_reg_file_update_val,
-    output reg[$clog2(ROB_ENTRY)-1:0]       out_reg_file_rob_entry,
+    output                                   out_reg_file_valid,
+    output[$clog2(PHYS_REG_SIZE)-1:0]         out_reg_file_update_reg,
+    output[XLEN-1:0]                          out_reg_file_update_val,
+    output[$clog2(ROB_SIZE)-1:0]             out_reg_file_rob_entry,
 
-    output wire                              out_rob_valid,
-    output wire[$clog2(PHYS_REG_SIZE)-1:0]   out_rob_update_reg,
-    output wire[XLEN-1:0]                    out_rob_update_val,
-    output wire[$clog2(ROB_SIZE)-1:0]        out_rob_rob_entry
+    output                                   out_rob_valid,
+    output[$clog2(PHYS_REG_SIZE)-1:0]        out_rob_update_reg,
+    output[XLEN-1:0]                         out_rob_update_val,
+    output[$clog2(ROB_SIZE)-1:0]             out_rob_rob_entry
 
 );
 

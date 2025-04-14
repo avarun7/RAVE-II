@@ -95,7 +95,7 @@ module backend_TOP #(parameter NUM_UOPS=32,
                .arch_rd1(src1_arch), .arch_rd2(src2_arch),
                .arch_wr(dest_arch),
                     //ring inputs
-               .ring_update(uop_finish_ooo_rob/*ring_update_ooo_rf*/),
+               .ring_update(ring_update_ooo_rf),
                .phys_ring(phys_ring_ooo_rf), .phys_ring_val(phys_ring_val_ooo_rf),
                     //ROB inputs
                .rob_update(rob_update_rob_rf),
@@ -124,9 +124,13 @@ module backend_TOP #(parameter NUM_UOPS=32,
                 .mapper_to_ring_uop_rs2_received(op2_rdy_map_ooo),
                 .mapper_to_ring_uop_rs2_reg(op2_tag_map_ooo),
                 .mapper_to_ring_dest_reg(dest_tag_map_ooo),
+                .out_reg_file_valid(ring_update_ooo_rf),
+                .out_reg_file_update_reg(phys_ring_ooo_rf),
+                .out_reg_file_update_val(phys_ring_val_ooo_rf),
+                .out_reg_file_rob_entry(),
                 .out_rob_valid(uop_finish_ooo_rob),
-                .out_rob_update_reg(phys_ring_ooo_rf),
-                .out_rob_update_val(phys_ring_val_ooo_rf),
+                .out_rob_update_reg(),
+                .out_rob_update_val(),
                 .out_rob_rob_entry(uop_finish_rob_entry_ooo_rob));
 
     rob_TOP #(.ARCHFILE_SIZE(ARCHFILE_SIZE), .PHYSFILE_SIZE(PHYSFILE_SIZE), .ROB_SIZE(ROB_SIZE))

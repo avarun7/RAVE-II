@@ -61,6 +61,9 @@ module TOP;
 
         #CYCLE_TIME;
         #CYCLE_TIME;
+
+        uop_ready = 1'b0;
+
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
