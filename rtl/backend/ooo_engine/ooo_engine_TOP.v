@@ -13,6 +13,11 @@ module ooo_engine_TOP#(parameter XLEN=32,PHYS_REG_SIZE=256, ROB_SIZE=256, UOP_SI
     input[$clog2(PHYS_REG_SIZE)-1:0]         mapper_to_ring_uop_rs2_reg,
     input[$clog2(PHYS_REG_SIZE)-1:0]         mapper_to_ring_dest_reg,
 
+    output reg                              out_reg_file_valid,
+    output reg[$clog2(PHYS_REG_SIZE)-1:0]   out_reg_file_update_reg,
+    output reg[XLEN-1:0]                    out_reg_file_update_val,
+    output reg[$clog2(ROB_ENTRY)-1:0]       out_reg_file_rob_entry,
+
     output wire                              out_rob_valid,
     output wire[$clog2(PHYS_REG_SIZE)-1:0]   out_rob_update_reg,
     output wire[XLEN-1:0]                    out_rob_update_val,
@@ -25,7 +30,7 @@ wire[$clog2(ROB_SIZE)-1:0]         ring_to_logical_rob_entry;
 wire                               ring_to_logical_rs1_received;
 wire[XLEN-1:0]                     ring_to_logical_rs1_value;
 wire[XLEN-1:0]                     ring_to_logical_pc;
-wire[$clog2(UOP_SIZE)-1:0]          ring_to_logical_uop_encoding;
+wire[$clog2(UOP_SIZE)-1:0]         ring_to_logical_uop_encoding;
 wire[XLEN-1:0]                     ring_to_logical_rs2_value;
 wire                               ring_to_logical_rs2_received;
 wire[$clog2(PHYS_REG_SIZE)-1:0]    ring_to_logical_rs2_reg;
@@ -73,7 +78,7 @@ wire[$clog2(ROB_SIZE)-1:0]         ring_to_ld_st_rob_entry;
 wire                               ring_to_ld_st_rs1_received;
 wire[XLEN-1:0]                     ring_to_ld_st_rs1_value;
 wire[XLEN-1:0]                     ring_to_ld_st_pc;
-wire[$clog2(UOP_SIZE)-1:0]          ring_to_ld_st_uop_encoding;
+wire[$clog2(UOP_SIZE)-1:0]         ring_to_ld_st_uop_encoding;
 wire[XLEN-1:0]                     ring_to_ld_st_rs2_value;
 wire                               ring_to_ld_st_rs2_received;
 wire[$clog2(PHYS_REG_SIZE)-1:0]    ring_to_ld_st_rs2_reg;
@@ -443,6 +448,11 @@ ring_rob #(.XLEN(XLEN), .PHYS_REG_SIZE(PHYS_REG_SIZE), .RF_QUEUE(RF_QUEUE), .UOP
     .mul_div_update_reg(mul_div_fu_to_ring_dest_reg),
     .mul_div_update_val(mul_div_fu_to_ring_result),
     .mul_div_rob_entry(mul_div_fu_to_ring_rob_entry),
+
+    .out_reg_file_valid(out_reg_file_valid),
+    .out_reg_file_update_reg(out_reg_file_update_reg),
+    .out_reg_file_update_val(out_reg_file_update_val),
+    .out_reg_file_rob_entry(out_reg_file_rob_entry),
 
     .out_rob_valid(out_rob_valid),
     .out_rob_update_reg(out_rob_update_reg),
