@@ -110,7 +110,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
         );
 
         wire [511:0] IBuff_out;
-        wire [XLEN-1:0] pc_out;
+        wire [XLEN-1:0] f2_pc_out;
 
         f2_TOP #(.XLEN(XLEN)) fetch_2( 
             .clk(clk),  .rst(rst),
@@ -152,8 +152,10 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             //outputs
             .exceptions_out(),
             .IBuff_out(IBuff_out),
-            .pc_out(pc_out)
+            .pc_out(f2_pc_out)
         );
+
+        wire [XLEN - 1:0] d1_pc_out;
 
         d1_TOP #(.XLEN(XLEN)) opcode_decode(
             .clk(clk), .rst(rst),
@@ -161,6 +163,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .exception_in(1'b0),
             .IBuff_in(IBuff_out),
             .resteer(resteer),
+            .pc_in(f2_pc_out),
             // .resteer_target_BR(), //32b - mispredict
             // .resteer_target_ROB(), //32b - exception
     
@@ -170,7 +173,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             // .pcbp_update_bhr(),
             
             // outputs
-            .pc(),
+            .pc(d1_pc_out),
             .exception_out(),
             .opcode_format(), //format of the instruction - compressed or not
             .instruction_out(), //expanded instruction

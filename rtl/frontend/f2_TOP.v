@@ -47,7 +47,7 @@ module f2_TOP #(parameter XLEN = 32,
     output reg stall   // New stall signal generated if IBuff insertion cannot occur
 );
 
-    //--------------------------------------------------------------------------
+    //----------------------------------------------------------------------
     // File logging (unchanged)
     integer file;
     integer cycle_number = 0;
@@ -59,7 +59,7 @@ module f2_TOP #(parameter XLEN = 32,
         end
     end
 
-    //--------------------------------------------------------------------------
+    //----------------------------------------------------------------------
     // Branch Predictor instantiation (unchanged except for pc connection)
     wire final_predict_taken;
     wire [XLEN-1:0] final_target_addr;
@@ -77,7 +77,7 @@ module f2_TOP #(parameter XLEN = 32,
         .final_target_addr(final_target_addr)
     );
     
-    //--------------------------------------------------------------------------
+    //----------------------------------------------------------------------
     // PC and sequencing logic
     reg [XLEN - 1:0] pc;
     reg [XLEN - 1:0] pc_last;
@@ -111,15 +111,16 @@ module f2_TOP #(parameter XLEN = 32,
         pc_out <= pc;
     end
 
-    //--------------------------------------------------------------------------
+    //----------------------------------------------------------------------
     // IBuff connection signals
+    // Replace the old multi-dimensional array with a single flattened bus.
     wire [3:0]          ibuff_valid;
-    wire [CL_SIZE-1:0]  ibuff_data_out [3:0];
+    wire [4*CL_SIZE-1:0] ibuff_data_out_flat;
     wire [3:0]          ibuff_load;
     // For simplicity, we tie the invalidate signal to zero.
     wire [3:0]          ibuff_invalidate = 4'b0000;
     
-    //--------------------------------------------------------------------------
+    //----------------------------------------------------------------------
     // Combinational logic: Determine which IBuff slot to load
     // (Slots 0 and 2 are for even data; Slots 1 and 3 for odd data.)
     reg [3:0] load_signals;
@@ -159,8 +160,8 @@ module f2_TOP #(parameter XLEN = 32,
         stall = stall_due_to_ibuff;
     end
     
-    //--------------------------------------------------------------------------
-    // Instantiate the IBuff, connecting inputs from the icache and using our load signals.
+    //----------------------------------------------------------------------
+    // Instantiate the IBuff, now using the flattened output port.
     IBuff #(.CACHE_LINE_SIZE(CL_SIZE)) ibuff (
         .clk(clk),
         .rst(rst || resteer),
@@ -168,12 +169,18 @@ module f2_TOP #(parameter XLEN = 32,
         .invalidate(ibuff_invalidate),
         .data_in_even(clc_data_in_even),
         .data_in_odd(clc_data_in_odd),
-        .data_out(ibuff_data_out),
+        .data_out_flat(ibuff_data_out_flat),  // Updated flattened port connection
         .valid_out(ibuff_valid)
     );
     
-    //--------------------------------------------------------------------------
-    // Logging the cycle (unchanged)
+    //----------------------------------------------------------------------
+    // Assign the flattened IBuff output to the module's IBuff_out register.
+    always @(posedge clk) begin
+         IBuff_out <= ibuff_data_out_flat;
+    end
+
+    //----------------------------------------------------------------------
+    // Logging the cycle
     always @(posedge clk) begin
         cycle_number = cycle_number + 1;
         $fwrite(file, "Cycle number: %d\n", cycle_number);

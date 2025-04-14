@@ -8,14 +8,16 @@ module IBuff #(
     input  logic [3:0]                invalidate,    // Invalidate signals for each entry
     input  logic [CACHE_LINE_SIZE-1:0] data_in_even,  // Even cache line input 
     input  logic [CACHE_LINE_SIZE-1:0] data_in_odd,   // Odd cache line input
-    output logic [CACHE_LINE_SIZE-1:0] data_out [3:0],  // Outputs for all 4 entries
+    
+    // Flattened output: concatenated four 128-bit entries, with
+    // data_out_flat[4*CACHE_LINE_SIZE-1:3*CACHE_LINE_SIZE] corresponding to buffer[3], etc.
+    output logic [4*CACHE_LINE_SIZE-1:0] data_out_flat,
     output logic [3:0]                valid_out      // Valid bits for each entry
 );
 
     // Internal storage for the 4 entries
     logic [CACHE_LINE_SIZE-1:0] buffer [3:0];
     logic [3:0] valid_bits;
-
     integer i;
     
     always @(posedge clk or posedge rst) begin
@@ -38,12 +40,10 @@ module IBuff #(
         end
     end
 
-    // Continuous assignment of outputs:
-    always @(*) begin
-        for (i = 0; i < 4; i = i + 1) begin
-            data_out[i] = buffer[i];
-        end
-        valid_out = valid_bits;
+    // On each clock, update the flattened output.
+    always @(posedge clk) begin
+        data_out_flat <= {buffer[3], buffer[2], buffer[1], buffer[0]};
+        valid_out     <= valid_bits;
     end
 
 endmodule
