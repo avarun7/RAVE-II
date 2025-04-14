@@ -1,7 +1,7 @@
 #!/bin/bash
 
 python3 mem_gen.py
-cat $1 | while read line 
+cat loadlist.f | while read line 
 do
    python3 mem_load.py $line
    mv loaded_banke_data.hex banke_data.hex
