@@ -109,8 +109,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
     
     dispatch #(.NUM_UOPS(NUM_UOPS), .XLEN(XLEN), .ARCHFILE_SIZE(ARCHFILE_SIZE),
                .PHYSFILE_SIZE(PHYSFILE_SIZE), .ROB_SIZE(ROB_SIZE))
-            disp(.clk(clk), .rst(rst),
-                 //RR inputs
+            disp(//RR inputs
                  .valid_in(valid_prr_disp),
                  .uop_in(uop_prr_disp), .eoi_in(eoi_prr_disp),
                  .dest_arch_in(dest_arch_prr_disp),

@@ -61,6 +61,13 @@ module TOP;
 
         #CYCLE_TIME;
         #CYCLE_TIME;
+        #CYCLE_TIME;
+        #CYCLE_TIME;
+        #CYCLE_TIME;
+        #CYCLE_TIME;
+        #CYCLE_TIME;
+        #CYCLE_TIME;
+        #CYCLE_TIME;
 
         uop_ready = 1'b0;
 
@@ -73,6 +80,10 @@ module TOP;
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
+
+        uop_ready = 1'b1;
+
+        
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
@@ -82,6 +93,9 @@ module TOP;
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
+
+        uop_ready = 1'b0;
+
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
@@ -91,6 +105,10 @@ module TOP;
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
+
+                uop_ready = 1'b1;
+
+        
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
@@ -100,67 +118,9 @@ module TOP;
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
-        #CYCLE_TIME;
+
+        uop_ready = 1'b0;
+
         #CYCLE_TIME;
         #CYCLE_TIME;
         #CYCLE_TIME;
