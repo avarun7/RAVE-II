@@ -1,0 +1,8 @@
+cycle,alu_op,alu_result,alu_zero,alu_carry,alu_overflow
+0,ADD,42,0,1,0
+1,SUB,17,0,0,0
+2,AND,5,0,0,0
+3,OR,63,0,0,0
+4,XOR,26,0,0,0
+5,ADD,99,0,1,0
+6,SUB,11,1,0,0
