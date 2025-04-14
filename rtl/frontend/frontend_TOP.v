@@ -63,7 +63,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
         .clk(clk), .rst(rst),
 
         //inputs
-        .stall_in(stall_in),
+        .stall_in(stall_in || ic_stall || (!mem_hit_even && !mem_hit_odd)),
         .resteer(resteer),
         
         .resteer_target_D1(32'b0),
@@ -96,7 +96,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .clc_even_in(clc_even),
             .clc_odd_in(clc_odd),
             
-            .stall_in(stall_in || ic_stall),
+            .stall_in(stall_in || ic_stall || (!mem_hit_even && !mem_hit_odd)),
             
             //outputs
             .pcd(),         //don't cache MMIO
@@ -112,7 +112,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
 
         wire [511:0] IBuff_out;
         wire [XLEN-1:0] f2_pc_out;
-
+        wire[3:0] ibuff_valid,ibuff_valid2;
         f2_TOP #(.XLEN(XLEN)) fetch_2( 
             .clk(clk),  .rst(rst),
             //inputs
@@ -151,6 +151,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .resteer_taken_ras(ras_valid_out),
 
             //outputs
+            .ibuff_valid(ibuff_valid2),
             .exceptions_out(),
             .IBuff_out(IBuff_out),
             .pc_out(f2_pc_out)
@@ -163,6 +164,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             // inputs
             .exception_in(1'b0),
             .IBuff_in(IBuff_out),
+            .IBuff_valid_in(ibuff_valid2),
             .resteer(resteer),
             .pc_in(f2_pc_out),
             // .resteer_target_BR(), //32b - mispredict

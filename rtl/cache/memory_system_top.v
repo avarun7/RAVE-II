@@ -534,7 +534,7 @@ icache_TOP #(
     .is_write_even(is_write_even),
     .is_write_odd(is_write_odd),
 
-    .stall(stall),
+    .stall(ic_stall),
     .exception(exception),
     //TODO: VERIFY THAT CHANGING VAR NAMES DOESN"T MESS stuff up
     //  src_dir_2_all_even
