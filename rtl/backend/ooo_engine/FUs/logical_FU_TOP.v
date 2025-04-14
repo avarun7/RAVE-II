@@ -22,16 +22,16 @@ module logical_FU#(parameter XLEN=32, ROB_SIZE=256, UOP_SIZE=16, PHYS_REG_SIZE=2
 
             if(UOP_SIZE == 5'b01101) result <= rs1;
             else begin
-                case (uop[2:0])
-                    3'b100: // XOR
+                case (uop[3:0])
+                    4'b0100: // XOR
                         result <= rs1 ^ rs2;
-                    3'b110: // OR
+                    4'b0110: // OR
                         result <= rs1 | rs2;
-                    3'b111: // AND
+                    4'b0111: // AND
                         result <= rs1 & rs2;
-                    3'b001: // Logical Left Shift
+                    4'b0001: // Logical Left Shift
                         result <= rs1 << (rs2 & 5'b11111);
-                    3'b101: // Right shift
+                    4'b0101: // Right shift
                         if(uop[0]) 
                             result <= ($signed(rs1) >>> (rs2 & 5'b11111));
                         else                

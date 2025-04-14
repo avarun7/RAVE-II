@@ -22,14 +22,14 @@ always @(posedge clk) begin
     else if(valid_in) begin
         valid_out <= 1;
         case (uop)
-            3'b000: // Add/Sub
+            4'b000: // Add/Sub
                 if(uop[0])
                     result <= $signed(rs1) - $signed(rs2);
                 else 
                     result <= $signed(rs1) + $signed(rs2);
-            3'b010: // Set Less than, needs to be intepreted as signed
+            4'b010: // Set Less than, needs to be intepreted as signed
                 result <= ($signed(rs2) > $signed(rs1)) ? 1'b1 : 1'b0;
-            3'b011: // Set Less than Unsigned
+            4'b011: // Set Less than Unsigned
                 result <= (rs2 > rs1) ? 1 : 0; 
 
             default: 
