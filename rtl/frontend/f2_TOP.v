@@ -42,7 +42,7 @@ module f2_TOP #(parameter XLEN = 32,
     
     // Outputs
     output reg exceptions_out,
-    output reg [XLEN - 1:0] IBuff_out, // Instruction (or word) sent to decode  
+    output reg [511:0] IBuff_out, // Instruction (or word) sent to decode  
     output reg [XLEN - 1:0] pc_out,
     output reg stall   // New stall signal generated if IBuff insertion cannot occur
 );
