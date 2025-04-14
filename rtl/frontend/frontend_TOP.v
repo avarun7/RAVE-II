@@ -41,7 +41,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
     initial begin
         file = $fopen("frontend.log", "w");
         if (file == 0) begin
-            $display("Error: Failed to open file");
+            $display("Error: Failed to open file frontend.log");
             $finish;
         end
     end
@@ -87,7 +87,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .clc_even_in(clc_even),
             .clc_odd_in(clc_odd),
             
-            .stall_in(mem_sys_stall),
+            .stall_in(stall_in || mem_sys_stall),
             
             //outputs
             .pcd(),         //don't cache MMIO
@@ -233,34 +233,34 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             $fwrite(file, "\n");
 
             $fwrite(file, "Control:\n");
-            $fwrite(file, "clc_even: 0x%h\n", clc_even);
-            $fwrite(file, "clc_odd: 0x%h\n", clc_odd);
-            $fwrite(file, "c1_ras_target: 0x%h\n", c1_ras_target);
-            $fwrite(file, "c1_ras_valid: %d\n", c1_ras_valid);
+            $fwrite(file, "- clc_even: 0x%h\n", clc_even);
+            $fwrite(file, "- clc_odd: 0x%h\n", clc_odd);
+            $fwrite(file, "- c1_ras_target: 0x%h\n", c1_ras_target);
+            $fwrite(file, "- c1_ras_valid: %d\n", c1_ras_valid);
             $fwrite(file, "\n");
 
             $fwrite(file, "Fetch 1:\n");
-            $fwrite(file, "addr_even_valid: %b\n", f1_clc_even_valid);
-            $fwrite(file, "addr_odd_valid: %b\n", f1_clc_odd_valid);
-            $fwrite(file, "addr_even: 0x%h\n", f1_addr_even);
-            $fwrite(file, "addr_odd: 0x%h\n", f1_addr_odd);
+            $fwrite(file, "- addr_even_valid: %b\n", f1_clc_even_valid);
+            $fwrite(file, "- addr_odd_valid: %b\n", f1_clc_odd_valid);
+            $fwrite(file, "- addr_even: 0x%h\n", f1_addr_even);
+            $fwrite(file, "- addr_odd: 0x%h\n", f1_addr_odd);
             $fwrite(file, "\n");
 
             $fwrite(file, "Memory System:\n");
-            $fwrite(file, "mem_hit_even: %b\n", mem_hit_even);
-            $fwrite(file, "mem_hit_odd: %b\n", mem_hit_odd);
-            $fwrite(file, "cl_even: 0x%h\n", cl_even);
-            $fwrite(file, "cl_odd: 0x%h\n", cl_odd);
-            $fwrite(file, "addr_out_even: 0x%h\n", addr_out_even);
-            $fwrite(file, "addr_out_odd: 0x%h\n", addr_out_odd);
-            $fwrite(file, "is_write_even: %b\n", is_write_even);
-            $fwrite(file, "is_write_odd: %b\n", is_write_odd);
-            $fwrite(file, "mem_sys_stall: %b\n", mem_sys_stall);
+            $fwrite(file, "- mem_hit_even: %b\n", mem_hit_even);
+            $fwrite(file, "- mem_hit_odd: %b\n", mem_hit_odd);
+            $fwrite(file, "- cl_even: 0x%h\n", cl_even);
+            $fwrite(file, "- cl_odd: 0x%h\n", cl_odd);
+            $fwrite(file, "- addr_out_even: 0x%h\n", addr_out_even);
+            $fwrite(file, "- addr_out_odd: 0x%h\n", addr_out_odd);
+            $fwrite(file, "- is_write_even: %b\n", is_write_even);
+            $fwrite(file, "- is_write_odd: %b\n", is_write_odd);
+            $fwrite(file, "- mem_sys_stall: %b\n", mem_sys_stall);
             $fwrite(file, "\n");
 
             $fwrite(file, "Fetch 2:\n");
-            $fwrite(file, "IBuff_out: 0x%h\n", IBuff_out);
-            $fwrite(file, "pc_out: 0x%h\n", pc_out);
+            $fwrite(file, "- IBuff_out: 0x%h\n", IBuff_out);
+            $fwrite(file, "- pc_out: 0x%h\n", pc_out);
 
             $fwrite(file, "----------------------------------------------------\n\n");
         end
