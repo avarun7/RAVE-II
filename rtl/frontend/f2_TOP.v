@@ -1,6 +1,6 @@
 module f2_TOP #(parameter XLEN = 32,
-                  parameter CL_SIZE = 128, // Cache line size (bits)
-                  parameter CLC_WIDTH = 28)
+                parameter CL_SIZE = 128, // Cache line size (bits)
+                parameter CLC_WIDTH = 28)
 (
     input  clk,
     input  rst,
@@ -44,11 +44,11 @@ module f2_TOP #(parameter XLEN = 32,
     output reg exceptions_out,
     output reg [XLEN - 1:0] IBuff_out, // Instruction (or word) sent to decode  
     output reg [XLEN - 1:0] pc_out,
-    output reg stall   // New stall signal generated if IBuff insertion cannot occur
+    output reg stall   // Stall signal if IBuff insertion is blocked
 );
 
     //--------------------------------------------------------------------------
-    // File logging (unchanged)
+    // File logging
     integer file;
     integer cycle_number = 0;
     initial begin
@@ -60,14 +60,18 @@ module f2_TOP #(parameter XLEN = 32,
     end
 
     //--------------------------------------------------------------------------
-    // Branch Predictor instantiation (unchanged except for pc connection)
+    // PC and sequencing signals (declared before use)
+    reg [XLEN - 1:0] pc;
+    reg [XLEN - 1:0] pc_last;
+    
+    //--------------------------------------------------------------------------
+    // Branch Predictor instantiation
     wire final_predict_taken;
     wire [XLEN-1:0] final_target_addr;
-    
     predictor_btb_wrapper btb_inst (
         .clk(clk),
         .reset(rst),
-        .branch_addr(pc),                // Instruction address from fetch stage
+        .branch_addr(pc),
         .branch_outcome(resolved_taken),
         .update(update_btb),
         .update_addr(resolved_pc),
@@ -79,14 +83,11 @@ module f2_TOP #(parameter XLEN = 32,
     
     //--------------------------------------------------------------------------
     // PC and sequencing logic
-    reg [XLEN - 1:0] pc;
-    reg [XLEN - 1:0] pc_last;
-    
     always @(posedge clk) begin
         if (rst) begin
             pc      <= 0;
             pc_last <= 0;
-        end else if (stall_in || stall) begin  // also stall if IBuff insertion is blocked
+        end else if (stall_in || stall) begin  // Stall if IBuff insertion is blocked
             pc      <= pc;
             pc_last <= pc_last;
         end else if (resteer) begin
@@ -113,17 +114,22 @@ module f2_TOP #(parameter XLEN = 32,
 
     //--------------------------------------------------------------------------
     // IBuff connection signals
-    wire [3:0]          ibuff_valid;
-    wire [CL_SIZE-1:0]  ibuff_data_out [3:0];
-    wire [3:0]          ibuff_load;
-    // For simplicity, we tie the invalidate signal to zero.
-    wire [3:0]          ibuff_invalidate = 4'b0000;
+    // Replace the array of IBuff outputs with individual wires for Verilog 2005.
+    wire [3:0] ibuff_valid;
+    wire [CL_SIZE-1:0] ibuff_data_out0;
+    wire [CL_SIZE-1:0] ibuff_data_out1;
+    wire [CL_SIZE-1:0] ibuff_data_out2;
+    wire [CL_SIZE-1:0] ibuff_data_out3;
+    
+    wire [3:0] ibuff_load;
+    // Tie the invalidate signal to zero.
+    wire [3:0] ibuff_invalidate;
+    assign ibuff_invalidate = 4'b0000;
     
     //--------------------------------------------------------------------------
-    // Combinational logic: Determine which IBuff slot to load
-    // (Slots 0 and 2 are for even data; Slots 1 and 3 for odd data.)
+    // Combinational logic: Determine which IBuff slot to load.
     reg [3:0] load_signals;
-    reg       stall_due_to_ibuff;
+    reg stall_due_to_ibuff;
     
     always @(*) begin
         load_signals = 4'b0000;
@@ -150,30 +156,36 @@ module f2_TOP #(parameter XLEN = 32,
         end
     end
     
-    // Drive the IBuff load vector with the computed signals.
     assign ibuff_load = load_signals;
     
-    // Generate the overall stall signal (ORing with other stalls if needed)
+    // Drive the overall stall signal.
     always @(*) begin
-        // Here, the stall signal reflects that the IBuff cannot accept the new line.
         stall = stall_due_to_ibuff;
     end
     
+    // To avoid using an inline logical OR in the port connection,
+    // create an intermediate wire for the IBuff reset.
+    wire ibuff_rst;
+    assign ibuff_rst = rst | resteer;
+    
     //--------------------------------------------------------------------------
-    // Instantiate the IBuff, connecting inputs from the icache and using our load signals.
+    // Instantiate the IBuff with updated port names (Verilog 2005 compliant).
     IBuff #(.CACHE_LINE_SIZE(CL_SIZE)) ibuff (
-        .clk(clk),
-        .rst(rst || resteer),
-        .load(ibuff_load),
-        .invalidate(ibuff_invalidate),
-        .data_in_even(clc_data_in_even),
-        .data_in_odd(clc_data_in_odd),
-        .data_out(ibuff_data_out),
-        .valid_out(ibuff_valid)
+         .clk(clk),
+         .rst(ibuff_rst),
+         .load(ibuff_load),
+         .invalidate(ibuff_invalidate),
+         .data_in_even(clc_data_in_even),
+         .data_in_odd(clc_data_in_odd),
+         .data_out0(ibuff_data_out0),
+         .data_out1(ibuff_data_out1),
+         .data_out2(ibuff_data_out2),
+         .data_out3(ibuff_data_out3),
+         .valid_out(ibuff_valid)
     );
     
     //--------------------------------------------------------------------------
-    // Logging the cycle (unchanged)
+    // Logging the cycle.
     always @(posedge clk) begin
         cycle_number = cycle_number + 1;
         $fwrite(file, "Cycle number: %d\n", cycle_number);
@@ -181,12 +193,6 @@ module f2_TOP #(parameter XLEN = 32,
         $fwrite(file, "pc_out: 0x%h\n", pc_out);
         $fwrite(file, "\n");
     end
-    
-    final begin
-        $fclose(file);
-    end
 
-    // Additional logic (e.g. determining which IBuff output packet to send to decode)
-    // can be developed as needed.
     
 endmodule
