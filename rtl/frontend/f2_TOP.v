@@ -104,9 +104,9 @@ reg [XLEN - 1:0] pc_last;
                 pc      <= resteer_target_ras;
                 pc_last <= resteer_target_ras;
             end
-        end else begin
+        end else if (|ibuff_valid) begin
             pc_last <= pc;
-            pc      <= pc + 32;
+            pc      <= pc + 4;
         end
         
         pc_out <= pc;

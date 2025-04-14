@@ -53,8 +53,8 @@ module byte_rotator #(parameter XLEN = 32) (
 
     // Rotate the 512-bit input by shift*8 bits.
     wire [511:0] rotated_data;
-    assign rotated_data = (data_in << (shift * 8)) | (data_in >> ((64 - shift) * 8));
-    assign data_out = rotated_data[511 -: XLEN];
+    assign rotated_data = (data_in >> (shift * 8)) | (data_in << ((64 - shift) * 8));
+    assign data_out = rotated_data[XLEN-1:0];
 
     //--------------------------------------------------------------------------
     // Compute the equivalent slice in the original (unrotated) data.
