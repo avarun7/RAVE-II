@@ -1,40 +1,48 @@
-module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (    
-        input clk, rst,
+module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (   
+    input clk, rst,
 
-        //inputs
-        input resteer,
-        input stall_in,
-        
-        input mispredict_BR,
-        input [XLEN - 1:0] resteer_target_BR, //32b - mispredict
-        input [9:0] bhr_update_BR,
-        
-        //from backend
-        input exception_ROB, //exception
-        input [XLEN - 1:0] resteer_target_ROB, //32b - exception
-        input [9:0] bhr_update_ROB,
+    //inputs
+    input resteer,
+    input stall_in,
 
-        input bp_update, //1b
-        input bp_update_taken,                  // Branch taken/not-taken decision 
-        input [XLEN - 1:0] br_resolved_pc,      // Address of resolved branch
-        input [XLEN - 1:0] br_resolved_target,  // Branch taken/not-taken decision
-        
-        //TODO: potentially a interrupt/exception target vector signal
-        
-        //outputs
-        output valid_out,
-        output uop, //micro-op //TODO: decide uops
-        output eoi, //Tells if uop is end of instruction
-        output [4:0] dr, 
-        output [4:0] sr1, 
-        output [4:0] sr2, 
-        output [XLEN - 1:0] imm,
-        output use_imm,
-        output [XLEN - 1:0] pc,
-        output exception, //vector with types, flagged as NOP for OOO engine
-        output [9:0] bp_bhr  // bhr from pc branch predictor
+    input mispredict_BR,
+    input [XLEN - 1:0] resteer_target_BR, //32b - mispredict
+    input [9:0] bhr_update_BR,
+    
+    //from backend
+    input exception_ROB, //exception
+    input [XLEN - 1:0] resteer_target_ROB, //32b - exception
+    input [9:0] bhr_update_ROB,
 
-    );
+    input bp_update, //1b
+    input bp_update_taken,                  // Branch taken/not-taken decision 
+    input [XLEN - 1:0] br_resolved_pc,      // Address of resolved branch
+    input [XLEN - 1:0] br_resolved_target,  // Branch taken/not-taken decision
+    
+    // I$ Outputs
+    input wire mem_hit_even, mem_hit_odd,
+    input wire [CL_SIZE-1:0] cl_even, cl_odd,
+    input wire [XLEN-1:0] addr_out_even, addr_out_odd,
+    input wire is_write_even, is_write_odd,
+    input ic_stall,
+    input ic_exception,
+
+    // I$ Inputs
+    output wire [XLEN - 1:0] cache_addr_even, cache_addr_odd,
+
+    //outputs
+    output valid_out,
+    output uop, //micro-op //TODO: decide uops
+    output eoi, //Tells if uop is end of instruction
+    output [4:0] dr, 
+    output [4:0] sr1, 
+    output [4:0] sr2, 
+    output [XLEN - 1:0] imm,
+    output use_imm,
+    output [XLEN - 1:0] pc,
+    output exception, //vector with types, flagged as NOP for OOO engine
+    output [9:0] bp_bhr  // bhr from pc branch predictor
+);
 
     integer file;
     integer cycle_number = 0;
@@ -87,7 +95,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .clc_even_in(clc_even),
             .clc_odd_in(clc_odd),
             
-            .stall_in(stall_in || mem_sys_stall),
+            .stall_in(stall_in || ic_stall),
             
             //outputs
             .pcd(),         //don't cache MMIO
@@ -97,34 +105,8 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .addr_even_valid(f1_clc_even_valid),
             .addr_odd_valid(f1_clc_odd_valid),
 
-            .addr_even(f1_addr_even),
-            .addr_odd(f1_addr_odd)
-        );
-
-        wire mem_hit_even, mem_hit_odd;
-        wire [CL_SIZE-1:0] cl_even, cl_odd;
-        wire [XLEN-1:0] addr_out_even, addr_out_odd;
-        wire is_write_even, is_write_odd;
-        wire mem_sys_stall;
-
-        memory_system_top icache (
-            .clk(clk), 
-            .rst(rst),
-            .addr_even(f1_addr_even),
-            .addr_odd(f1_addr_odd),
-    
-            //outputs
-            .hit_even(mem_hit_even),
-            .hit_odd(mem_hit_odd),
-            .cl_even(cl_even),
-            .cl_odd(cl_odd),
-    
-            .addr_out_even(addr_out_even),
-            .addr_out_odd(addr_out_odd),
-            .is_write_even(is_write_even),
-            .is_write_odd(is_write_odd),
-            .stall(mem_sys_stall),
-            .exception()        
+            .addr_even(cache_addr_even),
+            .addr_odd(cache_addr_odd)
         );
 
         wire [XLEN - 1:0] IBuff_out, pc_out;
@@ -170,9 +152,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .exceptions_out(),
             .IBuff_out(IBuff_out),
             .pc_out(pc_out)
-            
         );
-
 
         // d1_TOP #(.XLEN(XLEN)) opcode_decode(
         //     .clk(clk), .rst(),
@@ -246,17 +226,6 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             $fwrite(file, "- addr_odd: 0x%h\n", f1_addr_odd);
             $fwrite(file, "\n");
 
-            $fwrite(file, "Memory System:\n");
-            $fwrite(file, "- mem_hit_even: %b\n", mem_hit_even);
-            $fwrite(file, "- mem_hit_odd: %b\n", mem_hit_odd);
-            $fwrite(file, "- cl_even: 0x%h\n", cl_even);
-            $fwrite(file, "- cl_odd: 0x%h\n", cl_odd);
-            $fwrite(file, "- addr_out_even: 0x%h\n", addr_out_even);
-            $fwrite(file, "- addr_out_odd: 0x%h\n", addr_out_odd);
-            $fwrite(file, "- is_write_even: %b\n", is_write_even);
-            $fwrite(file, "- is_write_odd: %b\n", is_write_odd);
-            $fwrite(file, "- mem_sys_stall: %b\n", mem_sys_stall);
-            $fwrite(file, "\n");
 
             $fwrite(file, "Fetch 2:\n");
             $fwrite(file, "- IBuff_out: 0x%h\n", IBuff_out);
