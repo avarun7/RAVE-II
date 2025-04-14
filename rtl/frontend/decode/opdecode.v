@@ -25,7 +25,7 @@ assign first_sev = instr_in[6:0];
 assign op_mul_add = instr_in[26:25];
 wire [4:0] rs1;
 assign rs1 = instr_in[19:15];
-wire[4:0] rst2;
+wire[4:0] rs2;
 assign rs2 = instr_in[24:20];
 wire [4:0] rd; 
 assign rd = instr_in[11:7];
