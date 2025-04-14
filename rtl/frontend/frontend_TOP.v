@@ -31,15 +31,16 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
     output wire [XLEN - 1:0] cache_addr_even, cache_addr_odd,
 
     //outputs
-    output valid_out,
-    output uop, //micro-op //TODO: decide uops
-    output eoi, //Tells if uop is end of instruction
-    output [4:0] dr, 
-    output [4:0] sr1, 
-    output [4:0] sr2, 
-    output [XLEN - 1:0] imm,
-    output use_imm,
-    output [XLEN - 1:0] pc,
+    output uop_ready_out, 
+    output [6:0] uop_out, 
+    output eoi_out,
+    output [XLEN-1:0] imm_out, 
+    output use_imm_out,
+    output [XLEN-1:0] pc_out,
+    output except_out,
+    output [4:0] src1_arch_out, 
+    output [4:0] src2_arch_out,
+    output [4:0] dest_arch_out,
     output exception, //vector with types, flagged as NOP for OOO engine
     output [9:0] bp_bhr  // bhr from pc branch predictor
 );
@@ -155,7 +156,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .pc_out(f2_pc_out)
         );
 
-        wire [XLEN - 1:0] d1_pc_out;
+        wire [XLEN - 1:0] d1_pc_out, d1_instr_out;
 
         d1_TOP #(.XLEN(XLEN)) opcode_decode(
             .clk(clk), .rst(rst),
@@ -176,8 +177,8 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             .pc(d1_pc_out),
             .exception_out(),
             .opcode_format(), //format of the instruction - compressed or not
-            .instruction_out(), //expanded instruction
-            .instruction_valid(),   // New output: valid flag from the rotator
+            .instruction_out(d1_instr_out), //expanded instruction
+            .instruction_valid(d1_instr_val),   // New output: valid flag from the rotator
             .compressed_inst(),
 
             .resteer_D1(),
@@ -191,25 +192,26 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
 
         );
 
-        // d2_TOP #(.XLEN(XLEN)) decode(
-        //     .clk(clk), .rst(),
-        //     // Inputs
-        //     .pc_in(),
-            
-        //     .exception_in(),
-        //     .uop_count(),
-        //     .opcode_format(),
-        //     .instruction_in(),
-            
-        //     // Outputs
-        //     .uop(),
-        //     .eoi(),
-        //     .dr(), .sr1(), .sr2(), .imm(),
-        //     .use_imm(),
-        //     .pc_out(),
-        //     .exception_out()
-        // );
+        opdecode #(parameter XLEN=32) opdec(
+           .clk(clk),
+           .rst(rst),
         
+            .pc_in(d1_pc_out),
+            .valid_instr_in(d1_instr_val),
+            .instr_in(d1_instr_out),
+        
+            //Outputs to backend
+            .uop_ready_out(uop_ready_out),
+            .uop_out(uop_out),
+            .eoi_out(eoi_out),
+            .imm_out(imm_out),
+            .use_imm_out(use_imm_out),
+            .pc_out(pc_out),
+            .except_out(except_out),
+            .src1_arch_out(src1_arch_out),
+            .src2_arch_out(src2_arch_out),
+            .dest_arch_out(dest_arch_out)
+        );
 
         always @(posedge clk) begin
             cycle_number = cycle_number + 1;

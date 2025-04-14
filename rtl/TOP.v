@@ -10,25 +10,45 @@ module TOP();
     localparam RSV_SIZE=8;
     localparam ROB_SIZE=64;
 
-    reg clk;
+    initial begin
+        rst = 1;
+        #20
+        rst = 0;
+    end
+    reg clk, rst;
     initial begin
         clk = 1'b1;
         forever #(CYCLE_TIME / 2.0) clk = ~clk;
     end
     
+    wire[31:0] addr_even, addr_odd, addr_out_even,addr_out_odd;
+    wire hit_even, hit_odd, is_write_even, is_write_odd, ic_stall, ic_exception;
+    wire [127:0] cl_even, cl_odd;
+
+    wire             uop_readyc;
+    wire [6:0]       uopc;
+    wire             eoic;
+    wire [XLEN-1:0]  immc;
+    wire             use_immc;
+    wire [XLEN-1:0]  pc;
+    wire             exceptc;
+    wire [4:0]       src1_archc;
+    wire [4:0]       src2_archc;
+    wire [4:0]       dest_archc;
+
     frontend_TOP frontend (
     .clk(clk), .rst(rst),
 
     //inputs
-    .resteer(resteer),
-    .stall_in(stall_in),
+    .resteer(1'b0),
+    .stall_in(1'b0),
 
     .mispredict_BR(0),
     .resteer_target_BR(0), //32b - mispredict
     .bhr_update_BR(10'b0),
 
-    .exception_ROB(exception_ROB),
-    .resteer_target_ROB(addr_ROB), //32b - exception
+    .exception_ROB(0),
+    .resteer_target_ROB(0), //32b - exception
     .bhr_update_ROB(10'b0),
 
 
@@ -36,9 +56,6 @@ module TOP();
     .bp_update_taken(1'b0), //1b
     .br_resolved_pc(32'b0), //32b
     .br_resolved_target(32'b0),
-
-    .addr_even(addr_even),
-       .addr_odd(addr_odd),
 
     // I$ Inputs
     .addr_even(addr_even),
@@ -53,23 +70,24 @@ module TOP();
     .is_write_even(is_write_even),
     .is_write_odd(is_write_odd),
     .ic_stall(ic_stall),
-    .exception(exception),
+    .exception(ic_exception),
 
-    .valid_out(),
-    .uop(),
-    .eoi(),
-    .dr(),
-    .sr1(),
-    .sr2(),
-    .imm(),
-    .use_imm(),
-    .pc(),
-    .exception(),
-    .bp_bhr()
+    .uop_ready_out(uop_ready),
+    .uop_out(uop),
+    .eoi_out(eoi),
+    .imm_out(imm),
+    .use_imm_out(use_imm),
+    .pc_out(pc),
+    .except_out(except),
+    .src1_arch_out(src1_arch),
+    .src2_arch_out(src2_arch),
+    .dest_arch_out(dest_arch),
+    .exception(exception),
+    .bp_bhr(bp_bht)
 
 );
 
-    memory_system_top #(.CL_SIZE(128), .OOO_TAG_SIZE(10), .TAG_SIZE(18), .IDX_CNT(512), .OOO_ROB_SIZE(10)) 
+memory_system_top #(.CL_SIZE(128), .OOO_TAG_SIZE(10), .TAG_SIZE(18), .IDX_CNT(512), .OOO_ROB_SIZE(10)) 
     mem_sys_inst (
        .clk(clk),
        .rst(rst),
@@ -92,11 +110,11 @@ module TOP();
        .is_write_odd(is_write_odd),
 
        .ic_stall(ic_stall),
-       .exception(exception),
+       .exception(ic_exception),
 
        //dc
 
-       .ls_unit_alloc(ls_unit_alloc), //Data from RAS is valid or not
+       .ls_unit_alloc(1'b0), //Data from RAS is valid or not
        .addr_in(addr_in),
        .data_in(data_in),
        .size_in(size_in), //
@@ -107,7 +125,7 @@ module TOP();
 
        //FROM ROB
        .rob_ret_tag_in(rob_ret_tag_in), //Show top of ROB tag
-       .rob_valid(rob_valid), //bit to say whether or not the top of the rob is valid or not
+       .rob_valid(1'b0), //bit to say whether or not the top of the rob is valid or not
        .rob_resteer(rob_resteer), //Signal if there is a flush from ROB
        
        //TO ROB
@@ -127,7 +145,7 @@ module TOP();
    backend_TOP #(.NUM_UOPS(NUM_UOPS), .XLEN(XLEN), .ARCHFILE_SIZE(ARCHFILE_SIZE),
                   .PHYSFILE_SIZE(PHYSFILE_SIZE), .REG_SIZE(REG_SIZE), .RSV_SIZE(RSV_SIZE),
                   .ROB_SIZE(ROB_SIZE))
-            be(.clk(clk), .rst(rst),
+            be(.clk(clk), .rst(!rst),
                .uop_ready(uop_ready), .uop(uop), .eoi(eoi),
                .imm(imm), .use_imm(use_imm),
                .pc(pc),
