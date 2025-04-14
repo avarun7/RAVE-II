@@ -173,23 +173,6 @@ module f2_TOP #(parameter XLEN = 32,
     );
     
     //--------------------------------------------------------------------------
-    // Simple selection logic to send one word from IBuff to decode.
-    // (In a complete design, this logic would use the PC to select the correct word/line.)
-    always @(*) begin
-        if (ibuff_valid[0])
-            // Extract the lower 32 bits; in practice you may choose based on a PC offset.
-            IBuff_out = ibuff_data_out[0][31:0];
-        else if (ibuff_valid[1])
-            IBuff_out = ibuff_data_out[1][31:0];
-        else if (ibuff_valid[2])
-            IBuff_out = ibuff_data_out[2][31:0];
-        else if (ibuff_valid[3])
-            IBuff_out = ibuff_data_out[3][31:0];
-        else
-            IBuff_out = 32'h0;
-    end
-    
-    //--------------------------------------------------------------------------
     // Logging the cycle (unchanged)
     always @(posedge clk) begin
         cycle_number = cycle_number + 1;
