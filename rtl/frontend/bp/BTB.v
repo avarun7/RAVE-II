@@ -50,10 +50,10 @@ module branch_target_buffer (
   // When a branch is resolved (update is high), the BTB is updated.
   // If the branch was taken, the BTB entry is updated with the target address;
   // if not taken, the entry is invalidated.
+  integer i;
   always @(posedge clk) begin
     if (reset) begin
       // Invalidate all BTB entries on reset.
-      integer i;
       for (i = 0; i < BTB_ENTRIES; i = i + 1) begin
          valid[i]       <= 1'b0;
          tag_array[i]   <= 24'b0;

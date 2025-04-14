@@ -51,6 +51,8 @@ localparam PLS = 15; //Pending Load Store (edge case where store comes after loa
 
 wire [(1+1+1+OOO_TAG_SIZE)*8-1:0] old_m_vector;
 wire [(1+1+1+OOO_TAG_SIZE)*8-1:0] new_m_vector;
+wire [(1+1+1+OOO_TAG_SIZE)*8-1:0] old_m_vector;
+wire [(1+1+1+OOO_TAG_SIZE)*8-1:0] new_m_vector;
 reg[7:0] wr_ptr, rd_ptr;
 wire[8-1:0] modify_vector;
 qnm #(.N_WIDTH(32+32+3+2), .M_WIDTH(1+1+1+OOO_TAG_SIZE), .Q_LENGTH(8)) q1(

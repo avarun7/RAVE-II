@@ -1,146 +1,199 @@
-module f2_TOP #(parameter XLEN=32) (
-    input clk, rst,
-
-    input stall_in
-
-    //inputs
-    input [XLEN - 1:0] clc_paddr, //TODO
-    input [XLEN - 1:0] clc_vaddr, //TODO
-
-    input pcd,         //don't cache MMIO
-    input hit,
-    input [1:0] way, //TODO
-    input exceptions,
-
-    input [XLEN - 1:0] bppf_paddr, //TODO
-    input bppf_valid,
-
-    input [XLEN - 1:0] nlpf_paddr, //TODO
-    input nlpf_valid,
-
-    //TAG_STORE
-    input [XLEN - 1:0] tag_evict, //TODO
-
-    //DATASTORE
-    input [2:0] l2_icache_op, 
-    input [2:0] l2_icache_state,
-    input [XLEN - 1:0] l2_icache_addr,
-    input [511:0] l2_icache_data_in,
-
+module f2_TOP #(parameter XLEN = 32,
+                  parameter CL_SIZE = 128, // Cache line size (bits)
+                  parameter CLC_WIDTH = 28)
+(
+    input  clk,
+    input  rst,
+    input  stall_in,
+    
+    // Icache outputs
+    input  [CL_SIZE - 1:0] clc_data_in_even,
+    input  [CL_SIZE - 1:0] clc_data_in_odd,
+    input  clc_data_even_hit,
+    input  clc_data_odd_hit,
+    
+    input  pcd,         // don't cache MMIO
+    input  hit,
+    input  [1:0] way,   // TODO: way selection if needed
+    input  exceptions,
+    
     // Branch resolution inputs
-    input update_btb,                    // Signal to update BTB (from branch resolution)
-    input [XLEN-1:0] resolved_pc,        // Address of resolved branch
-    input [XLEN-1:0] resolved_target,    // Actual target of the branch
-    input resolved_taken,                // Branch taken/not-taken decision
-
-    //resteers
-    input resteer,
-    input [XLEN - 1:0] resteer_target_D1,
-    input resteer_taken_D1,
-    output [XLEN - 1:0] resteer_target_BR,
-    output resteer_taken_BR,
-    input [XLEN - 1:0] resteer_target_ROB,
-    input resteer_taken_ROB,
-    input [XLEN - 1:0] resteer_target_ras,
-    input resteer_taken_ras,
-
-
-
-    //outputs
-    output exceptions_out,
-
-    //Tag Store Overwrite
-    output [XLEN - 1:0] tag_ovrw, //TODO
-    output [1:0] way_ovrw,  //TODO
-
-    output [XLEN - 1:0] IBuff_out,
-
-    output prefetch_valid,
-    output [XLEN - 1:0] prefetch_addr,
-
-    //Datastore
-    output [2:0] icache_l2_op,
-    output [2:0] icache_l2_state,
-    output [XLEN - 1:0] icache_l2_addr,
-    output [511:0] icache_l2_data_out
-
-    //PC 
-    output [XLEN - 1:0] pc_out
-
+    input  update_btb,                    
+    input  [XLEN-1:0] resolved_pc,        
+    input  [XLEN-1:0] resolved_target,    
+    input  resolved_taken,                
+    
+    // resteer signals
+    input  resteer,
+    
+    input  [XLEN - 1:0] resteer_target_D1,
+    input  resteer_taken_D1,
+    
+    input  [XLEN - 1:0] resteer_target_BR,
+    input  resteer_taken_BR,
+    input  [9:0] bp_update_bhr_BR,  
+    
+    input  [XLEN - 1:0] resteer_target_ROB,
+    input  resteer_taken_ROB,
+    input  [9:0] bp_update_bhr_ROB,
+    
+    input  [XLEN - 1:0] resteer_target_ras,
+    input  resteer_taken_ras,
+    
+    // Outputs
+    output reg exceptions_out,
+    output reg [511:0] IBuff_out, // Instruction (or word) sent to decode  
+    output reg [XLEN - 1:0] pc_out,
+    output reg stall   // New stall signal generated if IBuff insertion cannot occur
 );
 
-//BP instantiation
-// Branch Prediction Wires
-wire final_predict_taken;
-wire [XLEN-1:0] final_target_addr;
-
-// Instantiate Branch Predictor
-predictor_btb_wrapper btb_inst (
-    .clk(clk),
-    .reset(rst),
-    .branch_addr(clc_paddr),         // Instruction address from fetch stage
-    .branch_outcome(resolved_taken), // Outcome from branch resolution
-    .update(update_btb),             // Update BTB when a branch is resolved
-    .update_addr(resolved_pc),       // Address of resolved branch
-    .actual_target(resolved_target), // Actual branch target
-    .branch_taken(resolved_taken),   // Branch taken/not-taken decision
-    .final_predict_taken(final_predict_taken), // Prediction output
-    .final_target_addr(final_target_addr)      // Predicted target address
-);
-
-// Use the prediction results
-assign prefetch_valid = final_predict_taken;
-assign prefetch_addr  = final_target_addr;
-
-//IBUFF instantiation
-
-
-IBuff #(.CACHE_LINE_SIZE(128)) ibuff(
-    .clk(clk),
-    .rst(rst || resteer),
-    .load(),
-    .data_in(), // Data inputs for each entry
-    .data_out(), // Outputs for all 4 entries
-    .valid_out()          // Valid bits for each entry
-);
-
-byte_rotator rotator (
-    .data_in(),
-    .shift(),
-    .data_out()
-);
-
-//PC instantiation
-reg [XLEN - 1:0] pc;
-
-always @(posedge clk) begin
-    if (rst) begin
-        pc <= 0;
-    end else if (stall_in) begin
-        pc <= pc;
-    end else if (resteer) begin
-        if (resteer_taken_ROB) begin
-            pc <= resteer_target_ROB;
-        end else if (resteer_taken_D1) begin
-            pc <= resteer_target_D1;
-        end else if () begin
-            pc <= ;
-        end else if (ras_valid_out) begin
-            pc <= ras_data_out;
+    //----------------------------------------------------------------------
+    // File logging (unchanged)
+    integer file;
+    integer cycle_number = 0;
+    initial begin
+        file = $fopen("f2.log", "w");
+        if (file == 0) begin
+            $display("Error: Failed to open file f2.log");
+            $finish;
         end
-    end else begin
-        pc <= pc + 64;
     end
-end
 
-endmodule
+    //----------------------------------------------------------------------
+    // Branch Predictor instantiation (unchanged except for pc connection)
+    wire final_predict_taken;
+    wire [XLEN-1:0] final_target_addr;
+    
+    predictor_btb_wrapper btb_inst (
+        .clk(clk),
+        .reset(rst),
+        .branch_addr(pc),                // Instruction address from fetch stage
+        .branch_outcome(resolved_taken),
+        .update(update_btb),
+        .update_addr(resolved_pc),
+        .actual_target(resolved_target),
+        .branch_taken(resolved_taken),
+        .final_predict_taken(final_predict_taken),
+        .final_target_addr(final_target_addr)
+    );
+    
+    //----------------------------------------------------------------------
+    // PC and sequencing logic
+    reg [XLEN - 1:0] pc;
+    reg [XLEN - 1:0] pc_last;
+    
+    always @(posedge clk) begin
+        if (rst) begin
+            pc      <= 0;
+            pc_last <= 0;
+        end else if (stall_in || stall) begin  // also stall if IBuff insertion is blocked
+            pc      <= pc;
+            pc_last <= pc_last;
+        end else if (resteer) begin
+            if (resteer_taken_ROB) begin
+                pc      <= resteer_target_ROB;
+                pc_last <= resteer_target_ROB;
+            end else if (resteer_taken_D1) begin
+                pc      <= resteer_target_D1;
+                pc_last <= resteer_target_D1;
+            end else if (resteer_taken_BR) begin
+                pc      <= resteer_target_BR;
+                pc_last <= resteer_target_BR;
+            end else if (resteer_taken_ras) begin
+                pc      <= resteer_target_ras;
+                pc_last <= resteer_target_ras;
+            end
+        end else begin
+            pc_last <= pc;
+            pc      <= pc + 32;
+        end
+        
+        pc_out <= pc;
+    end
 
-module byte_rotator (
-    input wire [511:0] data_in, // 512-bit input (64 bytes)
-    input wire [5:0] shift,     // 6-bit shift amount (0-63)
-    output reg [511:0] data_out // 512-bit output
-);
+    //----------------------------------------------------------------------
+    // IBuff connection signals
+    // Replace the old multi-dimensional array with a single flattened bus.
+    wire [3:0]          ibuff_valid;
+    wire [4*CL_SIZE-1:0] ibuff_data_out_flat;
+    wire [3:0]          ibuff_load;
+    // For simplicity, we tie the invalidate signal to zero.
+    wire [3:0]          ibuff_invalidate = 4'b0000;
+    
+    //----------------------------------------------------------------------
+    // Combinational logic: Determine which IBuff slot to load
+    // (Slots 0 and 2 are for even data; Slots 1 and 3 for odd data.)
+    reg [3:0] load_signals;
+    reg       stall_due_to_ibuff;
+    
     always @(*) begin
-        data_out = (data_in << (shift * 8)) | (data_in >> ((64 - shift) * 8));
+        load_signals = 4'b0000;
+        stall_due_to_ibuff = 1'b0;
+        
+        // Even data: if an even cache line is ready (hit), try slot 0 first, then slot 2.
+        if (clc_data_even_hit) begin
+            if (!ibuff_valid[0])
+                load_signals[0] = 1'b1;
+            else if (!ibuff_valid[2])
+                load_signals[2] = 1'b1;
+            else
+                stall_due_to_ibuff = 1'b1;
+        end
+        
+        // Odd data: if an odd cache line is ready (hit), try slot 1 first, then slot 3.
+        if (clc_data_odd_hit) begin
+            if (!ibuff_valid[1])
+                load_signals[1] = 1'b1;
+            else if (!ibuff_valid[3])
+                load_signals[3] = 1'b1;
+            else
+                stall_due_to_ibuff = 1'b1;
+        end
     end
+    
+    // Drive the IBuff load vector with the computed signals.
+    assign ibuff_load = load_signals;
+    
+    // Generate the overall stall signal (ORing with other stalls if needed)
+    always @(*) begin
+        // Here, the stall signal reflects that the IBuff cannot accept the new line.
+        stall = stall_due_to_ibuff;
+    end
+    
+    //----------------------------------------------------------------------
+    // Instantiate the IBuff, now using the flattened output port.
+    IBuff #(.CACHE_LINE_SIZE(CL_SIZE)) ibuff (
+        .clk(clk),
+        .rst(rst || resteer),
+        .load(ibuff_load),
+        .invalidate(ibuff_invalidate),
+        .data_in_even(clc_data_in_even),
+        .data_in_odd(clc_data_in_odd),
+        .data_out_flat(ibuff_data_out_flat),  // Updated flattened port connection
+        .valid_out(ibuff_valid)
+    );
+    
+    //----------------------------------------------------------------------
+    // Assign the flattened IBuff output to the module's IBuff_out register.
+    always @(posedge clk) begin
+         IBuff_out <= ibuff_data_out_flat;
+    end
+
+    //----------------------------------------------------------------------
+    // Logging the cycle
+    always @(posedge clk) begin
+        cycle_number = cycle_number + 1;
+        $fwrite(file, "Cycle number: %d\n", cycle_number);
+        $fwrite(file, "IBuff_out: 0x%h\n", IBuff_out);
+        $fwrite(file, "pc_out: 0x%h\n", pc_out);
+        $fwrite(file, "\n");
+    end
+    
+    final begin
+        $fclose(file);
+    end
+
+    // Additional logic (e.g. determining which IBuff output packet to send to decode)
+    // can be developed as needed.
+    
 endmodule
