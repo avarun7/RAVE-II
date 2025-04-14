@@ -82,34 +82,35 @@ reg [XLEN - 1:0] pc_last;
     //----------------------------------------------------------------------
     // PC and sequencing logic
 
-    
     always @(posedge clk) begin
+        
         if (rst) begin
-            pc      <= 0;
-            pc_last <= 0;
+            ibuff_valid = 0;
+            pc      = 0;
+            pc_last = 0;
         end else if (stall_in || stall) begin  // also stall if IBuff insertion is blocked
-            pc      <= pc;
-            pc_last <= pc_last;
+            pc      = pc;
+            pc_last = pc_last;
         end else if (resteer) begin
             if (resteer_taken_ROB) begin
-                pc      <= resteer_target_ROB;
-                pc_last <= resteer_target_ROB;
+                pc      = resteer_target_ROB;
+                pc_last = resteer_target_ROB;
             end else if (resteer_taken_D1) begin
-                pc      <= resteer_target_D1;
-                pc_last <= resteer_target_D1;
+                pc      = resteer_target_D1;
+                pc_last = resteer_target_D1;
             end else if (resteer_taken_BR) begin
-                pc      <= resteer_target_BR;
-                pc_last <= resteer_target_BR;
+                pc      = resteer_target_BR;
+                pc_last = resteer_target_BR;
             end else if (resteer_taken_ras) begin
-                pc      <= resteer_target_ras;
-                pc_last <= resteer_target_ras;
+                pc      = resteer_target_ras;
+                pc_last = resteer_target_ras;
             end
-        end else begin
-            pc_last <= pc;
-            pc      <= pc + 32;
+        end else if (|ibuff_valid) begin
+            pc_last = pc;
+            pc      = pc + 4;
         end
-        
-        pc_out <= pc;
+        ibuff_valid = ibuff_valid_2;
+        pc_out = pc;
     end
 
     //----------------------------------------------------------------------
@@ -162,8 +163,7 @@ reg [XLEN - 1:0] pc_last;
     end
     wire[3:0] ibuff_valid_2;
     always @(posedge clk) begin
-        if(rst) ibuff_valid = 0;
-        else ibuff_valid = ibuff_valid_2;
+        
     end
     //----------------------------------------------------------------------
     // Instantiate the IBuff, now using the flattened output port.
