@@ -192,7 +192,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
 
         );
 
-        opdecode #(parameter XLEN=32) opdec(
+        opdecode #(.XLEN(32)) opdec(
            .clk(clk),
            .rst(rst),
         
@@ -239,8 +239,8 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
             $fwrite(file, "----------------------------------------------------\n\n");
         end
     
-        final begin
-            $fclose(file);
-        end
+//        final begin
+//            $fclose(file);
+//        end
 
 endmodule

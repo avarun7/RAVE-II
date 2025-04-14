@@ -56,9 +56,9 @@ end
         $fwrite(file, "\n");
     end
 
-    final begin
-        $fclose(file);
-    end
+//    final begin
+//        $fclose(file);
+//    end
 
 
 endmodule

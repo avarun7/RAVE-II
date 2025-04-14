@@ -2,22 +2,22 @@ module IBuff #(
     parameter CACHE_LINE_SIZE = 128 // Default cache line size (bits)
 )
 (
-    input  logic                      clk,           // Clock signal
-    input  logic                      rst,           // Reset signal
-    input  logic [3:0]                load,          // Load signals for each entry
-    input  logic [3:0]                invalidate,    // Invalidate signals for each entry
-    input  logic [CACHE_LINE_SIZE-1:0] data_in_even,  // Even cache line input 
-    input  logic [CACHE_LINE_SIZE-1:0] data_in_odd,   // Odd cache line input
+    input                       clk,           // Clock signal
+    input                       rst,           // Reset signal
+    input  [3:0]                load,          // Load signals for each entry
+    input  [3:0]                invalidate,    // Invalidate signals for each entry
+    input  [CACHE_LINE_SIZE-1:0] data_in_even,  // Even cache line input 
+    input  [CACHE_LINE_SIZE-1:0] data_in_odd,   // Odd cache line input
     
     // Flattened output: concatenated four 128-bit entries, with
     // data_out_flat[4*CACHE_LINE_SIZE-1:3*CACHE_LINE_SIZE] corresponding to buffer[3], etc.
-    output logic [4*CACHE_LINE_SIZE-1:0] data_out_flat,
-    output logic [3:0]                valid_out      // Valid bits for each entry
+    output reg [4*CACHE_LINE_SIZE-1:0] data_out_flat,
+    output reg [3:0]                valid_out      // Valid bits for each entry
 );
 
     // Internal storage for the 4 entries
-    logic [CACHE_LINE_SIZE-1:0] buffer [3:0];
-    logic [3:0] valid_bits;
+    reg [CACHE_LINE_SIZE-1:0] buffer [3:0];
+    reg [3:0] valid_bits;
     integer i;
     
     always @(posedge clk or posedge rst) begin

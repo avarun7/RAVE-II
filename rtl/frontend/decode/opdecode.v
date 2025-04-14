@@ -124,7 +124,7 @@ always @(posedge clk) begin
 end
 
 assign uop_ready_out = !valid_n;
-qn #(.N_WIDTH(32 + CL_SIZE + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
+qn #(.N_WIDTH(1+7+1+XLEN+XLEN+1+1+15), .M_WIDTH(0), .Q_LENGTH(32)) q1(
     .m_din(),
     .n_din({eoi_in,imm_in,use_imm_in,uop_ready_in,uop_in,src1_arch_in,src2_arch_in,dest_arch_in,pcin,except_in}),
     .new_m_vector(0),
@@ -136,7 +136,7 @@ qn #(.N_WIDTH(32 + CL_SIZE + 8), .M_WIDTH(0), .Q_LENGTH(Q_LENGTH)) q1(
     .full(full), 
     .empty(valid_n),
     .old_m_vector(),
-    .dout({eoi_out,imm_out,use_imm_out,uop_ready_out2,uop_out,src1_arch_out,src2_arch_out,dest_arch_out,pcin,except_out})
+    .dout({eoi_out,imm_out,use_imm_out,uop_ready_out2,uop_out,src1_arch_out,src2_arch_out,dest_arch_out,pc_out,except_out})
 );
 //ADDI = 7'b010_0000
 //MUL = 7'b100_0000

@@ -22,8 +22,8 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
     //outputs
     output reg [CLC_WIDTH - 1 : 0] clc_even,
     output reg [CLC_WIDTH - 1 : 0] clc_odd,
-    output reg [XLEN - 1:0] ras_data_out,
-    output reg ras_valid_out
+    output wire [XLEN - 1:0] ras_data_out,
+    output wire ras_valid_out
 );
 
     integer file;
@@ -96,8 +96,8 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
         $fwrite(file, "\n");
     end
 
-    final begin
-        $fclose(file);
-    end
+//    final begin
+//        $fclose(file);
+//    end
 
 endmodule

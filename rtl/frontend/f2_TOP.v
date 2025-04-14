@@ -46,7 +46,8 @@ module f2_TOP #(parameter XLEN = 32,
     output reg [XLEN - 1:0] pc_out,
     output reg stall   // New stall signal generated if IBuff insertion cannot occur
 );
-
+reg [XLEN - 1:0] pc;
+reg [XLEN - 1:0] pc_last;
     //----------------------------------------------------------------------
     // File logging (unchanged)
     integer file;
@@ -79,8 +80,7 @@ module f2_TOP #(parameter XLEN = 32,
     
     //----------------------------------------------------------------------
     // PC and sequencing logic
-    reg [XLEN - 1:0] pc;
-    reg [XLEN - 1:0] pc_last;
+
     
     always @(posedge clk) begin
         if (rst) begin
@@ -189,9 +189,9 @@ module f2_TOP #(parameter XLEN = 32,
         $fwrite(file, "\n");
     end
     
-    final begin
-        $fclose(file);
-    end
+//    final begin
+//        $fclose(file);
+//    end
 
     // Additional logic (e.g. determining which IBuff output packet to send to decode)
     // can be developed as needed.
