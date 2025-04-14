@@ -9,47 +9,44 @@ module IBuff
     input       [3:0]             invalidate,    // Invalidate signals for each entry
     input       [CACHE_LINE_SIZE-1:0] data_in_even,  // Even cache line input 
     input       [CACHE_LINE_SIZE-1:0] data_in_odd,   // Odd cache line input
-    output reg  [CACHE_LINE_SIZE-1:0] data_out0,    // Output for entry 0
-    output reg  [CACHE_LINE_SIZE-1:0] data_out1,    // Output for entry 1
-    output reg  [CACHE_LINE_SIZE-1:0] data_out2,    // Output for entry 2
-    output reg  [CACHE_LINE_SIZE-1:0] data_out3,    // Output for entry 3
+    output reg  [CACHE_LINE_SIZE-1:0] data_out [0:3], // 2D array output: 4 entries
     output reg  [3:0]             valid_out      // Valid bits for each entry
 );
 
-    // Internal storage for the 4 entries
+    // Internal buffer holds the 4 cache lines.
     reg [CACHE_LINE_SIZE-1:0] buffer [0:3];
     reg [3:0] valid_bits;
     integer i;
 
-    // Sequential logic: load and invalidate operations.
+    // Sequential logic for handling load and invalidate operations.
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            valid_bits <= 4'b0000; // Clear all valid bits on reset.
+            valid_bits <= 4'b0000; // Clear valid bits on reset.
         end else begin
             for (i = 0; i < 4; i = i + 1) begin
-                // Only load if the load signal is asserted, the entry is not valid,
-                // and there is no invalidate requested.
+                // Load the data if the load signal is asserted,
+                // the entry is not already valid, and no invalidate is asserted.
                 if (load[i] && !valid_bits[i] && !invalidate[i]) begin
-                    // Depending on slot parity, choose the appropriate data.
+                    // Use data_in_even for even-indexed slots and data_in_odd for odd-indexed slots.
                     if (i % 2 == 0)
                         buffer[i] <= data_in_even;
                     else
                         buffer[i] <= data_in_odd;
                     valid_bits[i] <= 1'b1;
                 end
-                // Handle invalidate: if requested, clear the valid bit.
+                // Invalidate the entry if requested.
                 if (invalidate[i])
                     valid_bits[i] <= 1'b0;
             end
         end
     end
 
-    // Combinatorial logic for output assignment:
+    // Combinatorial logic assigns the internal buffer to the multi-dimensional output.
     always @(*) begin
-        data_out0 = buffer[0];
-        data_out1 = buffer[1];
-        data_out2 = buffer[2];
-        data_out3 = buffer[3];
+        data_out[0] = buffer[0];
+        data_out[1] = buffer[1];
+        data_out[2] = buffer[2];
+        data_out[3] = buffer[3];
         valid_out = valid_bits;
     end
 

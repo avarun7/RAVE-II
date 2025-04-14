@@ -1,6 +1,8 @@
-module f2_TOP #(parameter XLEN = 32,
-                parameter CL_SIZE = 128, // Cache line size (bits)
-                parameter CLC_WIDTH = 28)
+module f2_TOP #(
+    parameter XLEN = 32,
+    parameter CL_SIZE = 128, // Cache line size (bits)
+    parameter CLC_WIDTH = 28
+)
 (
     input  clk,
     input  rst,
@@ -42,7 +44,7 @@ module f2_TOP #(parameter XLEN = 32,
     
     // Outputs
     output reg exceptions_out,
-    output reg [511:0] IBuff_out, // Instruction (or word) sent to decode  
+    output reg [XLEN - 1:0] IBuff_out, // Instruction (or word) sent to decode  
     output reg [XLEN - 1:0] pc_out,
     output reg stall   // Stall signal if IBuff insertion is blocked
 );
@@ -81,7 +83,7 @@ module f2_TOP #(parameter XLEN = 32,
         .final_target_addr(final_target_addr)
     );
     
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // PC and sequencing logic
     always @(posedge clk) begin
         if (rst) begin
@@ -112,17 +114,18 @@ module f2_TOP #(parameter XLEN = 32,
         pc_out <= pc;
     end
 
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     // IBuff connection signals
-    // Replace the array of IBuff outputs with individual wires for Verilog 2005.
-    wire [3:0] ibuff_valid;
-    wire [CL_SIZE-1:0] ibuff_data_out0;
-    wire [CL_SIZE-1:0] ibuff_data_out1;
-    wire [CL_SIZE-1:0] ibuff_data_out2;
-    wire [CL_SIZE-1:0] ibuff_data_out3;
+
+    // Replace individual IBuff output wires with a 2D array.
+    // "ibuff_data_out" is now an array of 4 entries, each CL_SIZE bits wide.
+    wire [CL_SIZE-1:0] ibuff_data_out [0:3];
     
+    // Valid signal output from IBuff remains as a 4-bit wire.
+    wire [3:0] ibuff_valid;
+    
+    // Load and invalidate signals.
     wire [3:0] ibuff_load;
-    // Tie the invalidate signal to zero.
     wire [3:0] ibuff_invalidate;
     assign ibuff_invalidate = 4'b0000;
     
@@ -163,13 +166,12 @@ module f2_TOP #(parameter XLEN = 32,
         stall = stall_due_to_ibuff;
     end
     
-    // To avoid using an inline logical OR in the port connection,
-    // create an intermediate wire for the IBuff reset.
+    // Create an intermediate reset signal for IBuff.
     wire ibuff_rst;
     assign ibuff_rst = rst | resteer;
     
     //--------------------------------------------------------------------------
-    // Instantiate the IBuff with updated port names (Verilog 2005 compliant).
+    // Instantiate the IBuff with the new 2D array output.
     IBuff #(.CACHE_LINE_SIZE(CL_SIZE)) ibuff (
          .clk(clk),
          .rst(ibuff_rst),
@@ -177,10 +179,7 @@ module f2_TOP #(parameter XLEN = 32,
          .invalidate(ibuff_invalidate),
          .data_in_even(clc_data_in_even),
          .data_in_odd(clc_data_in_odd),
-         .data_out0(ibuff_data_out0),
-         .data_out1(ibuff_data_out1),
-         .data_out2(ibuff_data_out2),
-         .data_out3(ibuff_data_out3),
+         .data_out(ibuff_data_out),   // 2D array output connected here
          .valid_out(ibuff_valid)
     );
     
@@ -189,10 +188,9 @@ module f2_TOP #(parameter XLEN = 32,
     always @(posedge clk) begin
         cycle_number = cycle_number + 1;
         $fwrite(file, "Cycle number: %d\n", cycle_number);
-        $fwrite(file, "IBuff_out: 0x%h\n", IBuff_out);
+        $fwrite(file, "IBuff_out (example, slot0): 0x%h\n", ibuff_data_out[0]);
         $fwrite(file, "pc_out: 0x%h\n", pc_out);
         $fwrite(file, "\n");
     end
 
-    
 endmodule
