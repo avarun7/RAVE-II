@@ -163,7 +163,7 @@ assign rwnd_alloc = operation_buffer == ST && hit ;
 assign lsq_data = data_buffer[31:0];
 
 //TODO: adjust mshr_alloc to be mshr_alloc_pre_stall
-assign stall_cache = pending_stall  || mshr_alloc && mshr_full || rwnd_full && rwnd_alloc || lsq_full && lsq_alloc;
+assign stall_cache = pending_stall  ||  mshr_full || rwnd_full && rwnd_alloc || lsq_full && lsq_alloc;
 assign valid_input = |operation_buffer;
 always @(posedge clk) begin
     if(rst) begin
@@ -343,9 +343,7 @@ assign is_pending = current_state_buf[3];
     .data_evic(data_evict),
     .rewind_data(rwnd_data)
 );
-
-
-mshr #(.Q_LEGNTH(8)) mshr1(
+mshr #(.Q_LEGNTH(BANK_NAME == 1 || BANK_NAME == 2 ? 1 : 8)) mshr1(
     //Global
     .clk(clk),
     .rst(rst),    

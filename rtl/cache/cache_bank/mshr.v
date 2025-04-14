@@ -27,7 +27,7 @@ wire [30*8-1:0] new_m_vector;
 wire [29:0] hit_first; 
 wire [29:0] hit_second[0:7];
 
-assign mshr_hit = |hit_vector;
+assign mshr_hit = |hit_vector && !valid_n;
 assign mshr_fin = |modify_vector && l22q_valid;
 wire[31:0] old_v_0;
 assign hit_first = {addr_cache[31:4], 1'b0};

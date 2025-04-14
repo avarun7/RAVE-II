@@ -44,7 +44,8 @@ module f2_TOP #(parameter XLEN = 32,
     output reg exceptions_out,
     output reg [511:0] IBuff_out, // Instruction (or word) sent to decode  
     output reg [XLEN - 1:0] pc_out,
-    output reg stall   // New stall signal generated if IBuff insertion cannot occur
+    output reg stall,   // New stall signal generated if IBuff insertion cannot occur
+    output reg [3:0] ibuff_valid
 );
 reg [XLEN - 1:0] pc;
 reg [XLEN - 1:0] pc_last;
@@ -114,7 +115,7 @@ reg [XLEN - 1:0] pc_last;
     //----------------------------------------------------------------------
     // IBuff connection signals
     // Replace the old multi-dimensional array with a single flattened bus.
-    wire [3:0]          ibuff_valid;
+    // wire [3:0]          ibuff_valid;
     wire [4*CL_SIZE-1:0] ibuff_data_out_flat;
     wire [3:0]          ibuff_load;
     // For simplicity, we tie the invalidate signal to zero.
@@ -159,7 +160,11 @@ reg [XLEN - 1:0] pc_last;
         // Here, the stall signal reflects that the IBuff cannot accept the new line.
         stall = stall_due_to_ibuff;
     end
-    
+    wire[3:0] ibuff_valid_2;
+    always @(posedge clk) begin
+        if(rst) ibuff_valid = 0;
+        else ibuff_valid = ibuff_valid_2;
+    end
     //----------------------------------------------------------------------
     // Instantiate the IBuff, now using the flattened output port.
     IBuff #(.CACHE_LINE_SIZE(CL_SIZE)) ibuff (
@@ -170,7 +175,7 @@ reg [XLEN - 1:0] pc_last;
         .data_in_even(clc_data_in_even),
         .data_in_odd(clc_data_in_odd),
         .data_out_flat(ibuff_data_out_flat),  // Updated flattened port connection
-        .valid_out(ibuff_valid)
+        .valid_out(ibuff_valid_2)
     );
     
     //----------------------------------------------------------------------
