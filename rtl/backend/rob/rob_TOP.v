@@ -36,7 +36,7 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
 
 
 
-    `ifdef DEBUG
+    // `ifdef DEBUG
         integer cycle_cnt;
         integer fullfile, sparsefile, retirefile;
 
@@ -46,6 +46,9 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
             cycle_cnt = 0;
             fullfile = $fopen("./out/rob_full.dump");
             sparsefile = $fopen("./out/rob_sparse.dump");
+            #800
+            $fclose(sparsefile);
+            $fclose(fullfile);
         end
 
         always@(posedge clk) begin
@@ -109,6 +112,6 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
 
             cycle_cnt = cycle_cnt + 1;
         end
-    `endif
+    // `endif
 
 endmodule

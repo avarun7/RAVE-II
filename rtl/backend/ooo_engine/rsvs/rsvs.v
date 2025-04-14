@@ -136,7 +136,7 @@ always @(posedge clk) begin
     
 end
 
-`ifdef DEBUG
+// `ifdef DEBUG
 integer cycle_cnt;
 integer fullfile, sparsefile, retirefile;
 
@@ -163,6 +163,9 @@ initial begin
         fullfile = $fopen("./out/ld_st_rsv.dump");
         sparsefile = $fopen("./out/ld_st_rsv_sparse.dump");
     end
+    #800
+    $fclose(sparsefile);
+    $fclose(fullfile);
     
 end
 
@@ -198,7 +201,7 @@ always@(posedge clk) begin
 
     cycle_cnt = cycle_cnt + 1;
 end
-`endif
+// `endif
 
 
 

@@ -24,7 +24,6 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
     output reg [$clog2(PHYSFILE_SIZE)-1:0] phys_wr, oldphys_wr,
     output none_free
 );
-
     wire [$clog2(PHYSFILE_SIZE)-1:0] arch_wr_phys;
 
     reg archphys_uop_update;
@@ -81,7 +80,7 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
                     //1st cycle outputs
                 .none_free(none_free), .next_free(arch_wr_phys));
 
-    `ifdef DEBUG
+
         integer cycle_cnt;
         integer fullfile, sparsefile;
 
@@ -91,8 +90,11 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
             cycle_cnt = 0;
             fullfile = $fopen("./out/regfile_full.dump");
             sparsefile = $fopen("./out/regfile_sparse.dump");
+            #800
+            $fclose(fullfile);
+            $fclose(sparsefile);
         end
-
+        
         always@(posedge clk) begin
             $fdisplay(fullfile, "cycle number: %d", cycle_cnt);
             $fdisplay(fullfile, "[====REGFILE UPDATES====]");
@@ -150,6 +152,6 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
 
             cycle_cnt = cycle_cnt + 1;
         end
-    `endif
+
 
 endmodule

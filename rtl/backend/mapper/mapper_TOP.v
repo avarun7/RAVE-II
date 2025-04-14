@@ -139,7 +139,7 @@ module mapper_TOP #(parameter NUM_UOPS=32,
 
 
 
-    `ifdef DEBUG
+    // `ifdef DEBUG
         integer cycle_cnt;
         integer fullfile, sparsefile;
 
@@ -147,6 +147,9 @@ module mapper_TOP #(parameter NUM_UOPS=32,
             cycle_cnt = 0;
             fullfile = $fopen("./out/mapper_full.dump");
             sparsefile = $fopen("./out/mapper_sparse.dump");
+            #800
+            $fclose(fullfile);
+            $fclose(sparsefile);
         end
 
         always@(posedge clk) begin
@@ -194,6 +197,6 @@ module mapper_TOP #(parameter NUM_UOPS=32,
 
             cycle_cnt = cycle_cnt + 1;
         end
-    `endif
+    // `endif
 
 endmodule
