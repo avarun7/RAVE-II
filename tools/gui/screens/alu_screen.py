@@ -4,6 +4,7 @@ from .base_screen import BaseScreen
 class ALUScreen(BaseScreen):
     def __init__(self, state):
         super().__init__()
+        self.csv_path = None
         self.state = state
         self.back_button = pygame.Rect(50, 700, 100, 40)
 
@@ -21,6 +22,8 @@ class ALUScreen(BaseScreen):
 
     def draw(self, surface):
         surface.fill((20, 20, 20))
+     
+
         if self.state.data is None or self.state.data.empty:
             text = self.font.render("No data loaded.", True, (255, 0, 0))
             surface.blit(text, (50, 50))
@@ -33,7 +36,16 @@ class ALUScreen(BaseScreen):
                     text = self.font.render(f"{col}: {val}", True, (255, 255, 255))
                     surface.blit(text, (50, y))
                     y += 30
-
+    
+        if self.csv_path:
+            filename = self.csv_path.split("/")[-1]
+            file_text = self.font.render(f"File: {filename}", True, (100, 255, 100))
+            surface.blit(file_text, (50, 650))
+        elif self.state.csv_path:
+            filename = self.state.csv_path.split("/")[-1]
+            file_text = self.font.render(f"File (shared): {filename}", True, (180, 180, 180))
+            surface.blit(file_text, (50, 650))
+        
         # Draw back button
         pygame.draw.rect(surface, (80, 80, 80), self.back_button)
         pygame.draw.rect(surface, (255, 255, 255), self.back_button, 2)

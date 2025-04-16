@@ -1,6 +1,9 @@
 import pygame
 from .base_screen import BaseScreen
 from .alu_screen import ALUScreen
+from .backend_screen import BackendScreen
+from .frontend_screen import FrontendScreen
+from .memory_screen import MemoryScreen
 
 class MainMenuScreen(BaseScreen):
     def __init__(self, state):
@@ -10,9 +13,9 @@ class MainMenuScreen(BaseScreen):
 
         # Define buttons (label, rect, callback)
         self.buttons = [
-            ("View ALU", pygame.Rect(400, 200, 200, 50), lambda: state.screen_manager.switch(ALUScreen(state))),
-            ("Option 2", pygame.Rect(400, 270, 200, 50), lambda: print("Option 2 clicked")),
-            ("Option 3", pygame.Rect(400, 340, 200, 50), lambda: print("Option 3 clicked"))
+            ("Backend", pygame.Rect(400, 200, 200, 50), lambda: state.screen_manager.switch(BackendScreen(state))),
+            ("Frontend", pygame.Rect(400, 270, 200, 50), lambda: state.screen_manager.switch(FrontendScreen(state))),
+            ("Memory", pygame.Rect(400, 340, 200, 50), lambda: state.screen_manager.switch(MemoryScreen(state)))
         ]
 
     def update(self, events, state):
@@ -24,6 +27,7 @@ class MainMenuScreen(BaseScreen):
                             action()
 
     def draw(self, surface):
+        surface.fill((0,0,0))
         surface.blit(self.background, (0, 0))
 
         for label, rect, _ in self.buttons:
