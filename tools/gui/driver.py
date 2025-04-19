@@ -22,13 +22,6 @@ while running:
     for event in events:
         if event.type == pygame.QUIT:
             running = False
-
-        # Press 'L' to load a new CSV
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_l:
-            path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
-            if path:
-                state.load_new_csv(path, load_csv)
-
     manager.update(events, state)
     manager.draw(screen)
 
