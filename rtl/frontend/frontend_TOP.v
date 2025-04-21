@@ -48,7 +48,7 @@ module frontend_TOP #(parameter XLEN=32, CL_SIZE = 128, CLC_WIDTH=28) (
     integer file;
     integer cycle_number = 0;
     initial begin
-        file = $fopen("frontend.log", "w");
+        file = $fopen("out/frontend.log", "w");
         if (file == 0) begin
             $display("Error: Failed to open file frontend.log");
             $finish;

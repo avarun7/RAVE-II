@@ -54,7 +54,7 @@ reg [XLEN - 1:0] pc_last;
     integer file;
     integer cycle_number = 0;
     initial begin
-        file = $fopen("f2.log", "w");
+        file = $fopen("out/f2.log", "w");
         if (file == 0) begin
             $display("Error: Failed to open file f2.log");
             $finish;

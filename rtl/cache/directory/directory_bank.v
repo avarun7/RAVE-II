@@ -177,10 +177,10 @@ integer file;
   integer count = 0;
 initial begin
     if(NAME == 1) begin
-        file = $fopen("DIR_BANK_EVEN.csv", "w");
+        file = $fopen("out/DIR_BANK_EVEN.csv", "w");
     end
     if(NAME == 2) begin
-        file = $fopen("DIR_BANK_ODD.csv", "w");
+        file = $fopen("out/DIR_BANK_ODD.csv", "w");
     end
 
     opcode_names[0] = "NOOP";

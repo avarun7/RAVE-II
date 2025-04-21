@@ -129,10 +129,10 @@ end
 
 initial begin
     if(file_name == 1) begin 
-        $readmemh("banke_data.hex", mem_bank); // Load bank0 from hex file
+        $readmemh("./cache/memory/banke_data.hex", mem_bank); // Load bank0 from hex file
     end
     else begin
-        $readmemh("banko_data.hex", mem_bank); // Load bank1 from hex file
+        $readmemh("./cache/memory/banko_data.hex", mem_bank); // Load bank1 from hex file
     end
 end
 

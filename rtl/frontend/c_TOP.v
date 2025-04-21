@@ -29,7 +29,7 @@ module c_TOP #(parameter XLEN=32, CLC_WIDTH = 28) (
     integer file;
     integer cycle_number = 0;
     initial begin
-        file = $fopen("control.log", "w");
+        file = $fopen("out/control.log", "w");
         if (file == 0) begin
             $display("Error: Failed to open file control.log");
             // $finish;

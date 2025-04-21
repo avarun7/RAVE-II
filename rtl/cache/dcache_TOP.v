@@ -133,6 +133,9 @@ localparam RINV = 7;
 localparam REPLY = 2;
 
 wire[4:0] dealloc_des_even, dealloc_des_odd;
+wire [31:0] lsq_data_odd; //Not needed for I$
+
+wire[31:0] rwnd_data_odd;
 
 //Pipeline Output : 
 wire [31:0] addr_out_bank_even;
@@ -290,7 +293,7 @@ wire [OOO_TAG_SIZE-1:0] lsq_ooo_tag_in_dc_data_q_odd;
 wire [OOO_ROB_SIZE-1:0] lsq_ooo_rob_in_dc_data_q_odd;
 wire lsq_sext_in_dc_data_q_odd;
 
-
+wire[31:0] rwnd_data_even;
 wire[2:0] mshr_hit_ptr_even;//Not needed for I$
 wire[2:0] mshr_wr_ptr_even;//Not needed for I$
 wire[2:0] mshr_fin_ptr_even;//Not needed for I$
@@ -664,7 +667,7 @@ assign ooo_rob_in_even = dealloc_even[2] ? rwnd_ooo_rob_in_dc_data_q_even : deal
 
 wire [31:0] lsq_data_even; //Not needed for I$
 
-wire[31:0] rwnd_data_even;
+
 
 
 
@@ -966,9 +969,6 @@ assign ooo_rob_in_odd = dealloc_odd[2] ? rwnd_ooo_rob_in_dc_data_q_odd : dealloc
 
 //Cache
 
-wire [31:0] lsq_data_odd; //Not needed for I$
-
-wire[31:0] rwnd_data_odd;
 
 
 

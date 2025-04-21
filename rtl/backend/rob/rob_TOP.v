@@ -46,9 +46,9 @@ module rob_TOP #(parameter ARCHFILE_SIZE=32,
             cycle_cnt = 0;
             fullfile = $fopen("./out/rob_full.dump");
             sparsefile = $fopen("./out/rob_sparse.dump");
-            #800
-            $fclose(sparsefile);
-            $fclose(fullfile);
+            //#800
+            //$fclose(sparsefile);
+            //$fclose(fullfile);
         end
 
         always@(posedge clk) begin

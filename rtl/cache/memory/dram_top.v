@@ -373,7 +373,7 @@ dram_bank #(.CL_SIZE(128), .file_name(2)) db_odd(
 integer file;
   integer count = 0;
 initial begin
-    file = $fopen("MEM_FINAL.csv", "w");
+    file = $fopen("out/MEM_FINAL.csv", "w");
     if (file == 0) begin
       $display("Error: Unable to open file.");
       $stop;

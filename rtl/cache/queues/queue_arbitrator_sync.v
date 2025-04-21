@@ -27,7 +27,7 @@ module queue_arbitrator_sync #(parameter CL_SIZE = 128, Q_WIDTH = 6) (
 reg[3-1:0]       operation_out_temp;
 wire[Q_WIDTH-1:0] op_choice;
 assign sync_stall = partner_dealloc > dealloc_desired;
-pencoder_copy #(.WIDTH(Q_WIDTH)) pec1(.a(valid_in), .rst(rst), .o(op_choice));
+pencoder_copy #(.WIDTH(Q_WIDTH)) pec1(.a(valid_in), .o(op_choice));
 assign dealloc_desired =  valid_out? op_choice & {8{~stall_in}} : 0;
 assign dealloc = rst ? 0 : !valid_out ? 0 : sync_stall ? 0 : op_choice & {8{~stall_in}};
 assign valid_out = rst ? 0 :sync_stall ? 0 : |valid_in;
@@ -49,23 +49,23 @@ end
 
 endmodule
 
-module pencoder_copy #(parameter WIDTH=32)(
-    input [WIDTH-1:0] a,
-    input rst,
-    output reg [WIDTH-1:0] o
-);
+// module pencoder_copy #(parameter WIDTH=32)(
+//     input [WIDTH-1:0] a,
+//     input rst,
+//     output reg [WIDTH-1:0] o
+// );
     
-    integer unsigned i;
-    always@(*) begin
+//     integer unsigned i;
+//     always@(*) begin
         
-        for(i = 0; i < WIDTH; i = i + 1) begin
-            if(rst) begin
-                o[i] = 0;
-            end
-            else if(a[i]) begin
-                o = 1 << i;
-            end
-        end
-    end
+//         for(i = 0; i < WIDTH; i = i + 1) begin
+//             if(rst) begin
+//                 o[i] = 0;
+//             end
+//             else if(a[i]) begin
+//                 o = 1 << i;
+//             end
+//         end
+//     end
 
-endmodule
+// endmodule

@@ -90,9 +90,9 @@ module regfile_TOP #(parameter ARCHFILE_SIZE=32,
             cycle_cnt = 0;
             fullfile = $fopen("./out/regfile_full.dump");
             sparsefile = $fopen("./out/regfile_sparse.dump");
-            #800
-            $fclose(fullfile);
-            $fclose(sparsefile);
+            //#800
+            //$fclose(fullfile);
+            //$fclose(sparsefile);
         end
         
         always@(posedge clk) begin

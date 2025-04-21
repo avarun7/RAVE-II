@@ -163,9 +163,9 @@ initial begin
         fullfile = $fopen("./out/ld_st_rsv.dump");
         sparsefile = $fopen("./out/ld_st_rsv_sparse.dump");
     end
-    #800
-    $fclose(sparsefile);
-    $fclose(fullfile);
+    //#800
+    //$fclose(sparsefile);
+    //$fclose(fullfile);
     
 end
 

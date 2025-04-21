@@ -408,16 +408,16 @@ integer file;
   integer count = 0;
 initial begin
     if(BANK_NAME == 1) begin
-        file = $fopen("I$_BANK_EVEN.csv", "w");
+        file = $fopen("out/IC_BANK_EVEN.csv", "w");
     end
     if(BANK_NAME == 2) begin
-        file = $fopen("I$_BANK_ODD.csv", "w");
+        file = $fopen("out/IC_BANK_ODD.csv", "w");
     end
     if(BANK_NAME == 3) begin
-        file = $fopen("D$_BANK_EVEN.csv", "w");
+        file = $fopen("out/DC_BANK_EVEN.csv", "w");
     end
     if(BANK_NAME == 4) begin
-        file = $fopen("D$_BANK_ODD.csv", "w");
+        file = $fopen("out/DC_BANK_ODD.csv", "w");
     end
     opcode_names[0] = "NOOP";
     opcode_names[1] = "LD"; // Unused index
@@ -455,8 +455,8 @@ initial begin
     end
     
     $fdisplay(file, "Time,Cycle,Address_Buffer, Operation_Buffer, Size_Buffer,Data_Buffer,OOO_Tag_Buffer, Index_buffer, Tag_Buffer, Offset_buffer,Stall,Hit,MSHR_Alloc, Selected_Way, Tag_Old, Tag_New, Tag_Alloc, Meta_Old, Meta_New,Meta_Alloc, Data_Old, Data_New,Data_Alloc, Instr_Q_Alloc, Instr_Q_Operation, Data_Q_Alloc, Data_Q_Operation, Data_Q_Data"); // Write header
-    #1000
-    $fclose(file);
+    //#1000
+    //$fclose(file);
   end
   localparam META_SIZE = 8;
 //  MSHR_Alloc

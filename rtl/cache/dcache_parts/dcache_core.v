@@ -315,10 +315,10 @@ cache_bank #(.CL_SIZE(CL_SIZE), .IDX_CNT(IDX_CNT), .TAG_SIZE(TAG_SIZE), .OOO_TAG
 
     //Requests to DRAM/Directory
     //Evdction Q
-    .operation_evdc(operation_out_dc_data_q),
-    .addr_evdc(addr_out_dc_data_q), 
-    .alloc_evdc(alloc_out_dc_data_q),
-    .data_evdc(data_out_dc_data_q),
+    .operation_evic(operation_out_dc_data_q),
+    .addr_evic(addr_out_dc_data_q), 
+    .alloc_evic(alloc_out_dc_data_q),
+    .data_evic(data_out_dc_data_q),
     //Miss Q
     .operation_miss(operation_out_dc_instr_q),
     .addr_miss(addr_out_dc_instr_q),
