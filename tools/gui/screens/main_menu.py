@@ -8,7 +8,7 @@ class MainMenuScreen(BaseScreen):
     def __init__(self, state):
         self.state = state
         self.font = pygame.font.SysFont("Consolas", 30)
-        self.background = pygame.image.load("ECEStuff/RAVE-II/tools/gui/assets/menu_background.jpg")
+        self.background = pygame.image.load("./assets/menu_background.jpg")
 
         # Define buttons (label, rect, callback)
         self.buttons = [

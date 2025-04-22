@@ -1,13 +1,13 @@
 import pygame
 import sys
-import tkinter as tk
-from tkinter import filedialog
+#import tkinter as tk
+#from tkinter import filedialog
 from screen_manager import ScreenManager
 from screens.main_menu import MainMenuScreen
 from data_loader import load_csv
 from state import AppState
 
-tk.Tk().withdraw()
+#tk.Tk().withdraw()
 pygame.init()
 
 screen = pygame.display.set_mode((1024, 768))
