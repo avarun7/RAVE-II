@@ -7,18 +7,18 @@ module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, ROB_SIZE=256, UOP_SIZE=1
     input                                    uop_rs1_received,
     input[XLEN-1:0]                          uop_rs1_value,
     input[XLEN-1:0]                          uop_pc_in,
-    input[$clog2(UOP_SIZE)-1:0]               uop_uop_encoding,
+    input[$clog2(UOP_SIZE)-1:0]              uop_uop_encoding,
     input[XLEN-1:0]                          uop_rs2_value,
     input                                    uop_rs2_received,
     input[$clog2(PHYS_REG_SIZE)-1:0]         uop_rs2_reg,
-    input[$clog2(PHYS_REG_SIZE)-1:0]    uop_dest_reg,
+    input[$clog2(PHYS_REG_SIZE)-1:0]         uop_dest_reg,
 
     output reg[$clog2(PHYS_REG_SIZE)-1:0]    logical_rs1_reg,
     output reg[$clog2(ROB_SIZE)-1:0]         logical_rob_entry,
     output reg                               logical_rs1_received,
     output reg[XLEN-1:0]                     logical_rs1_value,
     output reg[XLEN-1:0]                     logical_pc,
-    output reg[$clog2(UOP_SIZE)-1:0]          logical_uop_encoding,
+    output reg[$clog2(UOP_SIZE)-1:0]         logical_uop_encoding,
     output reg[XLEN-1:0]                     logical_rs2_value,
     output reg                               logical_rs2_received,
     output reg[$clog2(PHYS_REG_SIZE)-1:0]    logical_rs2_reg,
@@ -30,7 +30,7 @@ module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, ROB_SIZE=256, UOP_SIZE=1
     output reg                               arithmetic_rs1_received,
     output reg[XLEN-1:0]                     arithmetic_rs1_value,
     output reg[XLEN-1:0]                     arithmetic_pc,
-    output reg[$clog2(UOP_SIZE)-1:0]          arithmetic_uop_encoding,
+    output reg[$clog2(UOP_SIZE)-1:0]         arithmetic_uop_encoding,
     output reg[XLEN-1:0]                     arithmetic_rs2_value,
     output reg                               arithmetic_rs2_received,
     output reg[$clog2(PHYS_REG_SIZE)-1:0]    arithmetic_rs2_reg,
@@ -42,7 +42,7 @@ module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, ROB_SIZE=256, UOP_SIZE=1
     output reg                               branch_rs1_received,
     output reg[XLEN-1:0]                     branch_rs1_value,
     output reg[XLEN-1:0]                     branch_pc,
-    output reg[$clog2(UOP_SIZE)-1:0]          branch_uop_encoding,
+    output reg[$clog2(UOP_SIZE)-1:0]         branch_uop_encoding,
     output reg[XLEN-1:0]                     branch_rs2_value,
     output reg                               branch_rs2_received,
     output reg[$clog2(PHYS_REG_SIZE)-1:0]    branch_rs2_reg,
@@ -55,7 +55,7 @@ module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, ROB_SIZE=256, UOP_SIZE=1
     output reg                               mul_div_rs1_received,
     output reg[XLEN-1:0]                     mul_div_rs1_value,
     output reg[XLEN-1:0]                     mul_div_pc,
-    output reg[$clog2(UOP_SIZE)-1:0]          mul_div_uop_encoding,
+    output reg[$clog2(UOP_SIZE)-1:0]         mul_div_uop_encoding,
     output reg[XLEN-1:0]                     mul_div_rs2_value,
     output reg                               mul_div_rs2_received,
     output reg[$clog2(PHYS_REG_SIZE)-1:0]    mul_div_rs2_reg,
@@ -67,7 +67,7 @@ module ring_rsvs#(parameter XLEN=32, PHYS_REG_SIZE=256, ROB_SIZE=256, UOP_SIZE=1
     output reg                               ld_st_rs1_received,
     output reg[XLEN-1:0]                     ld_st_rs1_value,
     output reg[XLEN-1:0]                     ld_st_pc,
-    output reg[$clog2(UOP_SIZE)-1:0]          ld_st_uop_encoding,
+    output reg[$clog2(UOP_SIZE)-1:0]         ld_st_uop_encoding,
     output reg[XLEN-1:0]                     ld_st_rs2_value,
     output reg                               ld_st_rs2_received,
     output reg[$clog2(PHYS_REG_SIZE)-1:0]    ld_st_rs2_reg,
@@ -82,7 +82,7 @@ reg[$clog2(ROB_SIZE)-1:0]         ring_uop_disperse_rob_entry;
 reg                               ring_uop_disperse_rs1_received;
 reg[XLEN-1:0]                     ring_uop_disperse_rs1_value;
 reg[XLEN-1:0]                     ring_uop_disperse_pc;
-reg[$clog2(UOP_SIZE)-1:0]          ring_uop_uop_encoding;
+reg[$clog2(UOP_SIZE)-1:0]         ring_uop_uop_encoding;
 reg[XLEN-1:0]                     ring_uop_disperse_rs2_value;
 reg                               ring_uop_disperse_rs2_received;
 reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_uop_disperse_rs2_reg;
@@ -94,7 +94,7 @@ reg[$clog2(ROB_SIZE)-1:0]         ring_logical_rob_entry;
 reg                               ring_logical_rs1_received;
 reg[XLEN-1:0]                     ring_logical_rs1_value;
 reg[XLEN-1:0]                     ring_logical_pc;
-reg[$clog2(UOP_SIZE)-1:0]          ring_logical_uop_encoding;
+reg[$clog2(UOP_SIZE)-1:0]         ring_logical_uop_encoding;
 reg[XLEN-1:0]                     ring_logical_rs2_value;
 reg                               ring_logical_rs2_received;
 reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_logical_rs2_reg;
@@ -106,7 +106,7 @@ reg[$clog2(ROB_SIZE)-1:0]         ring_arithmetic_rob_entry;
 reg                               ring_arithmetic_rs1_received;
 reg[XLEN-1:0]                     ring_arithmetic_rs1_value;
 reg[XLEN-1:0]                     ring_arithmetic_pc;
-reg[$clog2(UOP_SIZE)-1:0]          ring_arithmetic_uop_encoding;
+reg[$clog2(UOP_SIZE)-1:0]         ring_arithmetic_uop_encoding;
 reg[XLEN-1:0]                     ring_arithmetic_rs2_value;
 reg                               ring_arithmetic_rs2_received;
 reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_arithmetic_rs2_reg;
@@ -118,7 +118,7 @@ reg[$clog2(ROB_SIZE)-1:0]         ring_branch_rob_entry;
 reg                               ring_branch_rs1_received;
 reg[XLEN-1:0]                     ring_branch_rs1_value;
 reg[XLEN-1:0]                     ring_branch_pc;
-reg[$clog2(UOP_SIZE)-1:0]          ring_branch_uop_encoding;
+reg[$clog2(UOP_SIZE)-1:0]         ring_branch_uop_encoding;
 reg[XLEN-1:0]                     ring_branch_rs2_value;
 reg                               ring_branch_rs2_received;
 reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_branch_rs2_reg;
@@ -130,7 +130,7 @@ reg[$clog2(ROB_SIZE)-1:0]         ring_mul_div_rob_entry;
 reg                               ring_mul_div_rs1_received;
 reg[XLEN-1:0]                     ring_mul_div_rs1_value;
 reg[XLEN-1:0]                     ring_mul_div_pc;
-reg[$clog2(UOP_SIZE)-1:0]          ring_mul_div_uop_encoding;
+reg[$clog2(UOP_SIZE)-1:0]         ring_mul_div_uop_encoding;
 reg[XLEN-1:0]                     ring_mul_div_rs2_value;
 reg                               ring_mul_div_rs2_received;
 reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_mul_div_rs2_reg;
@@ -142,7 +142,7 @@ reg[$clog2(ROB_SIZE)-1:0]         ring_ld_st_rob_entry;
 reg                               ring_ld_st_rs1_received;
 reg[XLEN-1:0]                     ring_ld_st_rs1_value;
 reg[XLEN-1:0]                     ring_ld_st_pc;
-reg[$clog2(UOP_SIZE)-1:0]          ring_ld_st_uop_encoding;
+reg[$clog2(UOP_SIZE)-1:0]         ring_ld_st_uop_encoding;
 reg[XLEN-1:0]                     ring_ld_st_rs2_value;
 reg                               ring_ld_st_rs2_received;
 reg[$clog2(PHYS_REG_SIZE)-1:0]    ring_ld_st_rs2_reg;
