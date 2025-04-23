@@ -24,7 +24,7 @@ reg equals, less_than, s_less_than;
         rob_entry <= rob_entry_in;
         dest_tag <= dest_tag_in;
         case (uop)
-
+            // TODO: Trucate MSB, should just work then
             //Branch
             5'b11000: begin
                 link <= 1'b0;
